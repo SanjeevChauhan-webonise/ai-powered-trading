@@ -52,6 +52,7 @@ export default function PaperTradingPage() {
       api.paperOrders(),
     ]);
     setData({ account, positions, trades, orders });
+    window.dispatchEvent(new Event("paper-updated")); // refresh the balance shown in the sidebar
   }, []);
 
   useEffect(() => {

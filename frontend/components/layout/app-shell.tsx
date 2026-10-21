@@ -13,10 +13,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-import { api, type Health, type ModelsResponse } from "@/lib/api";
+import { api, type Health, type ModelsResponse, type PaperAccount } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { APP_NAME, TAGLINE } from "@/lib/brand";
 import { LEVEL_TONE } from "@/lib/levels";
+import { money } from "@/lib/format";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -62,6 +63,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [offline, setOffline] = useState(false);
   const [models, setModels] = useState<ModelsResponse | null>(null);
   const [dataName, setDataName] = useState<string | null>(null);
+  const [paper, setPaper] = useState<PaperAccount | null>(null);
+
+  // The paper balance in the sidebar: loaded once, then whenever the Paper Trading page changes the account.
+  useEffect(() => {
+    let on = true;
+    const load = () => api.paperAccount().then((p) => on && setPaper(p)).catch(() => undefined);
+    void load();
+    window.addEventListener("paper-updated", load);
+    return () => {
+      on = false;
+      window.removeEventListener("paper-updated", load);
+    };
+  }, []);
 
   useEffect(() => {
     api.health().then(setHealth).catch(() => setOffline(true));
@@ -93,6 +107,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </button>
             </div>
           )}
+          <Link href="/paper-trading" className="block rounded-lg bg-muted/60 px-2.5 py-2 hover:bg-muted">
+            <div className="mb-0.5 text-[10px] uppercase tracking-wide">Paper account</div>
+            <div className="font-mono text-sm font-semibold text-foreground">
+              {paper ? money(paper.equity) : "–"}
+            </div>
+            <div className="text-[11px]">
+              {paper ? `Virtual capital · cash ${money(paper.cash)}` : "Virtual capital"}
+            </div>
+          </Link>
           <div>
             <div className="mb-0.5 uppercase tracking-wide">Model</div>
             <div className="break-all font-mono text-foreground">{models?.default ?? "–"}</div>
