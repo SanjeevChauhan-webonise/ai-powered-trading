@@ -1,0 +1,13 @@
+__pycache__/
+.venv/
+.env
+.env.local
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+node_modules/
+.next/
+backend/storage/*
+!backend/storage/.gitkeep
+backend/option-data/*
+!backend/option-data/.gitkeep
