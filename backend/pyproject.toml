@@ -48,4 +48,5 @@ testpaths = ["tests"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["E501"]
+"otj/*" = ["E501"]
 "app/agents/prompts.py" = ["E501"]

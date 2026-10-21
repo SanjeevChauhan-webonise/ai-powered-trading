@@ -113,3 +113,16 @@ def test_models_endpoint(client: TestClient, monkeypatch: pytest.MonkeyPatch) ->
     body = client.get("/models").json()
     assert body["default_available"] is True
     assert {"id": "openai:gpt-4o", "provider": "openai", "label": "OpenAI · gpt-4o"} in body["models"]
+
+
+def test_azure_openai_needs_key_and_endpoint_and_lists_deployments():
+    from app.llm.registry import available_models, build_model
+
+    assert not [m for m in available_models(Settings(azure_openai_api_key="k")) if m.provider == "azure"]
+    s = Settings(
+        azure_openai_api_key="k",
+        azure_openai_endpoint="https://x.openai.azure.com",
+        azure_openai_deployments="gpt4o, mini",
+    )
+    assert [m.id for m in available_models(s) if m.provider == "azure"] == ["azure:gpt4o", "azure:mini"]
+    assert build_model(s, "azure:gpt4o").model_name == "gpt4o"

@@ -18,6 +18,51 @@ uv run pytest && uv run ruff check . && uv run mypy app
 ## Env vars
 See `.env.example`. Langfuse keys are optional; the app runs without them. `UPSTOX_ACCESS_TOKEN` is only needed for the Upstox import (below).
 
+## Accounts and experience levels
+Email + password accounts (`app/api/auth.py`, `app/core/security.py`). Everything except `/health` and `/auth/*` needs
+`Authorization: Bearer <token>`.
+- `POST /auth/register` (`email`, `name`, `password` of 8+ chars, `level`), `POST /auth/login`, `GET /auth/me`, `PATCH /auth/me`
+  (name, level), `POST /auth/logout`, `POST /auth/change-password` (ends your other logins). `ALLOW_REGISTRATION=false` closes sign-up.
+- Passwords are hashed with scrypt (standard library). A login is an opaque random token; only its SHA-256 is stored
+  (`auth_sessions`), it expires after `AUTH_SESSION_HOURS` (default 168) and logout deletes it. Failed logins are limited per
+  email (in memory, resets on restart). Login errors never say whether the email exists.
+- **Data scope:** strategies, backtests and AI runs belong to the user who made them (`user_id`); other users get 404.
+  Datasets, the knowledge base and models are shared.
+- **Levels** `beginner | advanced | expert` (set at sign-up, change with `PATCH /auth/me` or Settings) tune the agents'
+  explanations and add code guardrails: a risk note when max loss per trade is above 2% / 5% / 10% of capital, and for beginners
+  at most 3 trades a day. Numbers still come only from code.
+- Migration `0004` adds `users`, `auth_sessions`, `level` and the `user_id` columns (existing rows start unowned).
+
+**Fake test accounts** (`otj/accounts.py`, same password for all, never use on a shared server):
+the owner (your own email from `OWNER_EMAIL` in `backend/.env`, default `owner@example.com`; advanced), `amit@example.com` (beginner), `priya@example.com` (advanced),
+`rahul@example.com` (expert), `sneha@example.com` (beginner); password `Test@12345`.
+```bash
+docker compose exec api alembic upgrade head      # if the container did not already apply 0004
+docker compose run --rm -e PYTHONPATH=/app -v "$PWD/otj:/app/otj" api python otj/seed_users.py
+PYTHONPATH=. uv run python otj/fake_users.py      # each persona logs in and runs its own query
+```
+`seed_users.py` also hands runs that existed before accounts (tagged "[Amit]" etc. go to that persona, the rest to
+`ADOPT_UNOWNED_TO`) to their owners. Change the default passwords (`POST /auth/change-password`) for any account you keep.
+
+## Paper trading (simulation on replayed data)
+Each user has one paper account (`paper_accounts`, default balance Rs 5,00,000) with `paper_positions`, `paper_orders` and
+`paper_trades`. There is **no live feed**: the "market" is a loaded dataset replayed by a **market clock** (`app/paper/`).
+- `POST /paper/clock/start {dataset_id}` picks the dataset and starts the clock (first candle of the 3rd-last day), and
+  `POST /paper/clock/advance {candles}` moves it forward. Orders fill at the price of the candle the clock is on.
+- `GET /paper/expiries`, `GET /paper/chain?expiry=` (only expiries that have prices at the market time),
+  `POST /paper/orders` (buy), `POST /paper/positions/{id}/close` (sell to close), `GET /paper/account|positions|orders|trades`,
+  `POST /paper/account/reset`, and `POST /paper/from-plan {run_id, option_type}` to paper-trade an AI trade plan (same lots,
+  stop, target and 15:15 square-off; the strike follows the plan's ATM / offset / nearest-premium rule).
+- Positions are long options only (selling to open is rejected). While the clock advances, each candle runs the exits:
+  expiry, stop loss, target and square-off. Costs are charged when a trade closes (2 x Rs 20 brokerage + 0.05% taxes, the backtest
+  engine's defaults), so cash always moves by exactly the trade's net P&L.
+- Everything is private to the user. Migration `0005` adds the tables.
+- Fake history for the five test accounts (orders, closed trades, open positions), made by replaying the data with this same code:
+```bash
+docker compose exec api alembic upgrade head
+docker compose run --rm -e PYTHONPATH=/app -v "$PWD/otj:/app/otj" api python otj/seed_paper.py   # RESETS those accounts first
+```
+
 ## Datasets (Phase 1)
 A dataset holds underlying candles and/or option candles, stored as Parquet in `./storage/<id>/`
 (metadata in Postgres; migrations run automatically on container start).
@@ -90,8 +135,8 @@ parametrized no-lookahead test in `tests/test_indicators.py` covers every regist
 
 ## LLM models (Phase 4)
 `GET /models` lists models from providers whose credentials are set in env (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
-`GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY`, `OLLAMA_BASE_URL`). Model ids are `provider:model`, e.g.
-`anthropic:claude-sonnet-5-5`. A request can pick any model; otherwise `<AGENT>_MODEL` (research / strategy / backtest / risk)
+`AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` + `AZURE_OPENAI_DEPLOYMENTS` (model ids are `azure:<deployment>`), `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY`, `OLLAMA_BASE_URL`). Model ids are `provider:model`, e.g.
+`anthropic:claude-sonnet-5-5`. A request can pick any model; otherwise `<AGENT>_MODEL` (research / strategy / verify / backtest / risk)
 then `DEFAULT_MODEL` applies (`app/llm/registry.py: resolve_model`, `build_model`).
 
 **Add a model:** append it to the provider's tuple in `app/llm/registry.py`, or set `EXTRA_MODELS=openai:some-new-model` in env.
@@ -113,15 +158,39 @@ then re-ingest).
 `tests/test_rag_chroma_integration.py` runs against the compose ChromaDB (host port 8001) and skips if it is down.
 
 ## Multi-agent runs (Phase 5)
-`POST /runs` starts a background pipeline: **research -> strategy -> backtest -> risk review** (Pydantic AI agents in
+`POST /runs` starts a background pipeline: **research -> strategy -> verify -> backtest -> risk review** (Pydantic AI agents in
 `app/agents/`, orchestrated by `app/agents/orchestrator.py`). Body: `dataset_id` plus an `idea` (plain English) and/or one of
 `template_id` / `strategy_id` / `spec`, optional `start`, `end`, `capital`, `model`. It returns `202` with a run id.
+- **Research** reads the knowledge base (RAG) and recent **market news** (`search_news`: public RSS feeds of Indian trading/investing
+  sites such as Economic Times Markets, Mint, Business Standard, Moneycontrol, Investing.com; override with `NEWS_FEEDS`, disable with
+  `NEWS_ENABLED=false`). Its output (concepts, considerations, `market_context`, `news_sources`) is passed to the strategy and verify agents.
+  News describes today while the backtest runs on past data, so it guides strategy choice and risk caveats, never backtest evidence.
+- **Strategy** returns the spec plus `explanation`, `assumptions`, `reasons` (why each choice, citing research) and `when_to_trade`.
+- **Verify** checks the spec before it is backtested: fidelity to the idea, logic that can actually fire, risk settings, consistency with
+  research. Code computes the facts (`app/engine/spec_check.py`: no stop loss, reward/risk, unused indicators, RSI range, ...); the agent
+  returns a `verdict` (approved / needs_changes / rejected) with issues. It never blocks the run: the verdict is shown in the step output
+  and as a warning, and the backtest still runs.
+  **Loop:** if the agent-made spec is not approved, the issues go back to the strategy agent for a revision (at most 2 rounds), then it is
+  verified again; the verify output has `revisions`, `history` and `final_spec` (the spec that is backtested). Specs you supply yourself
+  (template / spec / saved strategy) are verified but never rewritten by the agents (only lots, stop/target and expiry are set
+  from your limits).
+- **Trade request flow (you execute the orders yourself; nothing is sent to a broker).** Describe the trade in free text and review how
+  it was understood: `POST /runs/parse {"query": "BankNifty, capital 50k, max loss 2000, target 7777, EMA with RSI"}` returns
+  `underlying, expiry, capital, max_loss, target_profit, preferred_indicators, idea, notes`. Then start the run with those fields:
+  `POST /runs {"underlying": "BANKNIFTY", "expiry": "2025-10-28", "capital": 50000, "max_loss": 2000, "target_profit": 7777, "idea": "..."}`
+  (no `dataset_id` needed: the newest dataset of that underlying with option candles is used).
+  Name indicators in the idea (EMA, RSI, VWAP, Supertrend, ...) to get exactly those; leave them out and the agents choose from the
+  research and market news. `max_loss` / `target_profit` are **per trade, in rupees**, for a bought option.
+  Code (not the LLM) turns them into lots, stop-loss % and target % (`app/engine/sizing.py`) using the median ATM premium in the
+  dataset, and the expiry date decides weekly vs monthly. The result is `steps[4].output.trade_plan` on `GET /runs/{id}`
+  (risk step): side, strike rule, lots/quantity, stop/target, estimated max loss and profit, entry window, `when_to_trade`, `reasons`,
+  verification verdict and backtest headline numbers. Premium estimates come from past data, so real fills differ.
 - `GET /runs/{id}`: status, per-step output/usage/errors, and `backtest_run_id` (open it with the normal `/backtests/{id}` results API).
 - `GET /runs/{id}/stream`: SSE (`step`, `run`, `done`). It polls the run record every 0.5 s, so late subscribers get the full history
   and it survives restarts. `GET /runs` lists runs. Runs cannot be cancelled yet.
 - Strategy step is skipped (no LLM call) when no idea is given. A failed step marks the run `failed` and keeps earlier outputs
   (including the stored backtest). Runs left `running` after a restart are marked failed on startup.
-- Model per agent: request `model` > `RESEARCH_MODEL`/`STRATEGY_MODEL`/`BACKTEST_MODEL`/`RISK_MODEL` > `DEFAULT_MODEL`.
+- Model per agent: request `model` > `RESEARCH_MODEL`/`STRATEGY_MODEL`/`VERIFY_MODEL`/`BACKTEST_MODEL`/`RISK_MODEL` > `DEFAULT_MODEL`.
 - **LLMs never compute numbers.** The backtest agent's `run_backtest` tool rejects any spec/dataset/range that differs from what
   the pipeline approved, metrics come from the engine, and the risk agent receives code-computed facts (`app/engine/summary.py`):
   exit-reason and CE/PE breakdown, profit concentration, losing streak, cost share, a +1 point slippage stress test, and flags

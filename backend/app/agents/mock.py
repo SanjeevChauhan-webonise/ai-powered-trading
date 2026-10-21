@@ -71,9 +71,74 @@ def _mock(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
             },
         )
 
+    if "answer" in props:  # ask
+        if not returns:
+            q = prompt.split("Trader question:", 1)[-1].strip()[:200] or "options"
+            return _call("search_knowledge", {"query": q, "k": 3})
+        found: list[dict[str, Any]] = returns[-1]
+        return _call(
+            out.name,
+            {
+                "answer": "(mock) " + (found[0]["text"][:300] if found else "Nothing relevant was found."),
+                "key_points": list(dict.fromkeys(h["heading"] for h in found if h["heading"]))[:4],
+                "caveats": ["(mock) Scripted retrieval only; no LLM analysis was performed."],
+                "sources": list(dict.fromkeys(h["source"] for h in found)),
+            },
+        )
+
+    if "max_loss" in props:  # intake: a crude regex parse, no language understanding
+        text = prompt.split("Trader request:", 1)[-1]
+        lower = text.lower()
+        num = r"(\d[\d,]*(?:\.\d+)?)\s*(k|lakh)?"
+
+        def amount(*words: str) -> float | None:
+            m = re.search(rf"(?:{'|'.join(words)})\D{{0,12}}{num}", lower)
+            if not m:
+                return None
+            return float(m.group(1).replace(",", "")) * {"k": 1_000, "lakh": 100_000}.get(m.group(2) or "", 1)
+
+        under = "BANKNIFTY" if re.search(r"bank\s*nifty", lower) else "NIFTY" if "nifty" in lower else None
+        is_question = bool(re.match(r"\s*(what|why|how|explain|kya|kaise|kyun)\b", lower)) or lower.rstrip().endswith(
+            "?"
+        )
+        indicators = [i for i in ("ema", "rsi", "vwap", "supertrend", "macd", "bollinger") if i in lower]
+        return _call(
+            out.name,
+            {
+                "underlying": under,
+                "capital": amount("capital", "amount"),
+                "max_loss": amount("loss"),
+                "target_profit": amount("target"),
+                "intent": "question" if is_question else "strategy",
+                "preferred_indicators": indicators,
+                "idea": text.strip(),
+                "notes": ["(mock) Regex parse only; check every field."],
+            },
+        )
+
+    if "verdict" in props:  # verify
+        facts = block(prompt, "SPEC_FACTS")
+        issues = [
+            {"title": f["code"], "severity": f["severity"], "detail": f["message"], "suggestion": ""}
+            for f in facts["flags"]
+        ]
+        high = any(i["severity"] == "high" for i in issues)
+        return _call(
+            out.name,
+            {
+                "verdict": "needs_changes" if high else "approved",
+                "matches_idea": True,
+                "summary": "(mock) Verdict derived only from the code-computed spec flags; no LLM judgement.",
+                "checks_passed": ["(mock) Spec validated by the schema."],
+                "issues": issues,
+            },
+        )
+
     if "spec" in props:  # strategy
-        idea = prompt.split("User idea:", 1)[-1].split("STARTING_SPEC:", 1)[0].strip().lower()
-        if "STARTING_SPEC:" in prompt:
+        idea = prompt.split("User idea:", 1)[-1].split("RESEARCH:", 1)[0].split("STARTING_SPEC:", 1)[0].strip().lower()
+        if "PREVIOUS_SPEC:" in prompt:
+            spec, how = block(prompt, "PREVIOUS_SPEC"), "kept the previous spec (no revision logic)"
+        elif "STARTING_SPEC:" in prompt:
             spec, how = block(prompt, "STARTING_SPEC"), "kept the provided starting spec"
         else:
             key = "rsi_reversal" if "rsi" in idea else "ema_crossover"
@@ -84,6 +149,8 @@ def _mock(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
                 "spec": spec,
                 "explanation": f"(mock) The offline mock model {how}; no LLM was used.",
                 "assumptions": ["(mock) All parameters are the template defaults."],
+                "reasons": [f"(mock) {how}; no reasoning was performed."],
+                "when_to_trade": "(mock) See the entry rules in the spec.",
             },
         )
 

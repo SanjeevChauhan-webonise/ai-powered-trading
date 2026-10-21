@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import ValidationError
 from sqlalchemy import select
 
-from app.api.deps import Db
+from app.api.deps import CurrentUser, Db
 from app.core.models import Strategy
 from app.engine.templates import TEMPLATES
 from app.schemas.api import StrategyCreate, StrategyOut, TemplateOut, ValidateRequest, ValidateResponse
@@ -33,8 +33,10 @@ def validate_spec(req: ValidateRequest) -> ValidateResponse:
 
 
 @router.post("", response_model=StrategyOut, summary="Save a strategy")
-def create_strategy(req: StrategyCreate, db: Db) -> StrategyOut:
-    row = Strategy(id=uuid.uuid4().hex, name=req.name or req.spec.name, spec=req.spec.model_dump(mode="json"))
+def create_strategy(req: StrategyCreate, db: Db, user: CurrentUser) -> StrategyOut:
+    row = Strategy(
+        id=uuid.uuid4().hex, name=req.name or req.spec.name, spec=req.spec.model_dump(mode="json"), user_id=user.id
+    )
     db.add(row)
     db.commit()
     db.refresh(row)
@@ -42,13 +44,14 @@ def create_strategy(req: StrategyCreate, db: Db) -> StrategyOut:
 
 
 @router.get("", response_model=list[StrategyOut], summary="List saved strategies")
-def list_strategies(db: Db) -> list[StrategyOut]:
-    return [_out(r) for r in db.scalars(select(Strategy).order_by(Strategy.created_at.desc()))]
+def list_strategies(db: Db, user: CurrentUser) -> list[StrategyOut]:
+    rows = db.scalars(select(Strategy).where(Strategy.user_id == user.id).order_by(Strategy.created_at.desc()))
+    return [_out(r) for r in rows]
 
 
 @router.get("/{strategy_id}", response_model=StrategyOut, summary="Get a saved strategy")
-def get_strategy(strategy_id: str, db: Db) -> StrategyOut:
+def get_strategy(strategy_id: str, db: Db, user: CurrentUser) -> StrategyOut:
     row = db.get(Strategy, strategy_id)
-    if row is None:
+    if row is None or row.user_id != user.id:
         raise HTTPException(404, "Strategy not found")
     return _out(row)

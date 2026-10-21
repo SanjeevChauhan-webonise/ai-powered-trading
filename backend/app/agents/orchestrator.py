@@ -19,21 +19,42 @@ from pydantic_ai.models import Model
 from pydantic_ai.usage import UsageLimits
 from sqlalchemy.orm import Session
 
-from app.agents.agents import backtest_agent, research_agent, risk_agent, strategy_agent
+from app.agents.agents import (
+    ask_agent,
+    backtest_agent,
+    intake_agent,
+    research_agent,
+    risk_agent,
+    strategy_agent,
+    verify_agent,
+)
 from app.agents.deps import AgentDeps, Canonical
+from app.agents.trade_plan import build_trade_plan
 from app.api.spec_source import resolve_spec
 from app.core.config import Settings
 from app.core.logging import run_id_var
-from app.core.models import PipelineRun
+from app.core.models import PipelineRun, User
 from app.core.tracing import run_span
 from app.data.backtest_io import build_run_record, load_frames
+from app.data.expiries import ExpiryService, get_service
 from app.data.models import Dataset
 from app.engine.backtest import run_backtest
+from app.engine.sizing import Sizing, apply_money_limits, estimate_entry_premium, expiry_kind
+from app.engine.spec_check import check_spec
 from app.engine.summary import build_facts, stress_spec
 from app.llm.registry import ModelError, build_model, resolve_model
+from app.news.feeds import NewsFetcher, parse_feeds
 from app.rag.embeddings import Embedder
 from app.rag.store import VectorStore
-from app.schemas.agents import STEP_ORDER, RunRequest, StepName
+from app.schemas.agents import (
+    STEP_ORDER,
+    AskAnswer,
+    ParsedQuery,
+    ResearchOutput,
+    RunRequest,
+    StepName,
+    VerifyOutput,
+)
 from app.schemas.backtest import BacktestResult
 from app.schemas.strategy import StrategySpec
 
@@ -41,6 +62,9 @@ log = logging.getLogger(__name__)
 T = TypeVar("T")
 SessionFactory = Callable[[], Session]
 ModelBuilder = Callable[[Settings, str], Model]
+BEGINNER_MAX_TRADES_PER_DAY = 3
+MAX_REVISIONS = 2  # verify -> strategy revision rounds
+REASONING_KEYS = ("explanation", "assumptions", "reasons", "when_to_trade")
 REQUEST_LIMIT = 25  # max model requests per agent run (guards runaway tool/retry loops)
 
 _semaphores: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore]" = weakref.WeakKeyDictionary()
@@ -65,6 +89,10 @@ def _err(e: BaseException) -> str:
     if isinstance(e, TimeoutError):
         return "TimeoutError: step timed out"
     return f"{type(e).__name__}: {e}"[:1000]
+
+
+def _add_usage(a: dict[str, int], b: dict[str, int]) -> dict[str, int]:
+    return {k: a.get(k, 0) + b.get(k, 0) for k in {*a, *b}}
 
 
 def _json_block(label: str, payload: Any) -> str:
@@ -94,6 +122,9 @@ class RunContext:
     lot_size: int
     deps_summary: str
     timeframe: int | None
+    underlying: str
+    user_id: str | None = None
+    level: str = "advanced"  # beginner | advanced | expert; unowned (legacy / test) runs behave like advanced
 
 
 class Pipeline:
@@ -104,9 +135,35 @@ class Pipeline:
         store: VectorStore,
         embedder: Embedder,
         model_builder: ModelBuilder = build_model,
+        news: NewsFetcher | None = None,
+        expiries: ExpiryService | None = None,
     ) -> None:
         self.settings, self.session_factory = settings, session_factory
         self.store, self.embedder, self.model_builder = store, embedder, model_builder
+        self.expiries = expiries or get_service(settings.storage_dir)
+        self.news = news or (
+            NewsFetcher(parse_feeds(settings.news_feeds), max_age_days=settings.news_max_age_days)
+            if settings.news_enabled
+            else None
+        )
+
+    async def parse_query(self, query: str, model: str | None) -> ParsedQuery:
+        """Turn the trader's free-text request into structured fields for POST /runs (shown to the user to confirm)."""
+        model_id = resolve_model(self.settings, model, agent="intake")
+        deps = AgentDeps(store=self.store, embedder=self.embedder)
+        out, _ = await self._agent(
+            intake_agent, f"Today: {date.today().isoformat()}\nTrader request:\n{query}", model_id, deps
+        )
+        return out  # type: ignore[no-any-return]
+
+    async def ask(self, query: str, model: str | None, level: str = "advanced") -> AskAnswer:
+        """Answer a general trading question from the knowledge base and recent news (no strategy, no backtest)."""
+        model_id = resolve_model(self.settings, model, agent="ask")
+        deps = AgentDeps(store=self.store, embedder=self.embedder, news=self.news)
+        out, _ = await self._agent(
+            ask_agent, f"Trader experience level: {level}\nTrader question:\n{query}", model_id, deps
+        )
+        return out  # type: ignore[no-any-return]
 
     # ---- persistence ---------------------------------------------------------------------------
     async def _db(self, fn: Callable[[Session], T]) -> T:
@@ -175,9 +232,22 @@ class Pipeline:
             if run is None or ds is None:
                 raise StepFailed("Run or dataset not found")
             req = RunRequest.model_validate(run.request)
-            base, strategy_id = resolve_spec(s, spec=req.spec, template_id=req.template_id, strategy_id=req.strategy_id)
+            base, strategy_id = resolve_spec(
+                s, spec=req.spec, template_id=req.template_id, strategy_id=req.strategy_id, user_id=run.user_id
+            )
+            owner = s.get(User, run.user_id) if run.user_id else None
             run.status = "running"
-            return RunContext(req, base, strategy_id, ds.lot_size, dataset_summary(ds), ds.timeframe_minutes)
+            return RunContext(
+                req,
+                base,
+                strategy_id,
+                ds.lot_size,
+                dataset_summary(ds),
+                ds.timeframe_minutes,
+                ds.underlying,
+                run.user_id,
+                owner.level if owner else "advanced",
+            )
 
         return fn
 
@@ -231,12 +301,40 @@ class Pipeline:
         deps = AgentDeps(
             store=self.store,
             embedder=self.embedder,
+            news=self.news,
             dataset_timeframe_minutes=ctx.timeframe,
             dataset_summary=ctx.deps_summary,
         )
 
         def run_engine(spec: StrategySpec, start: date | None, end: date | None) -> BacktestResult:
             return run_backtest(spec, under, opts, lot_size=ctx.lot_size, start=start, end=end, capital=req.capital)
+
+        sizing: Sizing | None = None
+
+        async def finalize(s: StrategySpec) -> StrategySpec:
+            """Apply the user's expiry and rupee limits in code: expiry kind, lots, stop loss and target %."""
+            nonlocal sizing
+            if req.expiry:
+                real = self.expiries.kind_of(ctx.underlying, req.expiry)  # cached exchange list only, no network
+                kind = ("monthly" if real == "monthly" else "nearest_weekly") if real else expiry_kind(req.expiry)
+                s = s.model_copy(update={"instrument": s.instrument.model_copy(update={"expiry": kind})})
+            if req.max_loss or req.target_profit:
+                premium = await asyncio.to_thread(estimate_entry_premium, under, opts, s)
+                s, sizing = apply_money_limits(s, premium, ctx.lot_size, req.max_loss, req.target_profit)
+            if ctx.level == "beginner" and s.risk.max_trades_per_day is None:  # guardrail: no overtrading for beginners
+                s = s.model_copy(
+                    update={"risk": s.risk.model_copy(update={"max_trades_per_day": BEGINNER_MAX_TRADES_PER_DAY})}
+                )
+            return s
+
+        trader = {
+            "underlying": ctx.underlying,
+            "expiry": req.expiry.isoformat() if req.expiry else None,
+            "capital": req.capital,
+            "max_loss_per_trade": req.max_loss,
+            "target_profit_per_trade": req.target_profit,
+            "experience_level": ctx.level,
+        }
 
         # 1. research
         topic = req.idea if has_idea else describe_spec(ctx.base_spec) if ctx.base_spec else ""
@@ -247,19 +345,31 @@ class Pipeline:
             )
             return out, out.model_dump(mode="json"), usage, []
 
-        await self._step(run_id, "research", models["research"], research)
+        research_out: ResearchOutput = await self._step(run_id, "research", models["research"], research)
 
         # 2. strategy
+        strategy_draft: dict[str, Any] = {}
+        reasoning: dict[str, Any] = {}
+        base_strategy_prompt = ""
         if has_idea:
             prompt = f"User idea:\n{req.idea}"
+            prompt += "\n\n" + _json_block("RESEARCH", research_out.model_dump(mode="json"))
+            prompt += "\n\n" + _json_block("TRADER_CONTEXT", trader)
             if ctx.base_spec is not None:
                 prompt += "\n\n" + _json_block("STARTING_SPEC", ctx.base_spec.model_dump(mode="json"))
+            base_strategy_prompt = prompt
 
             async def strategy() -> tuple[Any, dict[str, Any], dict[str, int] | None, list[str]]:
                 draft, usage = await self._agent(strategy_agent, prompt, models["strategy"], deps)
+                strategy_draft.update(draft.model_dump(mode="json"))
                 return draft.spec, {**draft.model_dump(mode="json"), "source": "agent"}, usage, []
 
             spec: StrategySpec = await self._step(run_id, "strategy", models["strategy"], strategy)
+            reasoning = {
+                k: v
+                for k, v in strategy_draft.items()
+                if k in ("explanation", "assumptions", "reasons", "when_to_trade")
+            }
         else:
             assert ctx.base_spec is not None
             spec = ctx.base_spec
@@ -273,7 +383,67 @@ class Pipeline:
                 output={"spec": spec.model_dump(mode="json"), "source": source},
             )
 
-        # 3. backtest
+        spec = await finalize(spec)
+
+        # 3. verify. Loop: when the agent-made spec is not approved, its issues go back to the strategy agent for a
+        # revision (at most MAX_REVISIONS), then it is verified again. Never blocks: the backtest always runs.
+        async def verify() -> tuple[Any, dict[str, Any], dict[str, int] | None, list[str]]:
+            nonlocal spec, reasoning
+            usage: dict[str, int] = {}
+            history: list[dict[str, Any]] = []
+            for attempt in range(MAX_REVISIONS + 1):
+                facts = check_spec(spec)
+                prompt = "Verify this strategy.\n"
+                if has_idea:
+                    prompt += f"User idea:\n{req.idea}\n\n"
+                prompt += "\n\n".join(
+                    [
+                        _json_block("RESEARCH", research_out.model_dump(mode="json")),
+                        _json_block("STRATEGY_SPEC", spec.model_dump(mode="json")),
+                        _json_block("SPEC_FACTS", facts.model_dump(mode="json")),
+                        _json_block("STRATEGY_REASONING", reasoning),
+                        _json_block("TRADER_CONTEXT", trader),
+                    ]
+                )
+                out, u = await self._agent(verify_agent, prompt, models["verify"], deps)
+                usage = _add_usage(usage, u)
+                history.append(
+                    {"attempt": attempt, "verdict": out.verdict, "issues": [i.model_dump() for i in out.issues]}
+                )
+                if out.verdict == "approved" or not strategy_draft or attempt == MAX_REVISIONS:
+                    break
+                revise = "\n\n".join(
+                    [
+                        base_strategy_prompt,
+                        "Revise the previous spec to fix the verifier's issues. Keep everything else unchanged.",
+                        _json_block("PREVIOUS_SPEC", spec.model_dump(mode="json")),
+                        _json_block("VERIFY_ISSUES", [i.model_dump() for i in out.issues]),
+                    ]
+                )
+                draft, u = await self._agent(strategy_agent, revise, models["strategy"], deps)
+                usage = _add_usage(usage, u)
+                spec = await finalize(draft.spec)
+                reasoning = {k: v for k, v in draft.model_dump(mode="json").items() if k in REASONING_KEYS}
+            warnings = []
+            if out.verdict != "approved":
+                warnings.append(
+                    f"Strategy verification: {out.verdict} ({len(out.issues)} issue(s)). See the verify step."
+                )
+            if len(history) > 1:
+                warnings.append(f"The strategy was revised {len(history) - 1} time(s) after verification.")
+            payload = {
+                **out.model_dump(mode="json"),
+                "facts": facts.model_dump(mode="json"),
+                "revisions": len(history) - 1,
+                "history": history,
+                "final_spec": spec.model_dump(mode="json"),
+                "reasoning": reasoning,
+            }
+            return out, payload, usage, warnings
+
+        verify_out: VerifyOutput = await self._step(run_id, "verify", models["verify"], verify)
+
+        # 4. backtest
         canonical = Canonical(spec, req.dataset_id, req.start, req.end)
         deps.canonical, deps.run_engine = canonical, run_engine
         args = {
@@ -296,6 +466,7 @@ class Pipeline:
                 dataset_id=req.dataset_id,
                 spec=spec,
                 strategy_id=ctx.strategy_id,
+                user_id=ctx.user_id,
                 start=req.start,
                 end=req.end,
                 capital=req.capital,
@@ -317,7 +488,7 @@ class Pipeline:
 
         result: BacktestResult = await self._step(run_id, "backtest", models["backtest"], backtest)
 
-        # 4. risk review
+        # 5. risk review
         async def risk() -> tuple[Any, dict[str, Any], dict[str, int] | None, list[str]]:
             warnings: list[str] = []
             stress, desc = stress_spec(spec)
@@ -332,13 +503,24 @@ class Pipeline:
                 "facts": facts.model_dump(mode="json"),
             }
             prompt = (
-                "Review this backtest.\n"
+                f"Review this backtest. TRADER_LEVEL: {ctx.level}\n"
                 + _json_block("STRATEGY_SPEC", spec.model_dump(mode="json"))
                 + "\n"
                 + _json_block("BACKTEST_FACTS", payload)
             )
             review, usage = await self._agent(risk_agent, prompt, models["risk"], deps)
-            return review, {"review": review.model_dump(mode="json"), "facts": payload["facts"]}, usage, warnings
+            plan = build_trade_plan(
+                req,
+                ctx.underlying,
+                spec,
+                sizing,
+                reasoning,
+                verify_out.model_dump(mode="json"),
+                payload["metrics"],
+                ctx.level,
+            )
+            out = {"review": review.model_dump(mode="json"), "facts": payload["facts"], "trade_plan": plan}
+            return review, out, usage, warnings
 
         await self._step(run_id, "risk", models["risk"], risk)
         await self._set_run(run_id, status="completed")

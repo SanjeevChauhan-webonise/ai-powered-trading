@@ -5,14 +5,15 @@ from collections.abc import AsyncIterator
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 
-from app.api.deps import Cfg, PipelineDep, SessionFactory
+from app.api.deps import Cfg, CurrentUser, PipelineDep, SessionFactory
 from app.api.spec_source import resolve_spec
 from app.core.models import PipelineRun
 from app.data.models import Dataset
 from app.llm.registry import ModelError, resolve_model
-from app.schemas.agents import STEP_ORDER, RunOut, RunRequest, RunSummary, StepRecord
+from app.schemas.agents import STEP_ORDER, AskAnswer, ParsedQuery, RunOut, RunRequest, RunSummary, StepRecord
 
 router = APIRouter(prefix="/runs", tags=["runs"])
 
@@ -43,18 +44,59 @@ def _out(r: PipelineRun) -> RunOut:
     )
 
 
+class ParseRequest(BaseModel):
+    query: str = Field(
+        min_length=3, max_length=2000, description="e.g. 'BankNifty, 50k capital, max loss 2000, target 7777'"
+    )
+    model: str | None = None
+
+
+@router.post("/parse", response_model=ParsedQuery, summary="Understand a free-text trade request (no run is started)")
+async def parse_query(req: ParseRequest, pipeline: PipelineDep, user: CurrentUser) -> ParsedQuery:
+    """Review the extracted underlying, expiry, amounts and indicators, then send them to POST /runs."""
+    try:
+        return await pipeline.parse_query(req.query, req.model)
+    except ModelError as e:
+        raise HTTPException(400, str(e)) from e
+
+
+@router.post("/ask", response_model=AskAnswer, summary="Ask any trading question (answered from RAG + news, no run)")
+async def ask(req: ParseRequest, pipeline: PipelineDep, user: CurrentUser) -> AskAnswer:
+    """For concepts, comparisons, risk and market-backdrop questions. To build and test a strategy, use POST /runs."""
+    try:
+        return await pipeline.ask(req.query, req.model, user.level)
+    except ModelError as e:
+        raise HTTPException(400, str(e)) from e
+
+
 @router.post("", response_model=RunSummary, status_code=202, summary="Start the multi-agent pipeline")
-async def create_run(req: RunRequest, settings: Cfg, factory: SessionFactory, pipeline: PipelineDep) -> RunSummary:
+async def create_run(
+    req: RunRequest, settings: Cfg, factory: SessionFactory, pipeline: PipelineDep, user: CurrentUser
+) -> RunSummary:
     """Returns immediately; follow progress with GET /runs/{id} or GET /runs/{id}/stream (SSE)."""
+
+    uid = user.id
 
     def create() -> RunSummary:
         with factory() as db:
-            ds = db.get(Dataset, req.dataset_id)
-            if ds is None:
-                raise HTTPException(404, "Dataset not found")
+            if req.dataset_id:
+                ds = db.get(Dataset, req.dataset_id)
+                if ds is None:
+                    raise HTTPException(404, "Dataset not found")
+                if req.underlying and ds.underlying != req.underlying:
+                    raise HTTPException(400, f"Dataset is {ds.underlying}, not {req.underlying}")
+            else:
+                ds = db.scalars(
+                    select(Dataset)
+                    .where(Dataset.underlying == req.underlying, Dataset.options_rows > 0, Dataset.underlying_rows > 0)
+                    .order_by(Dataset.created_at.desc())
+                ).first()
+                if ds is None:
+                    raise HTTPException(404, f"No {req.underlying} dataset with option candles; load one first")
+            stored = req.model_copy(update={"dataset_id": ds.id})
             if not ds.underlying_rows or not ds.options_rows:
                 raise HTTPException(400, "Dataset needs both underlying and option candles")
-            resolve_spec(db, spec=req.spec, template_id=req.template_id, strategy_id=req.strategy_id)
+            resolve_spec(db, spec=req.spec, template_id=req.template_id, strategy_id=req.strategy_id, user_id=uid)
             has_idea = bool(req.idea and req.idea.strip())
             try:
                 for agent in STEP_ORDER:
@@ -65,8 +107,9 @@ async def create_run(req: RunRequest, settings: Cfg, factory: SessionFactory, pi
             row = PipelineRun(
                 id=uuid.uuid4().hex,
                 dataset_id=ds.id,
+                user_id=uid,
                 status="queued",
-                request=req.model_dump(mode="json"),
+                request=stored.model_dump(mode="json"),
                 steps=[StepRecord(name=n).model_dump(mode="json") for n in STEP_ORDER],
             )
             db.add(row)
@@ -82,16 +125,19 @@ async def create_run(req: RunRequest, settings: Cfg, factory: SessionFactory, pi
 
 
 @router.get("", response_model=list[RunSummary], summary="List pipeline runs")
-def list_runs(factory: SessionFactory) -> list[RunSummary]:
+def list_runs(factory: SessionFactory, user: CurrentUser) -> list[RunSummary]:
+    uid = user.id
     with factory() as db:
-        return [_summary(r) for r in db.scalars(select(PipelineRun).order_by(PipelineRun.created_at.desc()))]
+        rows = db.scalars(select(PipelineRun).where(PipelineRun.user_id == uid).order_by(PipelineRun.created_at.desc()))
+        return [_summary(r) for r in rows]
 
 
 @router.get("/{run_id}", response_model=RunOut, summary="Run status, step outputs and backtest link")
-def get_run(run_id: str, factory: SessionFactory) -> RunOut:
+def get_run(run_id: str, factory: SessionFactory, user: CurrentUser) -> RunOut:
+    uid = user.id
     with factory() as db:
         row = db.get(PipelineRun, run_id)
-        if row is None:
+        if row is None or row.user_id != uid:
             raise HTTPException(404, "Run not found")
         return _out(row)
 
@@ -106,11 +152,13 @@ def _sse(event: str, data: str) -> str:
     response_class=StreamingResponse,
     responses={200: {"content": {"text/event-stream": {}}, "description": "events: step, run, done"}},
 )
-async def stream_run(run_id: str, request: Request, factory: SessionFactory) -> StreamingResponse:
+async def stream_run(run_id: str, request: Request, factory: SessionFactory, user: CurrentUser) -> StreamingResponse:
+    uid = user.id
+
     def snapshot() -> RunOut | None:
         with factory() as db:
             row = db.get(PipelineRun, run_id)
-            return _out(row) if row else None
+            return _out(row) if row and row.user_id == uid else None
 
     if await run_in_threadpool(snapshot) is None:
         raise HTTPException(404, "Run not found")

@@ -2,6 +2,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 
+from app.news.feeds import NewsFetcher
 from app.rag.embeddings import Embedder
 from app.rag.store import VectorStore
 from app.schemas.backtest import BacktestResult
@@ -24,6 +25,7 @@ class Canonical:
 class AgentDeps:
     store: VectorStore
     embedder: Embedder
+    news: NewsFetcher | None = None
     dataset_timeframe_minutes: int | None = None
     dataset_summary: str = ""
     canonical: Canonical | None = None

@@ -2,12 +2,13 @@ import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.agents.orchestrator import mark_interrupted
-from app.api import backtests, datasets, health, knowledge, models, runs, strategies
+from app.api import auth, backtests, datasets, expiries, health, knowledge, models, paper, runs, strategies
+from app.api.deps import get_current_user
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.logging import setup_logging
@@ -44,10 +45,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(health.router)
-app.include_router(datasets.router)
-app.include_router(strategies.router)
-app.include_router(backtests.router)
-app.include_router(models.router)
-app.include_router(knowledge.router)
-app.include_router(runs.router)
+app.include_router(health.router)  # open: used by the orchestrator / uptime checks
+app.include_router(auth.router)  # open: register and login
+_login = [Depends(get_current_user)]  # everything else needs a logged-in user
+for _router in (datasets, strategies, backtests, models, knowledge, runs, expiries, paper):
+    app.include_router(_router.router, dependencies=_login)

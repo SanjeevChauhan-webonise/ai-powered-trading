@@ -25,6 +25,7 @@ def build_run_record(
     start: date | None,
     end: date | None,
     capital: float,
+    user_id: str | None = None,
     result: BacktestResult | None = None,
     error: str | None = None,
 ) -> BacktestRun:
@@ -33,6 +34,7 @@ def build_run_record(
         id=uuid.uuid4().hex,
         dataset_id=dataset_id,
         strategy_id=strategy_id,
+        user_id=user_id,
         strategy_name=spec.name,
         spec=spec.model_dump(mode="json"),
         start=start,

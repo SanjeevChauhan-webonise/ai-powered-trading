@@ -15,6 +15,7 @@ from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.models.groq import GroqModel
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.anthropic import AnthropicProvider
+from pydantic_ai.providers.azure import AzureProvider
 from pydantic_ai.providers.google import GoogleProvider
 from pydantic_ai.providers.groq import GroqProvider
 from pydantic_ai.providers.ollama import OllamaProvider
@@ -43,6 +44,7 @@ PROVIDERS: tuple[Provider, ...] = (
         ("claude-fable-5-1", "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"),
     ),  # fmt: skip
     Provider("openai", "OpenAI", "openai_api_key", ("gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini")),
+    Provider("azure", "Azure OpenAI", "azure_openai_api_key", ()),  # models = your deployment names
     Provider("google", "Google Gemini", "gemini_api_key", ("gemini-2.5-pro", "gemini-2.5-flash")),
     Provider("groq", "Groq", "groq_api_key", ("llama-3.3-70b-versatile", "llama-3.1-8b-instant")),
     Provider(
@@ -72,6 +74,8 @@ def _split(model_id: str) -> tuple[str, str]:
 
 
 def _configured(settings: Settings, provider: Provider) -> bool:
+    if provider.key == "azure" and not settings.azure_openai_endpoint:
+        return False
     return bool(getattr(settings, provider.settings_field))
 
 
@@ -105,7 +109,12 @@ def available_models(settings: Settings) -> list[ModelInfo]:
     for p in PROVIDERS:
         if not _configured(settings, p):
             continue
-        names = ollama_models(settings.ollama_base_url) if p.key == "ollama" else list(p.models)
+        if p.key == "ollama":
+            names = ollama_models(settings.ollama_base_url)
+        elif p.key == "azure":
+            names = settings.azure_deployment_list
+        else:
+            names = list(p.models)
         for n in names:
             add(p, n)
     for extra in settings.extra_model_list:
@@ -145,6 +154,13 @@ def build_model(settings: Settings, model_id: str) -> Model:
             return OpenAIChatModel(name, provider=OpenAIProvider(api_key=settings.openai_api_key))
         case "anthropic":
             return AnthropicModel(name, provider=AnthropicProvider(api_key=settings.anthropic_api_key))
+        case "azure":
+            azure = AzureProvider(
+                azure_endpoint=settings.azure_openai_endpoint,
+                api_version=settings.azure_openai_api_version,
+                api_key=settings.azure_openai_api_key,
+            )
+            return OpenAIChatModel(name, provider=azure)  # name = the Azure deployment name
         case "google":
             return GoogleModel(name, provider=GoogleProvider(api_key=settings.gemini_api_key))
         case "groq":

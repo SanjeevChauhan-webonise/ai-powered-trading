@@ -4,7 +4,7 @@ from functools import partial
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
-from app.api.deps import Cfg, Db
+from app.api.deps import Cfg, CurrentUser, Db
 from app.api.spec_source import resolve_spec
 from app.core.models import BacktestRun
 from app.data.backtest_io import build_run_record, load_frames
@@ -32,20 +32,23 @@ def _out(r: BacktestRun) -> BacktestRunOut:
 
 
 @router.post("", response_model=BacktestRunOut, summary="Run a backtest directly (no AI)")
-def create_backtest(req: BacktestRequest, db: Db, settings: Cfg) -> BacktestRunOut:
+def create_backtest(req: BacktestRequest, db: Db, settings: Cfg, user: CurrentUser) -> BacktestRunOut:
     """Runs synchronously. Engine failures are stored as a run with status 'failed' and an error message."""
     ds = db.get(Dataset, req.dataset_id)
     if ds is None:
         raise HTTPException(404, "Dataset not found")
     if not ds.underlying_rows or not ds.options_rows:
         raise HTTPException(400, "Dataset needs both underlying and option candles")
-    spec, strategy_id = resolve_spec(db, spec=req.spec, template_id=req.template_id, strategy_id=req.strategy_id)
+    spec, strategy_id = resolve_spec(
+        db, spec=req.spec, template_id=req.template_id, strategy_id=req.strategy_id, user_id=user.id
+    )
     assert spec is not None  # BacktestRequest guarantees exactly one source
     record = partial(
         build_run_record,
         dataset_id=ds.id,
         spec=spec,
         strategy_id=strategy_id,
+        user_id=user.id,
         start=req.start,
         end=req.end,
         capital=req.capital,
@@ -66,13 +69,14 @@ def create_backtest(req: BacktestRequest, db: Db, settings: Cfg) -> BacktestRunO
 
 
 @router.get("", response_model=list[BacktestRunSummary], summary="List backtest runs (summaries)")
-def list_backtests(db: Db) -> list[BacktestRunSummary]:
-    return [_summary(r) for r in db.scalars(select(BacktestRun).order_by(BacktestRun.created_at.desc()))]
+def list_backtests(db: Db, user: CurrentUser) -> list[BacktestRunSummary]:
+    rows = db.scalars(select(BacktestRun).where(BacktestRun.user_id == user.id).order_by(BacktestRun.created_at.desc()))
+    return [_summary(r) for r in rows]
 
 
 @router.get("/{run_id}", response_model=BacktestRunOut, summary="Full backtest result")
-def get_backtest(run_id: str, db: Db) -> BacktestRunOut:
+def get_backtest(run_id: str, db: Db, user: CurrentUser) -> BacktestRunOut:
     row = db.get(BacktestRun, run_id)
-    if row is None:
+    if row is None or row.user_id != user.id:
         raise HTTPException(404, "Backtest not found")
     return _out(row)

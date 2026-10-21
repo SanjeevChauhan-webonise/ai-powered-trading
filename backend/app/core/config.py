@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     research_model: str = ""
     strategy_model: str = ""
     backtest_model: str = ""
+    verify_model: str = ""
     risk_model: str = ""
 
     # LLM providers: a provider is available only when its key (or Ollama URL) is set.
@@ -30,11 +31,24 @@ class Settings(BaseSettings):
     groq_api_key: str = ""
     openrouter_api_key: str = ""
     ollama_base_url: str = ""  # e.g. http://host.docker.internal:11434
+    azure_openai_api_key: str = ""
+    azure_openai_endpoint: str = ""  # https://<resource>.openai.azure.com
+    azure_openai_api_version: str = "2024-12-01-preview"
+    azure_openai_deployments: str = ""  # comma-separated deployment names; the model id is azure:<deployment>
     extra_models: str = ""  # comma-separated "provider:model" ids to add to /models
     enable_mock_llm: bool = False  # offline scripted "mock:demo" model for demos/tests; never calls a network
 
     # Upstox historical data import (Analytics Token needs no daily re-auth; option history needs Upstox Plus)
     upstox_access_token: str = ""
+
+    # Market news for the research agent (public RSS feeds; empty NEWS_FEEDS = built-in list of Indian market sites)
+    news_enabled: bool = True
+    news_feeds: str = ""  # "Name=https://feed.url,Name2=https://..."
+    news_max_age_days: int = 3
+
+    # Auth (email + password, opaque bearer-token sessions stored in the database)
+    auth_session_hours: int = 24 * 7
+    allow_registration: bool = True
 
     # Agent pipeline
     agent_timeout_seconds: float = 180.0
@@ -51,6 +65,10 @@ class Settings(BaseSettings):
     langfuse_public_key: str = ""
     langfuse_secret_key: str = ""
     langfuse_host: str = "https://cloud.langfuse.com"
+
+    @property
+    def azure_deployment_list(self) -> list[str]:
+        return [d.strip() for d in self.azure_openai_deployments.split(",") if d.strip()]
 
     @property
     def extra_model_list(self) -> list[str]:

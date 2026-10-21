@@ -20,10 +20,10 @@ from app.data.normalize import DataError
 
 # ----------------------------------------------------------------------------- SETTINGS
 UNDERLYINGS = ["NIFTY", "BANKNIFTY"]  # any of: "NIFTY", "BANKNIFTY"
-INTERVAL_MINUTES = 1  # must match the folder the export wrote (option-data/<UNDERLYING>/<N>m)
-DATA_DIR = Path("option-data")
+INTERVAL_MINUTES = 5  # must match the folder the export wrote (option-data/<UNDERLYING>/<N>m)
+DATA_DIR = Path("option-data/fake")
 # Lot sizes change over time; check the current NSE value before loading.
-LOT_SIZES = {"NIFTY": 75, "BANKNIFTY": 30}
+LOT_SIZES = {"NIFTY": 65, "BANKNIFTY": 30}
 # Set an id to replace the data of an existing dataset instead of creating a new one, e.g. {"NIFTY": "ab12..."}
 DATASET_IDS: dict[str, str] = {}
 # -----------------------------------------------------------------------------

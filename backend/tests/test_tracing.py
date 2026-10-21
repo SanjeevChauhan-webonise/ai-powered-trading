@@ -47,6 +47,6 @@ def test_pipeline_emits_one_trace_tagged_with_run_id(tmp_path: Path) -> None:
     }  # one trace
     agent_spans = [s for s in spans if s.name.startswith("invoke_agent")]
     assert {s.attributes["gen_ai.agent.name"] for s in agent_spans if s.attributes} == {
-        "research_agent", "strategy_agent", "backtest_agent", "risk_agent",
+        "research_agent", "strategy_agent", "verify_agent", "backtest_agent", "risk_agent",
     }  # fmt: skip
     assert any(s.name.startswith("execute_tool") for s in spans)  # tool calls (search_knowledge / run_backtest)

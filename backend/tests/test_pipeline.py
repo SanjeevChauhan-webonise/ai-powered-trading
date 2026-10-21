@@ -57,7 +57,7 @@ def test_full_pipeline_with_idea(env: Env) -> None:
     run = execute(env, env.create_run(idea="Buy CE when the 9 EMA crosses above the 21 EMA on 5 minute candles"))
     assert run.status == "completed" and run.error is None
     st = steps(run)
-    assert [s.status for s in st.values()] == ["completed"] * 4
+    assert [s.status for s in st.values()] == ["completed"] * 5
     assert all(s.model == "mock:demo" and s.usage and s.usage["requests"] >= 1 for s in st.values())
     assert st["research"].output and st["research"].output["sources"]  # real RAG retrieval through the tool
     assert st["strategy"].output and st["strategy"].output["source"] == "agent"
@@ -118,16 +118,36 @@ def test_strategy_invalid_output_is_retried(env: Env) -> None:
     assert steps(run)["strategy"].usage["requests"] == 2  # type: ignore[index]
 
 
-def test_strategy_timeframe_incompatible_with_dataset_is_retried(env: Env) -> None:
-    def model(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
-        if "spec" in roles(info) and turn(messages) == 0:
-            spec = TEMPLATES["ema_crossover"].model_copy(update={"timeframe_minutes": 1}).model_dump(mode="json")
-            return call(info, {"spec": spec, "explanation": "x"})  # dataset is 1-minute: 1 is not > 1
-        return mock._mock(messages, info)
+def _run_strategy_agent(timeframes: list[int], base: int = 5) -> Any:
+    from pydantic_ai.models.function import FunctionModel
 
-    run = execute(env, env.create_run(idea="ema crossover"), builder_with(model))
-    assert run.status == "completed" and steps(run)["strategy"].usage["requests"] == 2  # type: ignore[index]
-    assert steps(run)["strategy"].output["spec"]["timeframe_minutes"] == 5  # type: ignore[index]
+    from app.agents.agents import strategy_agent
+    from app.agents.deps import AgentDeps
+    from app.rag.store import InMemoryStore
+    from tests.rag_helpers import HashEmbedder
+
+    def model(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
+        tf = timeframes[min(turn(messages), len(timeframes) - 1)]
+        spec = TEMPLATES["ema_crossover"].model_copy(update={"timeframe_minutes": tf}).model_dump(mode="json")
+        return call(info, {"spec": spec, "explanation": "x"})
+
+    deps = AgentDeps(store=InMemoryStore(), embedder=HashEmbedder(), dataset_timeframe_minutes=base)
+    return strategy_agent.run_sync("idea", model=FunctionModel(model), deps=deps)
+
+
+def test_strategy_timeframe_equal_to_dataset_is_normalized_not_retried() -> None:
+    out = _run_strategy_agent([5])  # a 5-minute spec on a 5-minute dataset: nothing to resample
+    assert out.output.spec.timeframe_minutes is None and out.usage.requests == 1
+
+
+def test_strategy_timeframe_not_a_multiple_of_dataset_is_retried() -> None:
+    out = _run_strategy_agent([7, 10])  # 7 is not a multiple of the 5-minute dataset
+    assert out.output.spec.timeframe_minutes == 10 and out.usage.requests == 2
+
+
+def test_strategy_timeframe_smaller_than_dataset_is_retried() -> None:
+    out = _run_strategy_agent([3, 15])
+    assert out.output.spec.timeframe_minutes == 15 and out.usage.requests == 2
 
 
 def test_strategy_gives_up_after_retries(env: Env) -> None:
@@ -241,9 +261,15 @@ def test_per_agent_model_overrides(tmp_path: Path) -> None:
         "openai:gpt-4o",
         None,
         "openai:gpt-4o",
+        "openai:gpt-4o",
         "mock:demo",
     ]  # skipped step has no model
-    assert list(used.values()) == ["openai:gpt-4o", "openai:gpt-4o", "mock:demo"]  # strategy skipped: no model built
+    assert list(used.values()) == [
+        "openai:gpt-4o",
+        "openai:gpt-4o",
+        "openai:gpt-4o",
+        "mock:demo",
+    ]  # strategy skipped: no model built
 
 
 def test_mark_interrupted(env: Env) -> None:
@@ -260,5 +286,5 @@ def test_mark_interrupted(env: Env) -> None:
     assert mark_interrupted(env.maker) == 1
     row = env.run(running)
     assert row.status == "failed" and "restart" in (row.error or "")
-    assert [s["status"] for s in row.steps] == ["failed", "skipped", "skipped", "skipped"]
+    assert [s["status"] for s in row.steps] == ["failed", "skipped", "skipped", "skipped", "skipped"]
     assert env.run(done).status == "completed"
