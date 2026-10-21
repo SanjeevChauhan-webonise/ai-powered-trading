@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { AuthProvider } from "@/lib/auth";
+import { APP_NAME } from "@/lib/brand";
 
 import "./globals.css";
 
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Strike AI · Options Strategy Lab",
+  title: `${APP_NAME} · Options Strategy Lab`,
   description: "Educational options strategy backtesting research prototype",
 };
 

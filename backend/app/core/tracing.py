@@ -60,7 +60,7 @@ def run_span(run_id: str, name: str = "pipeline_run") -> Iterator[None]:
         "run_id": run_id,
         "langfuse.session.id": run_id,
         "langfuse.trace.name": name,
-        "langfuse.trace.tags": ["options-backtester"],
+        "langfuse.trace.tags": ["ai-powered-trading"],
         "langfuse.trace.metadata.run_id": run_id,
     }
     with tracer.start_as_current_span(name, attributes=attrs):

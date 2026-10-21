@@ -1,4 +1,6 @@
-const KEY = "strike-ai:token";
+import { STORAGE_PREFIX } from "./brand";
+
+const KEY = `${STORAGE_PREFIX}:token`;
 
 export function getToken(): string | null {
   try {

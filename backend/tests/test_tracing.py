@@ -41,7 +41,7 @@ def test_pipeline_emits_one_trace_tagged_with_run_id(tmp_path: Path) -> None:
     root = next(s for s in spans if s.name == "pipeline_run")
     assert root.attributes is not None
     assert root.attributes["run_id"] == run_id and root.attributes["langfuse.session.id"] == run_id
-    assert "options-backtester" in root.attributes["langfuse.trace.tags"]
+    assert "ai-powered-trading" in root.attributes["langfuse.trace.tags"]
     assert {s.context.trace_id for s in spans if s.context} == {
         root.context.trace_id if root.context else 0
     }  # one trace

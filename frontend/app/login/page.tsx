@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { api, type Level } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { APP_NAME, TAGLINE } from "@/lib/brand";
 import { LEVELS } from "@/lib/levels";
 
 // Fake test accounts created by otj/seed_users.py. Shown only while NEXT_PUBLIC_DEMO_LOGINS is not "false".
@@ -59,8 +60,8 @@ export default function LoginPage() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-5 p-6">
       <div>
-        <div className="text-2xl font-semibold tracking-tight">Strike AI</div>
-        <div className="text-sm text-muted-foreground">Options Strategy Lab · NSE · educational use only</div>
+        <div className="text-2xl font-semibold tracking-tight">{APP_NAME}</div>
+        <div className="text-sm text-muted-foreground">{TAGLINE} · educational use only</div>
       </div>
       <Card>
         <CardContent className="space-y-4 py-5">

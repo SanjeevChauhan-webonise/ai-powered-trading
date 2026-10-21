@@ -10,6 +10,7 @@ import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input";
 import { api, type ExpiriesResponse, type ModelsResponse, type Run } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { STORAGE_PREFIX } from "@/lib/brand";
 import { daysTo, expiryKind, expiryLabel, expiryNote, upcomingExpiries, type ExpiryOption } from "@/lib/expiries";
 import { tradePlanOf } from "@/lib/trade-plan";
 
@@ -24,7 +25,7 @@ const UNDERLYINGS: { id: string; supported: boolean }[] = [
   { id: "MIDCPNIFTY", supported: false },
 ];
 const RISK = ["Low", "Medium", "High"] as const;
-const RECENT_KEY = "strike-ai:recent-queries";
+const RECENT_KEY = `${STORAGE_PREFIX}:recent-queries`;
 const EXAMPLES = [
   "BANKNIFTY monthly expiry, EMA 9/21 crossover with RSI, max loss ₹2,000",
   "NIFTY mildly bullish till expiry, max loss ₹7,000. Which strategy fits and why?",

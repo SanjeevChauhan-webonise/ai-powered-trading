@@ -15,6 +15,7 @@ import { Suspense, useEffect, useState } from "react";
 
 import { api, type Health, type ModelsResponse } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { APP_NAME, TAGLINE } from "@/lib/brand";
 import { LEVEL_TONE } from "@/lib/levels";
 
 const NAV = [
@@ -73,8 +74,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen">
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-sidebar p-4 md:flex">
         <div className="px-2 pb-6 pt-2">
-          <div className="text-lg font-semibold tracking-tight">Strike AI</div>
-          <div className="text-xs text-muted-foreground">Options Strategy Lab · NSE</div>
+          <div className="text-lg font-semibold tracking-tight">{APP_NAME}</div>
+          <div className="text-xs text-muted-foreground">{TAGLINE}</div>
         </div>
         <Suspense fallback={<nav className="flex flex-col gap-1" />}>
           <SidebarNav />
