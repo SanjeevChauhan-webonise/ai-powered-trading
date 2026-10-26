@@ -87,6 +87,7 @@ cd frontend && npm run gen:api     # regenerate API types (backend must be runni
 - [`backend/README.md`](backend/README.md): API, engine, agents, RAG, data import, env vars
 - [`frontend/README.md`](frontend/README.md): pages and setup
 - [`docs/guardrails.md`](docs/guardrails.md): safety layers, OWASP mapping, measured results and known gaps
+- [`docs/test-report.md`](docs/test-report.md): latest full test pass (unit tests, API flows, browser flows) and known issues
 - [`CLAUDE.md`](CLAUDE.md): guidance for Claude Code (project rules, commands, subagents)
 
 ## Disclaimer

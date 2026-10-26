@@ -16,6 +16,7 @@ import json
 import os
 import sys
 import time
+from datetime import date, timedelta
 from pathlib import Path
 
 import httpx
@@ -52,13 +53,19 @@ USERS = [
 # -----------------------------------------------------------------------------
 
 
-def nearest_expiry(api: httpx.Client, underlying: str, kind: str) -> str | None:
-    """Nearest real weekly/monthly expiry from the backend (None if the lookup fails)."""
-    try:
-        rows = api.get("/expiries", params={"underlying": underlying, "count": 12}).json()["expiries"]
-    except (httpx.HTTPError, KeyError, ValueError):
-        return None
-    return next((r["date"] for r in rows if r["kind"] == kind and r["days_to_expiry"] >= 0), None)
+def nearest_expiry(underlying: str, kind: str) -> str:
+    """Next weekly or monthly expiry from the usual weekday (Tuesday; monthly = last Tuesday of the month).
+
+    An exchange holiday can move one by a day, which is fine for these fake accounts."""
+    today = date.today()
+    d = today
+    for _ in range(400):
+        if d.weekday() == 1 and d >= today:
+            is_monthly = (d + timedelta(days=7)).month != d.month
+            if kind == "weekly" or is_monthly:
+                return d.isoformat()
+        d += timedelta(days=1)
+    return today.isoformat()
 
 
 def show(title: str, rows: list[str]) -> None:
@@ -78,7 +85,7 @@ def run_user(api: httpx.Client, u: dict) -> dict:
         return {"user": u["name"], "type": "question", "answer": a}
 
     parsed = api.post("/runs/parse", json={"query": u["query"], **model}).json()
-    expiry = parsed.get("expiry") or nearest_expiry(api, u["underlying"], u["expiry"])
+    expiry = parsed.get("expiry") or nearest_expiry(u["underlying"], u["expiry"])
     body = {
         "underlying": u["underlying"], "expiry": expiry, "capital": u["capital"], "max_loss": u["max_loss"],
         "target_profit": u["target_profit"], "idea": f"{parsed.get('idea') or u['query']} Risk appetite: {u['risk']}.",

@@ -46,4 +46,4 @@ research (RAG + market news) -> strategy -> verify (up to 2 revision rounds) -> 
 - `engine-reviewer`: read-only review of backtest engine for lookahead, determinism and cost correctness.
 - `guardrail-reviewer`: read-only review of prompts, guardrails and anything LLM-facing.
 - `frontend-dev`: Next.js pages, components, API client and types.
-- `data-ops`: Upstox export, CSV conversion and dataset loading scripts in `backend/otj`.
+- `data-ops`: TheTrade conversion and CSV dataset loading scripts in `backend/otj`, dataset validation.

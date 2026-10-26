@@ -16,7 +16,7 @@ Every page except `/login` needs a login (token kept in the browser's localStora
 to `/login`). `/login` also creates accounts and shows the fake demo accounts unless `NEXT_PUBLIC_DEMO_LOGINS=false`.
 Sidebar layout (`components/layout/app-shell.tsx`), design from "Strategy Desk (AI query)".
 - `/`: dashboard. Counts, recent AI runs (open one in the Strategy Desk), recent backtests, datasets.
-- `/strategy-desk`: describe a trade in free text, pick underlying / expiry (dropdown of upcoming expiries, `lib/expiries.ts`) / capital / max loss / target / risk appetite, and
+- `/strategy-desk`: describe a trade in free text, pick underlying / expiry (dropdown of upcoming expiries estimated from the usual weekday, `lib/expiries.ts`) / capital / max loss / target / risk appetite, and
   get a trade plan with reasons plus the live agent pipeline. Calls `POST /runs/parse`, then `POST /runs`, and polls `GET /runs/{id}`.
   `?run=<id>` reopens an earlier run. A general options question ("what is theta decay?") is answered directly (knowledge base and news, no plan,
   no backtest); anything outside NIFTY / BANKNIFTY options trading is refused with a short message. Lots, stop and target come from your rupee limits (computed in the backend, not by the LLM).

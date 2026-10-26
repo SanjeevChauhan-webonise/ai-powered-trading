@@ -16,7 +16,7 @@ uv run pytest && uv run ruff check . && uv run mypy app
 ```
 
 ## Env vars
-See `.env.example`. Langfuse keys are optional; the app runs without them. `UPSTOX_ACCESS_TOKEN` is only needed for the Upstox import (below).
+See `.env.example`. Langfuse keys are optional; the app runs without them.
 
 ## Guardrails (scope, safety, budgets)
 The app only works for NIFTY / BANKNIFTY options trading. Full explanation, the OWASP mapping, measured results and the gaps are in
@@ -77,37 +77,29 @@ curl -F file=@u.csv -F kind=underlying -F underlying=NIFTY -F lot_size=75 \
 Timestamps are stored as naive exchange-local time (naive inputs are assumed to be in the mapping's
 `timezone`, default Asia/Kolkata). Invalid rows are dropped and reported in the quality report.
 
-### Real NIFTY / BANKNIFTY data from Upstox
-Two scripts in `otj/` (settings are edited inside each file, in the `SETTINGS` block at the top):
+### Real NIFTY / BANKNIFTY historical data
+Bring your own historical files, convert them to the standard CSV layout, then load them. Two scripts in `otj/`
+(settings are edited inside each file, in the `SETTINGS` block at the top):
 
-1. **`otj/export_upstox_csv.py`** downloads history from Upstox into CSV files.
-2. **`otj/load_csv_to_db.py`** loads those CSVs into the database as one dataset per underlying.
+1. **`otj/convert_thetrade.py`** converts the TheTrade parquet download in `option-data/thetrade/{index,options}/` into
+   `option-data/converted/<UNDERLYING>/1m/` (`underlying.csv` plus one `options_<expiry>.csv` per expiry, gitignored). Per minute it keeps
+   only strikes near the spot and drops candles with no price, so a 1-minute backtest fits in memory. Existing files are skipped,
+   so an interrupted run resumes.
+2. **`otj/load_csv_to_db.py`** loads those CSVs into the database as one dataset per underlying (it can coarsen 1-minute data while loading,
+   see `RESAMPLE_TO`).
 
 ```bash
 cd backend
-export UPSTOX_ACCESS_TOKEN=...                      # Upstox Analytics Token (no daily re-login)
-# 1. edit SETTINGS in otj/export_upstox_csv.py, then:
-PYTHONPATH=. uv run python otj/export_upstox_csv.py
+# 1. edit SETTINGS in otj/convert_thetrade.py (date range, strike window), then:
+PYTHONPATH=. uv run python otj/convert_thetrade.py
 # 2. edit SETTINGS in otj/load_csv_to_db.py (lot sizes!), then:
 PYTHONPATH=. uv run python otj/load_csv_to_db.py     # docker: docker compose exec api python otj/load_csv_to_db.py
 ```
-The loader prints each dataset `id`; use it as `dataset_id` in `POST /backtests`.
+The loader prints each dataset `id`; use it as `dataset_id` in `POST /backtests`. Any other source works too if you write the same
+columns (underlying: `timestamp, symbol, open, high, low, close, volume`; options add `underlying, expiry, strike, option_type, oi`),
+or upload a file with a column mapping through `POST /datasets/upload`.
 
-Export settings: `UNDERLYINGS` (NIFTY, BANKNIFTY), `START`/`END`, `INTERVAL_MINUTES` (1, 3, 5, 15, 30),
-`INCLUDE_OPTIONS`, `OPTION_TYPES` (CE/PE), `EXPIRY_TYPE` (all/weekly/monthly), `LAST_EXPIRIES` (most recent N),
-`N_STRIKES` (each side of ATM). Output goes to `option-data/<UNDERLYING>/<N>m/`: `underlying.csv` plus one
-`options_<expiry>.csv` per expiry (gitignored). Re-running skips files that already exist, so an interrupted export resumes.
-
-Limits to know about:
-- Underlying minute candles go back to Jan 2022. Option candles come from Upstox's expired-instruments API: it needs an
-  **Upstox Plus** plan and lists only about the last 6 months of expiries.
-- Requests are throttled and retried (Upstox allows 2000 calls per 30 min), so 1-minute option exports of many
-  expiries take hours. Start with a short range.
-- Lot sizes in `otj/load_csv_to_db.py` are defaults; they change over time, so check the current NSE value.
-- These scripts have only been tested against mocked Upstox responses, not the live API.
-
-Without scripts, the API offers the same: `POST /datasets/upstox` (small imports, runs inside the request) and
-`POST /datasets/upstox/export-jobs` (background CSV export to `storage/exports/`; poll `GET /datasets/upstox/export-jobs/{id}`).
+Lot sizes in `otj/load_csv_to_db.py` are defaults; they change over time, so check the current NSE value.
 
 Generate files without the API: `uv run python -m app.data.synthetic --out-dir storage/synthetic --format csv`
 

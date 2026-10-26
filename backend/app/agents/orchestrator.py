@@ -57,7 +57,6 @@ from app.schemas.agents import (
 )
 from app.schemas.backtest import BacktestResult
 from app.schemas.strategy import StrategySpec
-from upstox.expiries import ExpiryService, get_service
 
 log = logging.getLogger(__name__)
 T = TypeVar("T")
@@ -166,11 +165,9 @@ class Pipeline:
         embedder: Embedder,
         model_builder: ModelBuilder = build_model,
         news: NewsFetcher | None = None,
-        expiries: ExpiryService | None = None,
     ) -> None:
         self.settings, self.session_factory = settings, session_factory
         self.store, self.embedder, self.model_builder = store, embedder, model_builder
-        self.expiries = expiries or get_service(settings.storage_dir)
         self.news = news or (
             NewsFetcher(parse_feeds(settings.news_feeds), max_age_days=settings.news_max_age_days)
             if settings.news_enabled
@@ -349,8 +346,7 @@ class Pipeline:
             """Apply the user's expiry and rupee limits in code: expiry kind, lots, stop loss and target %."""
             nonlocal sizing
             if req.expiry:
-                real = self.expiries.kind_of(ctx.underlying, req.expiry)  # cached exchange list only, no network
-                kind = ("monthly" if real == "monthly" else "nearest_weekly") if real else expiry_kind(req.expiry)
+                kind = expiry_kind(req.expiry)
                 s = s.model_copy(update={"instrument": s.instrument.model_copy(update={"expiry": kind})})
             if req.max_loss or req.target_profit:
                 premium = await asyncio.to_thread(estimate_entry_premium, under, opts, s)

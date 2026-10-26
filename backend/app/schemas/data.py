@@ -77,45 +77,6 @@ class DatasetOut(BaseModel):
     created_at: datetime
 
 
-class UpstoxImportRequest(BaseModel):
-    name: str | None = None
-    underlying: Literal["NIFTY", "BANKNIFTY"] = "NIFTY"
-    start_date: date
-    end_date: date
-    interval_minutes: Literal[1, 3, 5, 15, 30] = 5
-    include_options: bool = Field(False, description="Needs Upstox Plus; only expiries from the last ~6 months exist")
-    n_strikes: int = Field(10, ge=1, le=30, description="Strikes on each side of ATM")
-    dataset_id: str | None = Field(None, description="Attach to an existing dataset")
-
-
-class UpstoxExportRequest(BaseModel):
-    underlying: Literal["NIFTY", "BANKNIFTY"] = "NIFTY"
-    start_date: date
-    end_date: date
-    interval_minutes: Literal[1, 3, 5, 15, 30] = 1
-    include_options: bool = Field(True, description="Needs Upstox Plus; only expiries from the last ~6 months exist")
-    n_strikes: int = Field(10, ge=1, le=30, description="Strikes on each side of ATM")
-    option_types: list[Literal["CE", "PE"]] = Field(default_factory=lambda: list(_BOTH), min_length=1)
-    expiry_type: Literal["all", "weekly", "monthly"] = "all"
-    last_expiries: int | None = Field(None, ge=1, description="Only the most recent N expiries in the range")
-
-
-class ExportJobOut(BaseModel):
-    id: str
-    status: Literal["running", "done", "failed"]
-    underlying: str
-    interval: int
-    start: date
-    end: date
-    out_dir: str
-    total_expiries: int
-    done_expiries: int
-    files: list[str]
-    error: str | None
-    started_at: datetime
-    finished_at: datetime | None
-
-
 class SyntheticRequest(BaseModel):
     name: str | None = None
     underlying: str = "NIFTY"

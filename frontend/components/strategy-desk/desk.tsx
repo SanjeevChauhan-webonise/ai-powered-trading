@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import {
   api,
   type AskAnswer,
-  type ExpiriesResponse,
   type ModelsResponse,
   type Run,
 } from "@/lib/api";
@@ -84,7 +83,6 @@ export function Desk() {
   const [recent, setRecent] = useState<string[]>([]);
   const [models, setModels] = useState<ModelsResponse | null>(null);
   const [model, setModel] = useState("");
-  const [live, setLive] = useState<ExpiriesResponse | null>(null);
   const [answer, setAnswer] = useState<AskAnswer | null>(null);
   const alive = useRef(true);
 
@@ -115,19 +113,6 @@ export function Desk() {
       await new Promise((res) => setTimeout(res, 1000));
     }
   }, []);
-
-  // Real expiries (holidays included) from the backend; the weekday-rule list is only a fallback.
-  useEffect(() => {
-    if (!underlying) return;
-    let on = true;
-    api
-      .expiries(underlying)
-      .then((r) => on && setLive(r))
-      .catch(() => on && setLive(null));
-    return () => {
-      on = false;
-    };
-  }, [underlying]);
 
   // Reopen a run from the dashboard (?run=<id>) and show the request it was made with.
   useEffect(() => {
@@ -211,14 +196,7 @@ export function Desk() {
   }
 
   // a date that is not in the list (from your query, or an earlier run) is kept as an extra option
-  const liveHere = live && live.underlying === underlying ? live : null;
-  const listed: ExpiryOption[] = liveHere
-    ? liveHere.expiries.map((e) => ({
-        date: e.date,
-        kind: e.kind,
-        days: e.days_to_expiry,
-      }))
-    : upcomingExpiries(underlying);
+  const listed: ExpiryOption[] = upcomingExpiries(underlying);
   const expiryOptions =
     expiry && underlying && !listed.some((o) => o.date === expiry)
       ? [
@@ -337,11 +315,9 @@ export function Desk() {
                   {expiry
                     ? `${daysTo(expiry) >= 0 ? `${daysTo(expiry)} days to expiry` : "Expiry date is in the past"} · ${expiryKind(expiry)}. `
                     : ""}
-                  {liveHere
-                    ? `Live exchange list (Upstox)${liveHere.stale ? ", cached copy" : ""}${liveHere.lot_size ? ` · 1 lot = ${liveHere.lot_size}` : ""}.`
-                    : underlying
-                      ? `${expiryNote(underlying)}. Estimated from the usual weekday; a holiday can shift one, so confirm in your broker.`
-                      : ""}
+                  {underlying
+                    ? `${expiryNote(underlying)}. Estimated from the usual weekday; a holiday can shift one, so confirm in your broker.`
+                    : ""}
                 </p>
               </div>
 

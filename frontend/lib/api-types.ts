@@ -141,61 +141,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/datasets/upstox": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Import NIFTY/BANKNIFTY history from Upstox */
-    post: operations["import_upstox_datasets_upstox_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/datasets/upstox/export-jobs": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List export jobs */
-    get: operations["list_export_jobs_datasets_upstox_export_jobs_get"];
-    put?: never;
-    /**
-     * Start a background CSV export from Upstox
-     * @description Writes one options CSV per expiry under <storage_dir>/exports/<underlying>/<N>m/; re-running resumes.
-     */
-    post: operations["start_export_job_datasets_upstox_export_jobs_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/datasets/upstox/export-jobs/{job_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Export job progress */
-    get: operations["get_export_job_datasets_upstox_export_jobs__job_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   "/datasets": {
     parameters: {
       query?: never;
@@ -517,34 +462,10 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/expiries": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Upcoming option expiries (live exchange contract list)
-     * @description Real expiry dates (holiday shifts included) and the lot size. `stale` means the last cached copy is shown
-     *     because the download failed.
-     */
-    get: operations["list_expiries_expiries_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    /** AccountOut */
-    /** AdvanceIn */
-    /** AdvanceOut */
     /** AllOf */
     "AllOf-Input": {
       /** All */
@@ -905,8 +826,6 @@ export interface components {
        */
       file: string;
     };
-    /** ChainOut */
-    /** ChainRow */
     /** ChangePasswordRequest */
     ChangePasswordRequest: {
       /** Current Password */
@@ -914,8 +833,6 @@ export interface components {
       /** New Password */
       new_password: string;
     };
-    /** ClockStartIn */
-    /** CloseIn */
     "Condition-Input":
       | components["schemas"]["Rule"]
       | components["schemas"]["AllOf-Input"]
@@ -1022,86 +939,6 @@ export interface components {
       /** Equity */
       equity: number;
     };
-    /** ExpiriesOut */
-    /** ExpiriesResponse */
-    ExpiriesResponse: {
-      /** Underlying */
-      underlying: string;
-      /** Lot Size */
-      lot_size: number | null;
-      /**
-       * Source
-       * @default Upstox instruments file (exchange contract list)
-       */
-      source: string;
-      /**
-       * Fetched At
-       * Format: date-time
-       */
-      fetched_at: string;
-      /** Stale */
-      stale: boolean;
-      /** Expiries */
-      expiries: components["schemas"]["ExpiryOut"][];
-    };
-    /** ExpiryOut */
-    ExpiryOut: {
-      /**
-       * Date
-       * Format: date
-       */
-      date: string;
-      /**
-       * Kind
-       * @enum {string}
-       */
-      kind: "weekly" | "monthly";
-      /** Days To Expiry */
-      days_to_expiry: number;
-    };
-    /** ExportJobOut */
-    ExportJobOut: {
-      /** Id */
-      id: string;
-      /**
-       * Status
-       * @enum {string}
-       */
-      status: "running" | "done" | "failed";
-      /** Underlying */
-      underlying: string;
-      /** Interval */
-      interval: number;
-      /**
-       * Start
-       * Format: date
-       */
-      start: string;
-      /**
-       * End
-       * Format: date
-       */
-      end: string;
-      /** Out Dir */
-      out_dir: string;
-      /** Total Expiries */
-      total_expiries: number;
-      /** Done Expiries */
-      done_expiries: number;
-      /** Files */
-      files: string[];
-      /** Error */
-      error: string | null;
-      /**
-       * Started At
-       * Format: date-time
-       */
-      started_at: string;
-      /** Finished At */
-      finished_at: string | null;
-    };
-    /** FromPlanIn */
-    /** FromPlanOut */
     /** GapSample */
     GapSample: {
       /**
@@ -1229,8 +1066,6 @@ export interface components {
       /** Models */
       models: components["schemas"]["ModelInfo"][];
     };
-    /** OrderIn */
-    /** OrderOut */
     /** ParseRequest */
     ParseRequest: {
       /**
@@ -1297,11 +1132,6 @@ export interface components {
        */
       notes?: string[];
     };
-    /** PnlDay */
-    /** PnlGroup */
-    /** PnlOut */
-    /** PnlSummary */
-    /** PositionOut */
     /** PriceRef */
     PriceRef: {
       /**
@@ -1357,7 +1187,6 @@ export interface components {
        */
       level: "beginner" | "advanced" | "expert";
     };
-    /** ResetIn */
     /** RetrievedChunk */
     RetrievedChunk: {
       /** Text */
@@ -1854,7 +1683,6 @@ export interface components {
       expires_at: string;
       user: components["schemas"]["UserOut"];
     };
-    /** TradeOut */
     /** UpdateProfileRequest */
     UpdateProfileRequest: {
       /** Name */
@@ -1868,100 +1696,6 @@ export interface components {
       source: string;
       /** Chunks */
       chunks: number;
-    };
-    /** UpstoxExportRequest */
-    UpstoxExportRequest: {
-      /**
-       * Underlying
-       * @default NIFTY
-       * @enum {string}
-       */
-      underlying: "NIFTY" | "BANKNIFTY";
-      /**
-       * Start Date
-       * Format: date
-       */
-      start_date: string;
-      /**
-       * End Date
-       * Format: date
-       */
-      end_date: string;
-      /**
-       * Interval Minutes
-       * @default 1
-       * @enum {integer}
-       */
-      interval_minutes: 1 | 3 | 5 | 15 | 30;
-      /**
-       * Include Options
-       * @description Needs Upstox Plus; only expiries from the last ~6 months exist
-       * @default true
-       */
-      include_options: boolean;
-      /**
-       * N Strikes
-       * @description Strikes on each side of ATM
-       * @default 10
-       */
-      n_strikes: number;
-      /** Option Types */
-      option_types?: ("CE" | "PE")[];
-      /**
-       * Expiry Type
-       * @default all
-       * @enum {string}
-       */
-      expiry_type: "all" | "weekly" | "monthly";
-      /**
-       * Last Expiries
-       * @description Only the most recent N expiries in the range
-       */
-      last_expiries?: number | null;
-    };
-    /** UpstoxImportRequest */
-    UpstoxImportRequest: {
-      /** Name */
-      name?: string | null;
-      /**
-       * Underlying
-       * @default NIFTY
-       * @enum {string}
-       */
-      underlying: "NIFTY" | "BANKNIFTY";
-      /**
-       * Start Date
-       * Format: date
-       */
-      start_date: string;
-      /**
-       * End Date
-       * Format: date
-       */
-      end_date: string;
-      /**
-       * Interval Minutes
-       * @default 5
-       * @enum {integer}
-       */
-      interval_minutes: 1 | 3 | 5 | 15 | 30;
-      /**
-       * Include Options
-       * @description Needs Upstox Plus; only expiries from the last ~6 months exist
-       * @default false
-       */
-      include_options: boolean;
-      /**
-       * N Strikes
-       * @description Strikes on each side of ATM
-       * @default 10
-       */
-      n_strikes: number;
-      /**
-       * Dataset Id
-       * @description Attach to an existing dataset
-       */
-      dataset_id?: string | null;
     };
     /** UserOut */
     UserOut: {
@@ -2297,140 +2031,6 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["DatasetOut"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  import_upstox_datasets_upstox_post: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpstoxImportRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DatasetOut"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  list_export_jobs_datasets_upstox_export_jobs_get: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ExportJobOut"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  start_export_job_datasets_upstox_export_jobs_post: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpstoxExportRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ExportJobOut"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_export_job_datasets_upstox_export_jobs__job_id__get: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string | null;
-      };
-      path: {
-        job_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ExportJobOut"];
         };
       };
       /** @description Validation Error */
@@ -3124,40 +2724,6 @@ export interface operations {
         };
         content: {
           "text/event-stream": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  list_expiries_expiries_get: {
-    parameters: {
-      query: {
-        underlying: "NIFTY" | "BANKNIFTY";
-        count?: number;
-      };
-      header?: {
-        authorization?: string | null;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ExpiriesResponse"];
         };
       };
       /** @description Validation Error */

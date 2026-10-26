@@ -31,7 +31,6 @@ export interface ChunkPage {
   chunks: { id: string; heading: string; chunk_index: number; text: string }[];
 }
 export type KnowledgeChunk = S["RetrievedChunk"];
-export type ExpiriesResponse = S["ExpiriesResponse"];
 export type User = S["UserOut"];
 export type TokenOut = S["TokenOut"];
 export type Level = User["level"];
@@ -144,10 +143,6 @@ export const api = {
   getRun: (id: string) => request<Run>(`/runs/${id}`),
   runs: () => request<RunSummary[]>("/runs"),
   models: () => request<ModelsResponse>("/models"),
-  expiries: (underlying: string, count = 10) =>
-    request<ExpiriesResponse>(
-      `/expiries?underlying=${underlying}&count=${count}`,
-    ),
   knowledgeDocs: () => request<KnowledgeDoc[]>("/knowledge/documents"),
   knowledgeChunks: (source: string, offset = 0, limit = 20) =>
     request<ChunkPage>(

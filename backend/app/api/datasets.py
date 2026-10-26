@@ -1,14 +1,11 @@
 import json
-from pathlib import Path
 from typing import Annotated
 
-import httpx
 import pandas as pd
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import ValidationError
 from sqlalchemy import select
 
-import upstox
 from app.api.deps import Cfg, Db
 from app.data import service
 from app.data.models import Dataset
@@ -18,12 +15,8 @@ from app.schemas.data import (
     ColumnMapping,
     DatasetKind,
     DatasetOut,
-    ExportJobOut,
     SyntheticRequest,
-    UpstoxExportRequest,
-    UpstoxImportRequest,
 )
-from upstox import export
 
 router = APIRouter(prefix="/datasets", tags=["datasets"])
 
@@ -92,73 +85,6 @@ def create_synthetic(req: SyntheticRequest, db: Db, settings: Cfg) -> DatasetOut
         underlying=req.underlying, dataset_id=row.id,
     )  # fmt: skip
     return _out(row)
-
-
-@router.post("/upstox", response_model=DatasetOut, summary="Import NIFTY/BANKNIFTY history from Upstox")
-def import_upstox(req: UpstoxImportRequest, db: Db, settings: Cfg) -> DatasetOut:
-    if req.end_date < req.start_date:
-        raise HTTPException(422, "end_date must not be before start_date")
-    try:
-        client = upstox.UpstoxClient(settings.upstox_access_token)
-        under = upstox.fetch_underlying(client, req.underlying, req.interval_minutes, req.start_date, req.end_date)
-        opts, lot_size = None, 1
-        if req.include_options:
-            opts, lot_size = upstox.fetch_options(
-                client, req.underlying, under, req.interval_minutes, req.start_date, req.end_date, req.n_strikes
-            )  # fmt: skip
-        row = service.ingest(
-            db, settings, under, kind="underlying", mapping=ColumnMapping.standard("underlying"),
-            underlying=req.underlying, lot_size=lot_size, name=req.name or f"Upstox {req.underlying}",
-            dataset_id=req.dataset_id,
-        )  # fmt: skip
-        if opts is not None:
-            row = service.ingest(
-                db, settings, opts, kind="options", mapping=ColumnMapping.standard("options"),
-                underlying=req.underlying, dataset_id=row.id,
-            )  # fmt: skip
-    except LookupError as e:
-        raise HTTPException(404, str(e)) from e
-    except upstox.UpstoxError as e:
-        raise HTTPException(502, str(e)) from e
-    except DataError as e:
-        raise HTTPException(400, str(e)) from e
-    except httpx.HTTPError as e:
-        raise HTTPException(502, f"Could not reach Upstox: {e}") from e
-    return _out(row)
-
-
-def _job_out(j: export.ExportJob) -> ExportJobOut:
-    return ExportJobOut.model_validate(j, from_attributes=True)
-
-
-@router.post("/upstox/export-jobs", response_model=ExportJobOut, summary="Start a background CSV export from Upstox")
-def start_export_job(req: UpstoxExportRequest, settings: Cfg) -> ExportJobOut:
-    """Writes one options CSV per expiry under <storage_dir>/exports/<underlying>/<N>m/; re-running resumes."""
-    if req.end_date < req.start_date:
-        raise HTTPException(422, "end_date must not be before start_date")
-    try:
-        client = upstox.UpstoxClient(settings.upstox_access_token)
-    except upstox.UpstoxError as e:
-        raise HTTPException(400, str(e)) from e
-    job = export.start_job(
-        client, req.underlying, req.interval_minutes, req.start_date, req.end_date,
-        Path(settings.storage_dir) / "exports", n_strikes=req.n_strikes, include_options=req.include_options,
-        option_types=tuple(req.option_types), expiry_type=req.expiry_type, last_expiries=req.last_expiries,
-    )  # fmt: skip
-    return _job_out(job)
-
-
-@router.get("/upstox/export-jobs", response_model=list[ExportJobOut], summary="List export jobs")
-def list_export_jobs() -> list[ExportJobOut]:
-    return [_job_out(j) for j in export.list_jobs()]
-
-
-@router.get("/upstox/export-jobs/{job_id}", response_model=ExportJobOut, summary="Export job progress")
-def get_export_job(job_id: str) -> ExportJobOut:
-    job = export.get_job(job_id)
-    if job is None:
-        raise HTTPException(404, "Export job not found")
-    return _job_out(job)
 
 
 @router.get("", response_model=list[DatasetOut], summary="List datasets")

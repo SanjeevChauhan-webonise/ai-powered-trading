@@ -14,12 +14,14 @@ from app.schemas.data import ColumnMapping
 
 def _coarsen_options(df: pd.DataFrame, minutes: int) -> pd.DataFrame:
     """Aggregate one expiry's candles to `minutes`, with bins on the clock (09:15 is a multiple of 5/15/...)."""
+    # sort by the original minute first: "first"/"last" below must see each bin's candles in time order
+    df = df.sort_values("timestamp", kind="stable")
     df = df.assign(timestamp=df["timestamp"].dt.floor(f"{minutes}min"))
     agg: dict[str, str] = {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
     if "oi" in df.columns:
         agg["oi"] = "last"
     keys = ["underlying", "expiry", "strike", "option_type", "timestamp"]
-    return df.sort_values("timestamp").groupby(keys, sort=False, as_index=False).agg(agg)
+    return df.groupby(keys, sort=False, as_index=False).agg(agg)
 
 
 def load_export_dir(

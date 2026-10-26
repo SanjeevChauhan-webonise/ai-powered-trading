@@ -140,8 +140,8 @@ export default function Dashboard() {
         <CardContent>
           {datasets.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No datasets. Load NIFTY / BANKNIFTY history with the Upstox export scripts, or create a synthetic one
-              from New backtest.
+              No datasets. Load NIFTY / BANKNIFTY history with the CSV loader (see backend/README.md), or create a
+              synthetic one from New backtest.
             </p>
           ) : (
             <Table>

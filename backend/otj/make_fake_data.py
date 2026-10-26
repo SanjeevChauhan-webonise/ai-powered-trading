@@ -5,7 +5,7 @@ Edit the SETTINGS block below, then run:
   PYTHONPATH=. uv run python otj/make_fake_data.py
 
 Writes option-data/fake/<UNDERLYING>/<N>m/underlying.csv and options_<expiry>.csv, the same layout and columns as
-otj/export_upstox_csv.py, so otj/load_csv_to_db.py can load them (set its DATA_DIR to option-data/fake and its
+otj/convert_thetrade.py, so otj/load_csv_to_db.py can load them (set its DATA_DIR to option-data/fake and its
 INTERVAL_MINUTES to match). The prices are made up and have NO real edge; use them only to test the app.
 """
 

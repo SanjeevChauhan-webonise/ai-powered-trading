@@ -1,4 +1,4 @@
-"""Load CSVs written by export_upstox_csv.py into the database, one dataset per underlying.
+"""Load CSVs (underlying.csv + options_<expiry>.csv, e.g. written by convert_thetrade.py) into the database, one dataset per underlying.
 
 Edit the SETTINGS block below, then run:
 
@@ -20,7 +20,7 @@ from app.data.normalize import DataError
 
 # ----------------------------------------------------------------------------- SETTINGS
 UNDERLYINGS = ["NIFTY"]  # any of: "NIFTY", "BANKNIFTY"
-INTERVAL_MINUTES = 1  # must match the folder the export wrote (option-data/<UNDERLYING>/<N>m)
+INTERVAL_MINUTES = 1  # must match the folder name the converter wrote (option-data/<UNDERLYING>/<N>m)
 DATA_DIR = Path("option-data/converted")
 # Multi-year 1-minute data does not fit in memory in the app; coarsen it while loading (underlying -> N minutes)
 RESAMPLE_TO: dict[str, int] = {"NIFTY": 5}

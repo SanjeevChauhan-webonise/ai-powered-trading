@@ -115,7 +115,7 @@ def test_update_profile_and_change_password(client: TestClient):
 # ---- access control -------------------------------------------------------------------------
 PROTECTED = [
     ("GET", "/datasets"), ("GET", "/strategies"), ("GET", "/backtests"), ("GET", "/runs"), ("GET", "/models"),
-    ("GET", "/knowledge/documents"), ("GET", "/expiries?underlying=NIFTY"), ("POST", "/runs/parse"),
+    ("GET", "/knowledge/documents"), ("POST", "/runs/parse"),
     ("POST", "/runs/ask"), ("GET", "/auth/me"),
 ]  # fmt: skip
 

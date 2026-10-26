@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=(".env", "upstox/.env"), extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     app_name: str = "AI Powered Trading"
     app_version: str = "0.1.0"
@@ -40,11 +40,6 @@ class Settings(BaseSettings):
     azure_openai_deployments: str = ""  # comma-separated deployment names; the model id is azure:<deployment>
     extra_models: str = ""  # comma-separated "provider:model" ids to add to /models
     enable_mock_llm: bool = False  # offline scripted "mock:demo" model for demos/tests; never calls a network
-
-    # Upstox historical data import (Analytics Token needs no daily re-auth; option history needs Upstox Plus)
-    upstox_api_key: str = ""
-    upstox_api_secret: str = ""
-    upstox_access_token: str = ""
 
     # Market news for the research agent (public RSS feeds; empty NEWS_FEEDS = built-in list of Indian market sites)
     news_enabled: bool = True
