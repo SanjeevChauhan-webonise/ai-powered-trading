@@ -11,7 +11,7 @@ from typing import Literal
 
 import pandas as pd
 
-from app.data.upstox import UpstoxClient, fetch_expiry_options, fetch_underlying, list_expiries
+from upstox import UpstoxClient, fetch_expiry_options, fetch_underlying, list_expiries
 
 log = logging.getLogger(__name__)
 

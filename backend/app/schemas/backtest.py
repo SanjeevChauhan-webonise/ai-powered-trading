@@ -6,6 +6,24 @@ from pydantic import BaseModel, Field
 ExitReason = Literal["stop_loss", "target", "trailing_sl", "signal", "square_off", "end_of_data"]
 
 
+class TradeCandle(BaseModel):
+    timestamp: datetime
+    open: float
+    high: float
+    low: float
+    close: float
+
+
+class CheckLine(BaseModel):
+    """One figure of a trade: what the engine reported next to an independent recomputation."""
+
+    name: str
+    reported: float | None = None
+    recomputed: float | None = None
+    ok: bool
+    note: str = ""
+
+
 class BacktestTrade(BaseModel):
     id: int
     side: Literal["buy", "sell"]
@@ -24,6 +42,17 @@ class BacktestTrade(BaseModel):
     taxes: float
     net_pnl: float
     exit_reason: ExitReason
+    # audit trail: everything needed to re-do this trade by hand
+    lots: int | None = None
+    lot_size: int | None = None
+    entry_raw: float | None = Field(None, description="Option open at the entry candle, before slippage")
+    exit_raw: float | None = Field(None, description="Price the exit rule fired at, before slippage")
+    stop_price: float | None = None
+    target_price: float | None = None
+    trail_stop_price: float | None = Field(None, description="Trailing stop level in force when the trade closed")
+    candles: list[TradeCandle] = Field(default_factory=list, description="Option candles from entry to exit")
+    verified: bool | None = Field(None, description="True when every check line matches the recomputation")
+    checks: list[CheckLine] = Field(default_factory=list)
 
 
 class EquityPoint(BaseModel):
@@ -60,6 +89,16 @@ class EngineEvent(BaseModel):
     message: str
 
 
+class Verification(BaseModel):
+    checked: int
+    passed: int
+    failed: int
+    sum_of_trades: float
+    reported_total_pnl: float
+    totals_match: bool
+    failed_trade_ids: list[int] = Field(default_factory=list)
+
+
 class BacktestResult(BaseModel):
     strategy_name: str
     start: date | None
@@ -71,3 +110,4 @@ class BacktestResult(BaseModel):
     metrics: BacktestMetrics
     events: list[EngineEvent]
     events_truncated: bool = False
+    verification: Verification | None = None

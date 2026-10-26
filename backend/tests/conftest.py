@@ -6,6 +6,7 @@ from app.core.config import Settings
 Settings.model_config["env_file"] = None
 for _name in Settings.model_fields:
     os.environ.pop(_name.upper(), None)
+os.environ["RAG_BUILTIN_DOCS"] = "true"  # tests exercise the built-in notes
 os.environ["RAG_AUTOINGEST"] = "false"  # tests never touch ChromaDB / the embedding model at startup
 
 import uuid  # noqa: E402

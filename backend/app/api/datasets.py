@@ -8,8 +8,9 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import ValidationError
 from sqlalchemy import select
 
+import upstox
 from app.api.deps import Cfg, Db
-from app.data import export, service, upstox
+from app.data import service
 from app.data.models import Dataset
 from app.data.normalize import DataError
 from app.data.synthetic import SyntheticConfig, generate
@@ -22,6 +23,7 @@ from app.schemas.data import (
     UpstoxExportRequest,
     UpstoxImportRequest,
 )
+from upstox import export
 
 router = APIRouter(prefix="/datasets", tags=["datasets"])
 

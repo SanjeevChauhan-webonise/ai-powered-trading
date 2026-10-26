@@ -8,8 +8,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.api.expiries import get_expiry_service
-from app.data.expiries import ExpiryError, ExpiryService, parse_instruments
 from app.main import app
+from upstox.expiries import ExpiryError, ExpiryService, parse_instruments
 
 
 def ms(y: int, m: int, d: int) -> int:  # 15:29:59 IST, as the exchange lists expiries

@@ -13,6 +13,8 @@ STEP_ORDER: tuple[StepName, ...] = ("research", "strategy", "verify", "backtest"
 
 # ---- typed agent outputs -----------------------------------------------------------------------
 class ResearchOutput(BaseModel):
+    in_scope: bool = Field(True, description="False when the idea is not a NIFTY / BANKNIFTY options trading idea")
+    refusal: str | None = Field(None, description="When in_scope is false: one calm sentence for the trader")
     concepts: list[str] = Field(description="Key concepts relevant to the idea, each one short and self-contained")
     considerations: list[str] = Field(description="Practical considerations, risks and caveats for this idea")
     sources: list[str] = Field(description="Knowledge-base source file names the points are based on")
@@ -42,7 +44,8 @@ class StrategyDraft(BaseModel):
 
 
 class AskAnswer(BaseModel):
-    answer: str = Field(description="A clear, direct answer to the trader's question")
+    in_scope: bool = Field(True, description="False when the question is not about NIFTY / BANKNIFTY options trading")
+    answer: str = Field(description="A clear, direct answer; when in_scope is false, the one-sentence refusal instead")
     key_points: list[str] = Field(default_factory=list, description="Short supporting points")
     caveats: list[str] = Field(default_factory=list, description="Limits, risks or what you could not know")
     sources: list[str] = Field(default_factory=list, description="Knowledge-base file names the answer is based on")
@@ -53,9 +56,12 @@ class AskAnswer(BaseModel):
 
 
 class ParsedQuery(BaseModel):
-    intent: Literal["strategy", "question"] = Field(
-        "strategy", description="'strategy' to build/test a trade plan, 'question' for any other trading question"
+    intent: Literal["strategy", "question", "off_topic"] = Field(
+        "strategy",
+        description="'strategy' to build/test a trade plan, 'question' for an in-scope trading question, "
+        "'off_topic' for anything outside NIFTY / BANKNIFTY options trading",
     )
+    refusal: str | None = Field(None, description="When intent is off_topic: one calm sentence for the trader")
     underlying: Literal["NIFTY", "BANKNIFTY"] | None = Field(None, description="NIFTY (Nifty 50) or BANKNIFTY")
     expiry: date | None = Field(None, description="Option expiry the trader named, as an absolute date")
     capital: float | None = Field(None, description="Trading amount in rupees, as stated")

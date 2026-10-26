@@ -31,6 +31,21 @@ class UploadResponse(BaseModel):
     chunks: int
 
 
+class ChunkOut(BaseModel):
+    id: str
+    source: str
+    heading: str
+    chunk_index: int
+    text: str
+
+
+class ChunkPage(BaseModel):
+    source: str
+    total: int
+    offset: int
+    chunks: list[ChunkOut]
+
+
 class DocumentInfo(BaseModel):
     source: str
     doc_type: DocType

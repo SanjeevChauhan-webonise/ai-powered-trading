@@ -49,6 +49,21 @@ def _call(name: str, args: dict[str, Any]) -> ModelResponse:
     return ModelResponse(parts=[ToolCallPart(tool_name=name, args=args)])
 
 
+_OFF_TOPIC = re.compile(
+    r"\b(poem|recipe|biryani|joke|python|javascript|bitcoin|crypto|ethereum|weather|cricket|election|movie|"
+    r"ignore (all |your |the )?(previous |prior )?(instructions|rules)|system prompt|you are now)\b",
+    re.I,
+)
+_REFUSAL = (
+    "This tool only handles NIFTY and BANKNIFTY options trading. "
+    "Ask me about a strategy, a backtest or an option concept."
+)
+
+
+def off_topic(text: str) -> bool:
+    return bool(_OFF_TOPIC.search(text)) or not text.strip("?!. \n")
+
+
 def _mock(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
     out = info.output_tools[0]
     props = set(out.parameters_json_schema.get("properties", {}))
@@ -56,6 +71,10 @@ def _mock(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
     returns = _tool_results(messages)
 
     if "concepts" in props:  # research
+        if not returns and off_topic(prompt.split(":", 1)[-1]):
+            return _call(
+                out.name, {"in_scope": False, "refusal": _REFUSAL, "concepts": [], "considerations": [], "sources": []}
+            )
         if not returns:
             query = re.sub(r"\s+", " ", prompt.split(":", 1)[-1]).strip()[:200] or "options strategy"
             return _call("search_knowledge", {"query": query, "k": 4})
@@ -72,6 +91,8 @@ def _mock(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
         )
 
     if "answer" in props:  # ask
+        if not returns and off_topic(prompt.split("Trader question:", 1)[-1]):
+            return _call(out.name, {"in_scope": False, "answer": _REFUSAL})
         if not returns:
             q = prompt.split("Trader question:", 1)[-1].strip()[:200] or "options"
             return _call("search_knowledge", {"query": q, "k": 3})
@@ -89,6 +110,10 @@ def _mock(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
     if "max_loss" in props:  # intake: a crude regex parse, no language understanding
         text = prompt.split("Trader request:", 1)[-1]
         lower = text.lower()
+        if off_topic(text):
+            return _call(
+                out.name, {"intent": "off_topic", "refusal": _REFUSAL, "idea": "", "notes": ["(mock) Out of scope."]}
+            )
         num = r"(\d[\d,]*(?:\.\d+)?)\s*(k|lakh)?"
 
         def amount(*words: str) -> float | None:

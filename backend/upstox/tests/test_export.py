@@ -3,8 +3,8 @@ from datetime import date
 
 import pandas as pd
 
-from app.data.export import export_range, get_job, start_job
-from tests.test_upstox import _client
+from upstox.export import export_range, get_job, start_job
+from upstox.tests.test_upstox import _client
 
 
 def test_export_writes_per_expiry_csv_and_resumes(tmp_path):

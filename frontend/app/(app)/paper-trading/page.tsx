@@ -128,7 +128,7 @@ export default function PaperTradingPage() {
           </div>
 
           <Positions rows={data.positions} onClosed={refresh} onError={setError} />
-          <div className="grid items-start gap-5 xl:grid-cols-2">
+          <div className="grid items-start gap-5 2xl:grid-cols-2">
             <Trades rows={data.trades} />
             <Orders rows={data.orders} />
           </div>

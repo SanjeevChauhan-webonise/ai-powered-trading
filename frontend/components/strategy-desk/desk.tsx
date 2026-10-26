@@ -6,14 +6,35 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { api, type ExpiriesResponse, type ModelsResponse, type Run } from "@/lib/api";
+import {
+  api,
+  type AskAnswer,
+  type ExpiriesResponse,
+  type ModelsResponse,
+  type Run,
+} from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { STORAGE_PREFIX } from "@/lib/brand";
-import { daysTo, expiryKind, expiryLabel, expiryNote, upcomingExpiries, type ExpiryOption } from "@/lib/expiries";
+import { SHOW_PAPER_TRADING } from "@/lib/features";
+import {
+  daysTo,
+  expiryKind,
+  expiryLabel,
+  expiryNote,
+  upcomingExpiries,
+  type ExpiryOption,
+} from "@/lib/expiries";
 import { tradePlanOf } from "@/lib/trade-plan";
 
+import { Answer } from "./answer";
 import { Pipeline } from "./pipeline";
 import { Recommendation } from "./recommendation";
 
@@ -29,10 +50,13 @@ const RECENT_KEY = `${STORAGE_PREFIX}:recent-queries`;
 const EXAMPLES = [
   "BANKNIFTY monthly expiry, EMA 9/21 crossover with RSI, max loss ₹2,000",
   "NIFTY mildly bullish till expiry, max loss ₹7,000. Which strategy fits and why?",
-  "Supertrend with VWAP on BANKNIFTY, target ₹7,777 per trade",
+  "NIFTY weekly expiry, buy ATM CE when MACD crosses above signal, stop loss 25%, target 50%",
+  "What is the current NIFTY lot size and how many lots fit in ₹1,00,000 capital?",
+  "What is theta decay and how does it hurt option buyers near expiry?",
 ];
 
-const label = "mb-1.5 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground";
+const label =
+  "mb-1.5 block text-[11px] font-medium uppercase tracking-wide text-muted-foreground";
 const field = "h-10 bg-background";
 
 function loadRecent(): string[] {
@@ -63,12 +87,21 @@ export function Desk() {
   const [models, setModels] = useState<ModelsResponse | null>(null);
   const [model, setModel] = useState("");
   const [live, setLive] = useState<ExpiriesResponse | null>(null);
+  const [answer, setAnswer] = useState<AskAnswer | null>(null);
   const alive = useRef(true);
 
   useEffect(() => {
     alive.current = true;
     const t = window.setTimeout(() => setRecent(loadRecent()), 0); // localStorage is browser-only
-    api.models().then(setModels).catch(() => undefined);
+    api
+      .models()
+      .then((m) => {
+        setModels(m);
+        // preselect the server's default model so the dropdown shows it (not just "Default")
+        if (m.models.some((x) => x.id === m.default))
+          setModel((cur) => cur || m.default);
+      })
+      .catch(() => undefined);
     return () => {
       alive.current = false;
       window.clearTimeout(t);
@@ -112,13 +145,14 @@ export function Desk() {
         setCapital(String(q.capital));
         setMaxLoss(q.max_loss ? String(q.max_loss) : "");
         setTarget(q.target_profit ? String(q.target_profit) : "");
-        if (r.status === "queued" || r.status === "running") void follow(r.id).catch(() => undefined);
+        if (r.status === "queued" || r.status === "running")
+          void follow(r.id).catch(() => undefined);
       })
       .catch((e: Error) => setError(e.message));
   }, [runParam, follow]);
 
-  async function generate(e: React.FormEvent) {
-    e.preventDefault();
+  async function generate(e: React.FormEvent | null, forceStrategy = false) {
+    e?.preventDefault();
     if (!query.trim()) {
       setError("Describe your view or trade first.");
       return;
@@ -127,10 +161,25 @@ export function Desk() {
     setError(null);
     setNotes([]);
     setRun(null);
+    setAnswer(null);
     try {
       const parsed = await api.parseQuery(query, model);
+      if (parsed.intent === "off_topic") {
+        setError(
+          parsed.refusal ||
+            "This tool only handles NIFTY and BANKNIFTY options trading.",
+        );
+        return;
+      }
+      if (parsed.intent === "question" && !forceStrategy) {
+        setAnswer(await api.ask(query, model)); // a general question: answer it, no plan and no backtest
+        return;
+      }
       const u = underlying ?? parsed.underlying;
-      if (!u) throw new Error("Pick an underlying (NIFTY or BANKNIFTY), or mention it in your query.");
+      if (!u)
+        throw new Error(
+          "Pick an underlying (NIFTY or BANKNIFTY), or mention it in your query.",
+        );
       const exp = expiry || parsed.expiry || null;
       const cap = Number(capital) || parsed.capital || 100000;
       const loss = Number(maxLoss) || parsed.max_loss || null;
@@ -140,7 +189,8 @@ export function Desk() {
       setNotes(parsed.notes ?? []);
       if (!capital && parsed.capital) setCapital(String(parsed.capital));
       if (!maxLoss && parsed.max_loss) setMaxLoss(String(parsed.max_loss));
-      if (!target && parsed.target_profit) setTarget(String(parsed.target_profit));
+      if (!target && parsed.target_profit)
+        setTarget(String(parsed.target_profit));
 
       const created = await api.createRun({
         underlying: u,
@@ -165,11 +215,18 @@ export function Desk() {
   // a date that is not in the list (from your query, or an earlier run) is kept as an extra option
   const liveHere = live && live.underlying === underlying ? live : null;
   const listed: ExpiryOption[] = liveHere
-    ? liveHere.expiries.map((e) => ({ date: e.date, kind: e.kind, days: e.days_to_expiry }))
+    ? liveHere.expiries.map((e) => ({
+        date: e.date,
+        kind: e.kind,
+        days: e.days_to_expiry,
+      }))
     : upcomingExpiries(underlying);
   const expiryOptions =
     expiry && underlying && !listed.some((o) => o.date === expiry)
-      ? [...listed, { date: expiry, kind: expiryKind(expiry), days: daysTo(expiry) }].sort((x, y) => x.date.localeCompare(y.date))
+      ? [
+          ...listed,
+          { date: expiry, kind: expiryKind(expiry), days: daysTo(expiry) },
+        ].sort((x, y) => x.date.localeCompare(y.date))
       : listed;
   const plan = tradePlanOf(run);
   const working = busy || run?.status === "queued" || run?.status === "running";
@@ -178,29 +235,43 @@ export function Desk() {
     <main className="mx-auto max-w-[1400px] space-y-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Strategy Desk</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Strategy Desk
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Describe your view. Five agents research, build, verify, backtest and risk-review a strategy for you.
+            Describe your view. Five agents research, build, verify, backtest
+            and risk-review a strategy for you.
           </p>
         </div>
-        <div className="flex rounded-xl bg-muted p-1 text-sm font-medium">
-          <span className="rounded-lg bg-card px-4 py-1.5 shadow-sm">Backtest mode</span>
-          <Link href="/paper-trading" className="px-4 py-1.5 text-muted-foreground hover:text-foreground">
-            Paper trade mode
-          </Link>
-        </div>
+        {SHOW_PAPER_TRADING && (
+          <div className="flex rounded-xl bg-muted p-1 text-sm font-medium">
+            <span className="rounded-lg bg-card px-4 py-1.5 shadow-sm">
+              Backtest mode
+            </span>
+            <Link
+              href="/paper-trading"
+              className="px-4 py-1.5 text-muted-foreground hover:text-foreground"
+            >
+              Paper trade mode
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="grid items-start gap-5 xl:grid-cols-[1fr_1.1fr_1fr]">
         <Card>
           <CardHeader>
-          <CardTitle className="text-base">Ask the agents</CardTitle>
-          <CardAction><span className="text-xs text-muted-foreground">Step 1</span></CardAction>
-        </CardHeader>
+            <CardTitle className="text-base">Ask the agents</CardTitle>
+            <CardAction>
+              <span className="text-xs text-muted-foreground">Step 1</span>
+            </CardAction>
+          </CardHeader>
           <CardContent>
             <form onSubmit={generate} className="space-y-4">
               <div>
-                <label className={label} htmlFor="q">Your query</label>
+                <label className={label} htmlFor="q">
+                  Your query
+                </label>
                 <textarea
                   id="q"
                   value={query}
@@ -209,9 +280,27 @@ export function Desk() {
                   placeholder={EXAMPLES[0]}
                   className="w-full resize-y rounded-lg border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                 />
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  <span className="text-xs text-muted-foreground">
+                    Try an example:
+                  </span>
+                  {EXAMPLES.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      onClick={() => setQuery(q)}
+                      className="max-w-[16rem] truncate rounded-full border bg-muted/50 px-2.5 py-1 text-xs hover:bg-muted"
+                      title={q}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Name indicators (EMA, RSI, VWAP, Supertrend) to use them; otherwise the agents choose from research
-                  and market news.
+                  Name indicators (EMA, RSI, VWAP, Supertrend) to use them;
+                  otherwise the agents choose from research and market news. You
+                  can also ask a NIFTY / BANKNIFTY options question, such as
+                  &quot;what is theta decay?&quot;.
                 </p>
               </div>
 
@@ -226,7 +315,9 @@ export function Desk() {
                       title={u.supported ? undefined : "Not supported yet"}
                       onClick={() => setUnderlying(u.id as Underlying)}
                       className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-                        underlying === u.id ? "border-primary bg-primary/10 text-primary" : "hover:bg-muted"
+                        underlying === u.id
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "hover:bg-muted"
                       }`}
                     >
                       {u.id}
@@ -236,7 +327,9 @@ export function Desk() {
               </div>
 
               <div>
-                <label className={label} htmlFor="exp">Expiry you plan to trade</label>
+                <label className={label} htmlFor="exp">
+                  Expiry you plan to trade
+                </label>
                 <select
                   id="exp"
                   value={expiry}
@@ -245,7 +338,9 @@ export function Desk() {
                   className="h-10 w-full rounded-lg border bg-background px-2 text-sm disabled:opacity-60"
                 >
                   <option value="">
-                    {underlying ? "Not specified (read from query / nearest)" : "Pick an underlying first"}
+                    {underlying
+                      ? "Not specified (read from query / nearest)"
+                      : "Pick an underlying first"}
                   </option>
                   {expiryOptions.map((o) => (
                     <option key={o.date} value={o.date}>
@@ -267,20 +362,54 @@ export function Desk() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className={label} htmlFor="cap">Capital (₹)</label>
-                  <Input id="cap" inputMode="numeric" className={`${field} font-mono`} placeholder="1,00,000" value={capital} onChange={(e) => setCapital(e.target.value.replace(/[^\d.]/g, ""))} />
+                  <label className={label} htmlFor="cap">
+                    Capital (₹)
+                  </label>
+                  <Input
+                    id="cap"
+                    inputMode="numeric"
+                    className={`${field} font-mono`}
+                    placeholder="1,00,000"
+                    value={capital}
+                    onChange={(e) =>
+                      setCapital(e.target.value.replace(/[^\d.]/g, ""))
+                    }
+                  />
                 </div>
                 <div>
-                  <label className={label} htmlFor="ml">Max loss (₹)</label>
-                  <Input id="ml" inputMode="numeric" className={`${field} font-mono`} placeholder="per trade" value={maxLoss} onChange={(e) => setMaxLoss(e.target.value.replace(/[^\d.]/g, ""))} />
+                  <label className={label} htmlFor="ml">
+                    Max loss (₹)
+                  </label>
+                  <Input
+                    id="ml"
+                    inputMode="numeric"
+                    className={`${field} font-mono`}
+                    placeholder="per trade"
+                    value={maxLoss}
+                    onChange={(e) =>
+                      setMaxLoss(e.target.value.replace(/[^\d.]/g, ""))
+                    }
+                  />
                 </div>
                 <div>
-                  <label className={label} htmlFor="tg">Target (₹)</label>
-                  <Input id="tg" inputMode="numeric" className={`${field} font-mono`} placeholder="per trade" value={target} onChange={(e) => setTarget(e.target.value.replace(/[^\d.]/g, ""))} />
+                  <label className={label} htmlFor="tg">
+                    Target (₹)
+                  </label>
+                  <Input
+                    id="tg"
+                    inputMode="numeric"
+                    className={`${field} font-mono`}
+                    placeholder="per trade"
+                    value={target}
+                    onChange={(e) =>
+                      setTarget(e.target.value.replace(/[^\d.]/g, ""))
+                    }
+                  />
                 </div>
               </div>
               <p className="-mt-2 text-xs text-muted-foreground">
-                Lots are worked out from your max loss (per trade, option buying). Blank fields are read from your query.
+                Lots are worked out from your max loss (per trade, option
+                buying). Blank fields are read from your query.
               </p>
 
               <div>
@@ -300,26 +429,41 @@ export function Desk() {
               </div>
 
               <div>
-                <label className={label} htmlFor="mdl">Model</label>
+                <label className={label} htmlFor="mdl">
+                  Model
+                </label>
                 <select
                   id="mdl"
-                  value={model}
+                  value={models?.locked ? "" : model}
+                  disabled={models?.locked}
                   onChange={(e) => setModel(e.target.value)}
                   className="h-10 w-full rounded-lg border bg-background px-2 text-sm"
                 >
                   <option value="">Default ({models?.default ?? "…"})</option>
                   {models?.models.map((m) => (
-                    <option key={m.id} value={m.id}>{m.id}</option>
+                    <option key={m.id} value={m.id}>
+                      {m.id}
+                    </option>
                   ))}
                 </select>
+                {models?.locked && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    The model is fixed by the server ({models.default}).
+                  </p>
+                )}
                 {models?.default.startsWith("mock:") && !model && (
                   <p className="mt-1 text-xs text-amber-700">
-                    The default is the offline mock model (scripted, no real reasoning). Pick a real model above.
+                    The default is the offline mock model (scripted, no real
+                    reasoning). Pick a real model above.
                   </p>
                 )}
               </div>
 
-              {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
+              {error && (
+                <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800">
+                  {error}
+                </p>
+              )}
               {notes.length > 0 && (
                 <ul className="list-disc space-y-0.5 rounded-lg bg-amber-50 py-2 pl-7 pr-3 text-xs text-amber-900">
                   {notes.map((n, i) => (
@@ -329,27 +473,52 @@ export function Desk() {
               )}
               {user && (
                 <p className="text-xs text-muted-foreground">
-                  Answers and guardrails are tuned for your <span className="font-medium">{user.level}</span> level
+                  Answers and guardrails are tuned for your{" "}
+                  <span className="font-medium">{user.level}</span> level
                   (change it in Settings).
                 </p>
               )}
-              <Button type="submit" className="h-11 w-full text-sm font-semibold" disabled={busy}>
+              <Button
+                type="submit"
+                className="h-11 w-full text-sm font-semibold"
+                disabled={busy}
+              >
                 {busy && <LoaderCircle className="animate-spin" />}
-                {busy ? "Agents are working…" : "Generate strategy"}
+                {busy ? "Agents are working…" : "Ask or generate strategy"}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        <Recommendation run={run} plan={plan} working={working} />
-        <Pipeline run={run} />
+        {answer ? (
+          <Answer
+            answer={answer}
+            onBuildPlan={() => void generate(null, true)}
+          />
+        ) : (
+          <Recommendation run={run} plan={plan} working={working} />
+        )}
+        <Pipeline
+          run={run}
+          note={
+            answer
+              ? "Answered without running the agents or a backtest."
+              : undefined
+          }
+        />
       </div>
 
       <Card>
         <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3 text-sm">
           <span className="font-semibold">Recent queries</span>
-          {(recent.length ? recent : EXAMPLES).map((q) => (
-            <button key={q} type="button" onClick={() => setQuery(q)} className="max-w-md truncate text-primary hover:underline" title={q}>
+          {(recent.length ? recent : EXAMPLES.slice(0, 3)).map((q) => (
+            <button
+              key={q}
+              type="button"
+              onClick={() => setQuery(q)}
+              className="max-w-md truncate text-primary hover:underline"
+              title={q}
+            >
               {q}
             </button>
           ))}

@@ -15,5 +15,8 @@ def list_models(settings: Cfg) -> ModelsResponse:
     except ModelError:
         default_ok = False
     return ModelsResponse(
-        default=settings.default_model, default_available=default_ok, models=available_models(settings)
+        default=settings.default_model,
+        default_available=default_ok,
+        locked=settings.lock_model,
+        models=available_models(settings),
     )

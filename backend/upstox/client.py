@@ -20,9 +20,15 @@ from app.data.normalize import DataError
 log = logging.getLogger(__name__)
 
 BASE_URL = "https://api.upstox.com"
-INDEX_KEYS = {"NIFTY": "NSE_INDEX|Nifty 50", "BANKNIFTY": "NSE_INDEX|Nifty Bank"}
+INDEX_KEYS = {
+    "NIFTY": "NSE_INDEX|Nifty 50",
+    "BANKNIFTY": "NSE_INDEX|Nifty Bank",
+    "FINNIFTY": "NSE_INDEX|Nifty Fin Service",
+    "INDIAVIX": "NSE_INDEX|India VIX",
+}
 EXPIRED_INTERVALS = {1: "1minute", 3: "3minute", 5: "5minute", 15: "15minute", 30: "30minute"}
 UNDERLYING_CHUNK_DAYS = 28  # v3 minute candles: max 1 month per request (1-15 min)
+DAILY_CHUNK_DAYS = 3000  # v3 day candles: max 1 decade per request; daily data starts Jan 2000
 OPTION_CHUNK_DAYS = 7  # the expired-candle docs state no range limit, so stay conservative
 OPTION_LOOKBACK_DAYS = 31  # a monthly contract lists for about a month before expiry
 WEEKLY_LOOKBACK_DAYS = 7
@@ -66,6 +72,13 @@ class UpstoxClient:
         out: list[list[Any]] = []
         for lo, hi in _windows(start, end, UNDERLYING_CHUNK_DAYS):
             path = f"/v3/historical-candle/{quote(instrument_key, safe='')}/minutes/{interval}/{hi}/{lo}"
+            out += self._get(path)["candles"]
+        return out
+
+    def daily_candles(self, instrument_key: str, start: date, end: date) -> list[list[Any]]:
+        out: list[list[Any]] = []
+        for lo, hi in _windows(start, end, DAILY_CHUNK_DAYS):
+            path = f"/v3/historical-candle/{quote(instrument_key, safe='')}/days/1/{hi}/{lo}"
             out += self._get(path)["candles"]
         return out
 
@@ -119,6 +132,16 @@ def fetch_underlying(client: UpstoxClient, underlying: str, interval: int, start
     df = _candle_frame(candles).drop(columns="oi")
     df.insert(1, "symbol", underlying)
     return df
+
+
+def fetch_daily(client: UpstoxClient, underlying: str, start: date, end: date) -> pd.DataFrame:
+    """Daily candles (history from Jan 2000) in the standard upload schema."""
+    candles = client.daily_candles(INDEX_KEYS[underlying], start, end)
+    if not candles:
+        raise UpstoxError(f"Upstox returned no {underlying} daily candles for {start}..{end}")
+    df = _candle_frame(candles).drop(columns="oi")
+    df.insert(1, "symbol", underlying)
+    return df.sort_values("timestamp").drop_duplicates("timestamp").reset_index(drop=True)
 
 
 def _pick_strikes(contracts: list[dict[str, Any]], reference: float, n_strikes: int) -> list[dict[str, Any]]:

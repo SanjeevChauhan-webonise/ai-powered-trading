@@ -34,7 +34,7 @@ def upload_dir(settings: Settings) -> Path:
 
 
 def collect_sources(settings: Settings) -> list[Source]:
-    out = [Source(p.name, p, "builtin") for p in sorted(BUILTIN_DIR.glob("*.md"))]
+    out = [Source(p.name, p, "builtin") for p in sorted(BUILTIN_DIR.glob("*.md"))] if settings.rag_builtin_docs else []
     up = upload_dir(settings)
     if up.exists():
         out += [

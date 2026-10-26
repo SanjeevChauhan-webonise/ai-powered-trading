@@ -9,8 +9,8 @@ from app.core.config import Settings
 from app.core.db import Base
 from app.data import models  # noqa: F401
 from app.data.csv_loader import load_export_dir
-from app.data.export import export_range
-from tests.test_upstox import _client
+from upstox.export import export_range
+from upstox.tests.test_upstox import _client
 
 
 def test_export_then_load_roundtrip(tmp_path):
@@ -28,3 +28,20 @@ def test_export_then_load_roundtrip(tmp_path):
     assert row.underlying_rows == 2 and row.lot_size == 75
     assert row.expiries == ["2025-04-17", "2025-04-24"]
     assert row.options_rows == 2 * len(second.drop_duplicates(["timestamp", "strike", "option_type"]))
+
+
+def test_coarsen_options_bins_on_the_clock() -> None:
+    from app.data.csv_loader import _coarsen_options
+
+    ts = pd.to_datetime(["2025-01-01 09:15", "2025-01-01 09:16", "2025-01-01 09:19", "2025-01-01 09:20"])
+    df = pd.DataFrame(
+        {"timestamp": ts, "underlying": "NIFTY", "expiry": pd.Timestamp("2025-01-02"), "strike": 100.0,
+         "option_type": "CE", "open": [10.0, 11, 12, 13], "high": [12.0, 14, 13, 15], "low": [9.0, 10, 11, 12],
+         "close": [11.0, 12, 13, 14], "volume": [1, 2, 3, 4], "oi": [5.0, 6, 7, 8]}
+    )  # fmt: skip
+    out = _coarsen_options(df, 5)
+    assert list(out["timestamp"]) == list(pd.to_datetime(["2025-01-01 09:15", "2025-01-01 09:20"]))
+    first = out.iloc[0]
+    assert (first["open"], first["high"], first["low"], first["close"], first["volume"], first["oi"]) == (
+        10.0, 14.0, 9.0, 13.0, 6, 7.0
+    )  # fmt: skip

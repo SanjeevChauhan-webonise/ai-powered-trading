@@ -10,6 +10,7 @@ from app.core.models import BacktestRun
 from app.data.backtest_io import build_run_record, load_frames
 from app.data.models import Dataset
 from app.engine.backtest import run_backtest
+from app.engine.lots import LOT_SCHEDULES
 from app.schemas.api import BacktestRequest, BacktestRunOut, BacktestRunSummary
 from app.schemas.backtest import BacktestResult
 from app.schemas.strategy import StrategySpec
@@ -56,8 +57,9 @@ def create_backtest(req: BacktestRequest, db: Db, settings: Cfg, user: CurrentUs
     try:
         under, opts = load_frames(settings, ds.id)
         result = run_backtest(
-            spec, under, opts, lot_size=ds.lot_size, start=req.start, end=req.end, capital=req.capital
-        )
+            spec, under, opts, lot_size=ds.lot_size, start=req.start, end=req.end, capital=req.capital,
+            lot_schedule=LOT_SCHEDULES.get(ds.underlying),
+        )  # fmt: skip
         run = record(result=result)
     except Exception as e:  # engine/data problems are recorded, not raised
         log.exception("backtest failed")

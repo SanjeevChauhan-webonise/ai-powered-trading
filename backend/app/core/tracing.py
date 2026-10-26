@@ -53,15 +53,31 @@ def reset_tracing() -> None:
 
 
 @contextmanager
-def run_span(run_id: str, name: str = "pipeline_run") -> Iterator[None]:
-    """One parent span per pipeline run so all agent/tool spans form a single Langfuse trace tagged with run_id."""
+def run_span(
+    run_id: str,
+    name: str = "pipeline_run",
+    *,
+    title: str | None = None,
+    user_id: str | None = None,
+    tags: list[str] | None = None,
+    metadata: dict[str, str] | None = None,
+) -> Iterator[None]:
+    """One parent span per pipeline run so all agent/tool spans form a single Langfuse trace tagged with run_id.
+
+    `title` is the trace name shown in Langfuse (defaults to `name`, the span name); `user_id` fills its Users tab;
+    tags and metadata are filterable.
+    """
     tracer = _provider.get_tracer("app.pipeline") if _provider else trace.get_tracer("app.pipeline")
-    attrs = {
+    attrs: dict[str, str | list[str]] = {
         "run_id": run_id,
         "langfuse.session.id": run_id,
-        "langfuse.trace.name": name,
-        "langfuse.trace.tags": ["ai-powered-trading"],
+        "langfuse.trace.name": title or name,
+        "langfuse.trace.tags": ["ai-powered-trading", *(tags or [])],
         "langfuse.trace.metadata.run_id": run_id,
     }
+    if user_id:
+        attrs["langfuse.user.id"] = user_id
+    for k, v in (metadata or {}).items():
+        attrs[f"langfuse.trace.metadata.{k}"] = v
     with tracer.start_as_current_span(name, attributes=attrs):
         yield

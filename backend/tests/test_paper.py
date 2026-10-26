@@ -267,3 +267,63 @@ def test_expiries_not_yet_listed_are_not_offered(client: TestClient):
     assert r.status_code == 400 and "not an available expiry" in r.json()["detail"]
     client.post("/paper/clock/advance", json={"candles": 400})  # into day 2: now it is listed
     assert late.date().isoformat() in client.get("/paper/expiries").json()["expiries"]
+
+
+def two_days_of_trades(client: TestClient, ds: str) -> list[dict[str, Any]]:
+    """One CE closed on 4 Jan and one PE closed on 5 Jan (1-minute candles: 375 a day)."""
+    started(client, ds)
+    out = []
+    for option_type, candles in (("CE", 60), ("PE", 30)):
+        atm_order(client, option_type=option_type)
+        client.post("/paper/clock/advance", json={"candles": candles})
+        pid = client.get("/paper/positions").json()[0]["id"]
+        out.append(client.post(f"/paper/positions/{pid}/close", json={}).json())
+        if option_type == "CE":
+            client.post("/paper/clock/advance", json={"candles": 375})  # into the next trading day
+    return out
+
+
+def test_pnl_by_date_and_range(client: TestClient, ds: str):
+    t1, t2 = two_days_of_trades(client, ds)
+    assert t1["exit_time"][:10] == "2024-01-04" and t2["exit_time"][:10] == "2024-01-05"
+
+    allp = client.get("/paper/pnl").json()
+    s = allp["summary"]
+    assert s["trades"] == 2 and abs(s["net_pnl"] - (t1["net_pnl"] + t2["net_pnl"])) < 0.02
+    assert abs(s["gross_pnl"] - (t1["gross_pnl"] + t2["gross_pnl"])) < 0.02
+    assert abs(s["net_pnl"] - (s["gross_pnl"] - s["costs"])) < 0.02
+    assert allp["available_from"] == "2024-01-04" and allp["available_to"] == "2024-01-05"
+    assert [d["date"] for d in allp["daily"]] == ["2024-01-04", "2024-01-05"]
+    assert abs(allp["daily"][-1]["cumulative"] - s["net_pnl"]) < 0.02
+    assert {g["key"] for g in allp["by_option_type"]} == {"CE", "PE"} and allp["by_exit_reason"][0]["key"] == "manual"
+    assert s["wins"] + s["losses"] <= 2 and s["max_drawdown"] >= 0
+
+    one = client.get("/paper/pnl", params={"date_from": "2024-01-04", "date_to": "2024-01-04"}).json()
+    assert one["summary"]["trades"] == 1 and abs(one["summary"]["net_pnl"] - t1["net_pnl"]) < 0.02
+    assert one["available_from"] == "2024-01-04" and one["available_to"] == "2024-01-05"  # bounds ignore the filter
+    tail = client.get("/paper/pnl", params={"date_from": "2024-01-05"}).json()
+    assert tail["summary"]["trades"] == 1 and tail["daily"][0]["cumulative"] == tail["daily"][0]["net_pnl"]
+    head = client.get("/paper/pnl", params={"date_to": "2024-01-04"}).json()
+    assert head["summary"]["trades"] == 1
+
+
+def test_pnl_empty_range_and_bad_range(client: TestClient, ds: str):
+    two_days_of_trades(client, ds)
+    empty = client.get("/paper/pnl", params={"date_from": "2030-01-01", "date_to": "2030-01-31"}).json()
+    assert empty["summary"]["trades"] == 0 and empty["summary"]["win_rate_pct"] is None and empty["daily"] == []
+    assert empty["summary"]["profit_factor"] is None and empty["summary"]["best_trade"] is None
+    r = client.get("/paper/pnl", params={"date_from": "2024-01-05", "date_to": "2024-01-04"})
+    assert r.status_code == 400
+    assert client.get("/paper/pnl", params={"date_from": "nonsense"}).status_code == 422
+
+
+def test_trades_can_be_filtered_by_date_and_pnl_is_private(client: TestClient, ds: str):
+    two_days_of_trades(client, ds)
+    jan4 = client.get("/paper/trades", params={"date_from": "2024-01-04", "date_to": "2024-01-04"}).json()
+    jan5 = client.get("/paper/trades", params={"date_from": "2024-01-05"}).json()
+    assert len(jan4) == 1 and jan4[0]["option_type"] == "CE" and len(jan5) == 1 and jan5[0]["option_type"] == "PE"
+    assert len(client.get("/paper/trades").json()) == 2
+    bob = TestClient(app)
+    bob.headers.update(make_login(app.state.session_factory, "bob@example.com", "Bob"))
+    b = bob.get("/paper/pnl").json()
+    assert b["summary"]["trades"] == 0 and b["available_from"] is None and bob.get("/paper/trades").json() == []

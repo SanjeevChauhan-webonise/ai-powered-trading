@@ -140,3 +140,45 @@ class ExpiriesOut(BaseModel):
     dataset_id: str
     clock_time: datetime
     expiries: list[date]
+
+
+class PnlSummary(BaseModel):
+    net_pnl: float
+    gross_pnl: float
+    costs: float
+    trades: int
+    wins: int
+    losses: int
+    win_rate_pct: float | None
+    avg_win: float | None
+    avg_loss: float | None
+    profit_factor: float | None = Field(description="Sum of winning trades / sum of losing trades; null if none lost")
+    best_trade: float | None
+    worst_trade: float | None
+    max_drawdown: float = Field(description="Largest fall of the running net P&L (trade by trade) inside the range")
+
+
+class PnlDay(BaseModel):
+    date: date
+    trades: int
+    net_pnl: float
+    cumulative: float = Field(description="Running net P&L from the start of the range to the end of this day")
+
+
+class PnlGroup(BaseModel):
+    key: str
+    trades: int
+    net_pnl: float
+
+
+class PnlOut(BaseModel):
+    date_from: date | None
+    date_to: date | None
+    available_from: date | None = Field(
+        description="Date of the first closed trade in the account (ignores the filter)"
+    )
+    available_to: date | None
+    summary: PnlSummary
+    daily: list[PnlDay]
+    by_exit_reason: list[PnlGroup]
+    by_option_type: list[PnlGroup]

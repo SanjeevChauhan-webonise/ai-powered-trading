@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
 from app.api.deps import Cfg
-from app.data.expiries import ExpiryError, ExpiryService, get_service
+from upstox.expiries import ExpiryError, ExpiryService, get_service
 
 router = APIRouter(prefix="/expiries", tags=["expiries"])
 

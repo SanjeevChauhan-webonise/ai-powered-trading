@@ -12,6 +12,8 @@ from app.api.deps import Cfg, CurrentUser, PipelineDep, SessionFactory
 from app.api.spec_source import resolve_spec
 from app.core.models import PipelineRun
 from app.data.models import Dataset
+from app.guardrails.limits import check_run_quota, risk_limit_problem, throttle_llm
+from app.guardrails.text import REFUSAL, guard_text
 from app.llm.registry import ModelError, resolve_model
 from app.schemas.agents import STEP_ORDER, AskAnswer, ParsedQuery, RunOut, RunRequest, RunSummary, StepRecord
 
@@ -52,19 +54,27 @@ class ParseRequest(BaseModel):
 
 
 @router.post("/parse", response_model=ParsedQuery, summary="Understand a free-text trade request (no run is started)")
-async def parse_query(req: ParseRequest, pipeline: PipelineDep, user: CurrentUser) -> ParsedQuery:
+async def parse_query(req: ParseRequest, pipeline: PipelineDep, user: CurrentUser, settings: Cfg) -> ParsedQuery:
     """Review the extracted underlying, expiry, amounts and indicators, then send them to POST /runs."""
+    throttle_llm(user.id, settings)
+    g = guard_text(req.query, source="parse", user_id=user.id)
+    if g.injection:  # refused in code, before any model call
+        return ParsedQuery(intent="off_topic", refusal=REFUSAL, idea="", notes=["Request blocked by the input guard."])
     try:
-        return await pipeline.parse_query(req.query, req.model)
+        return await pipeline.parse_query(g.text, req.model)
     except ModelError as e:
         raise HTTPException(400, str(e)) from e
 
 
 @router.post("/ask", response_model=AskAnswer, summary="Ask any trading question (answered from RAG + news, no run)")
-async def ask(req: ParseRequest, pipeline: PipelineDep, user: CurrentUser) -> AskAnswer:
+async def ask(req: ParseRequest, pipeline: PipelineDep, user: CurrentUser, settings: Cfg) -> AskAnswer:
     """For concepts, comparisons, risk and market-backdrop questions. To build and test a strategy, use POST /runs."""
+    throttle_llm(user.id, settings)
+    g = guard_text(req.query, source="ask", user_id=user.id)
+    if g.injection:
+        return AskAnswer(in_scope=False, answer=REFUSAL)
     try:
-        return await pipeline.ask(req.query, req.model, user.level)
+        return await pipeline.ask(g.text, req.model, user.level)
     except ModelError as e:
         raise HTTPException(400, str(e)) from e
 
@@ -76,6 +86,15 @@ async def create_run(
     """Returns immediately; follow progress with GET /runs/{id} or GET /runs/{id}/stream (SSE)."""
 
     uid = user.id
+    throttle_llm(uid, settings)
+    if req.idea:
+        g = guard_text(req.idea, source="run", user_id=uid)
+        if g.injection:
+            raise HTTPException(400, REFUSAL)
+        req = req.model_copy(update={"idea": g.text})
+    problem = risk_limit_problem(user.level, req.capital, req.max_loss, req.target_profit)
+    if problem:
+        raise HTTPException(400, problem)
 
     def create() -> RunSummary:
         with factory() as db:
@@ -93,6 +112,7 @@ async def create_run(
                 ).first()
                 if ds is None:
                     raise HTTPException(404, f"No {req.underlying} dataset with option candles; load one first")
+            check_run_quota(db, uid, settings)
             stored = req.model_copy(update={"dataset_id": ds.id})
             if not ds.underlying_rows or not ds.options_rows:
                 raise HTTPException(400, "Dataset needs both underlying and option candles")

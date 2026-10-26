@@ -3,7 +3,8 @@ from datetime import date
 import httpx
 import pytest
 
-from app.data.upstox import UpstoxClient, UpstoxError, _windows, fetch_options, fetch_underlying
+from upstox import UpstoxClient, UpstoxError, fetch_options, fetch_underlying
+from upstox.client import _windows
 
 
 def _candle(ts: str, px: float) -> list:
@@ -79,12 +80,12 @@ def test_retries_then_raises_on_api_error():
 
 
 def test_option_type_and_last_expiries_filters():
-    from app.data.upstox import list_expiries
+    from upstox import list_expiries
 
     client = _client()
     under = fetch_underlying(client, "NIFTY", 5, date(2025, 4, 10), date(2025, 4, 17))
     opts, _ = fetch_options(client, "NIFTY", under, 5, date(2025, 4, 10), date(2025, 4, 17), n_strikes=1)
-    from app.data.upstox import fetch_expiry_options
+    from upstox import fetch_expiry_options
 
     ce, _ = fetch_expiry_options(client, "NIFTY", under, date(2025, 4, 17), 5, date(2025, 4, 10), 1, ("CE",))
     assert set(ce["option_type"]) == {"CE"} and len(opts) > len(ce)

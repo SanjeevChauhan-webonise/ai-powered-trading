@@ -4,3957 +4,4177 @@
  */
 
 export interface paths {
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Service health */
-        get: operations["health_health_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/health": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create an account and log in */
-        post: operations["register_auth_register_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Service health */
+    get: operations["health_health_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/register": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Log in with email and password */
-        post: operations["login_auth_login_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Create an account and log in */
+    post: operations["register_auth_register_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The logged-in user */
-        get: operations["me_auth_me_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update your name or experience level */
-        patch: operations["update_me_auth_me_patch"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Log in with email and password */
+    post: operations["login_auth_login_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** End this login */
-        post: operations["logout_auth_logout_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** The logged-in user */
+    get: operations["me_auth_me_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update your name or experience level */
+    patch: operations["update_me_auth_me_patch"];
+    trace?: never;
+  };
+  "/auth/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/change-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Change your password (other logins are ended) */
-        post: operations["change_password_auth_change_password_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** End this login */
+    post: operations["logout_auth_logout_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/change-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/datasets/upload": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Upload CSV/Parquet with a column mapping */
-        post: operations["upload_dataset_datasets_upload_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Change your password (other logins are ended) */
+    post: operations["change_password_auth_change_password_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/datasets/upload": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/datasets/synthetic": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Generate a synthetic demo dataset */
-        post: operations["create_synthetic_datasets_synthetic_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Upload CSV/Parquet with a column mapping */
+    post: operations["upload_dataset_datasets_upload_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/datasets/synthetic": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/datasets/upstox": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Import NIFTY/BANKNIFTY history from Upstox */
-        post: operations["import_upstox_datasets_upstox_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Generate a synthetic demo dataset */
+    post: operations["create_synthetic_datasets_synthetic_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/datasets/upstox": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/datasets/upstox/export-jobs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List export jobs */
-        get: operations["list_export_jobs_datasets_upstox_export_jobs_get"];
-        put?: never;
-        /**
-         * Start a background CSV export from Upstox
-         * @description Writes one options CSV per expiry under <storage_dir>/exports/<underlying>/<N>m/; re-running resumes.
-         */
-        post: operations["start_export_job_datasets_upstox_export_jobs_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Import NIFTY/BANKNIFTY history from Upstox */
+    post: operations["import_upstox_datasets_upstox_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/datasets/upstox/export-jobs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/datasets/upstox/export-jobs/{job_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Export job progress */
-        get: operations["get_export_job_datasets_upstox_export_jobs__job_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** List export jobs */
+    get: operations["list_export_jobs_datasets_upstox_export_jobs_get"];
+    put?: never;
+    /**
+     * Start a background CSV export from Upstox
+     * @description Writes one options CSV per expiry under <storage_dir>/exports/<underlying>/<N>m/; re-running resumes.
+     */
+    post: operations["start_export_job_datasets_upstox_export_jobs_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/datasets/upstox/export-jobs/{job_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/datasets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List datasets */
-        get: operations["list_datasets_datasets_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Export job progress */
+    get: operations["get_export_job_datasets_upstox_export_jobs__job_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/datasets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/datasets/{dataset_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Dataset details and quality report */
-        get: operations["get_dataset_datasets__dataset_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** List datasets */
+    get: operations["list_datasets_datasets_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/datasets/{dataset_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/strategies/templates": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Built-in strategy templates */
-        get: operations["list_templates_strategies_templates_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Dataset details and quality report */
+    get: operations["get_dataset_datasets__dataset_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/strategies/templates": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/strategies/validate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Validate a strategy spec */
-        post: operations["validate_spec_strategies_validate_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Built-in strategy templates */
+    get: operations["list_templates_strategies_templates_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/strategies/validate": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/strategies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List saved strategies */
-        get: operations["list_strategies_strategies_get"];
-        put?: never;
-        /** Save a strategy */
-        post: operations["create_strategy_strategies_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Validate a strategy spec */
+    post: operations["validate_spec_strategies_validate_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/strategies": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/strategies/{strategy_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a saved strategy */
-        get: operations["get_strategy_strategies__strategy_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** List saved strategies */
+    get: operations["list_strategies_strategies_get"];
+    put?: never;
+    /** Save a strategy */
+    post: operations["create_strategy_strategies_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/strategies/{strategy_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/backtests": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List backtest runs (summaries) */
-        get: operations["list_backtests_backtests_get"];
-        put?: never;
-        /**
-         * Run a backtest directly (no AI)
-         * @description Runs synchronously. Engine failures are stored as a run with status 'failed' and an error message.
-         */
-        post: operations["create_backtest_backtests_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Get a saved strategy */
+    get: operations["get_strategy_strategies__strategy_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/backtests": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/backtests/{run_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Full backtest result */
-        get: operations["get_backtest_backtests__run_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** List backtest runs (summaries) */
+    get: operations["list_backtests_backtests_get"];
+    put?: never;
+    /**
+     * Run a backtest directly (no AI)
+     * @description Runs synchronously. Engine failures are stored as a run with status 'failed' and an error message.
+     */
+    post: operations["create_backtest_backtests_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/backtests/{run_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/models": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** LLMs available from configured providers */
-        get: operations["list_models_models_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Full backtest result */
+    get: operations["get_backtest_backtests__run_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/models": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/knowledge/ingest": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Re-ingest built-in docs and uploads */
-        post: operations["reingest_knowledge_ingest_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** LLMs available from configured providers */
+    get: operations["list_models_models_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/knowledge/ingest": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/knowledge/upload": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Upload a .md or .pdf document */
-        post: operations["upload_knowledge_upload_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Re-ingest built-in docs and uploads */
+    post: operations["reingest_knowledge_ingest_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/knowledge/upload": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/knowledge/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Retrieve relevant chunks (no LLM) */
-        post: operations["search_knowledge_search_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Upload a .md or .pdf document */
+    post: operations["upload_knowledge_upload_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/knowledge/search": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/knowledge/documents": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Ingested sources */
-        get: operations["documents_knowledge_documents_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Retrieve relevant chunks (no LLM) */
+    post: operations["search_knowledge_search_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/knowledge/documents": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/runs/parse": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Understand a free-text trade request (no run is started)
-         * @description Review the extracted underlying, expiry, amounts and indicators, then send them to POST /runs.
-         */
-        post: operations["parse_query_runs_parse_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Ingested sources */
+    get: operations["documents_knowledge_documents_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/runs/parse": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/runs/ask": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Ask any trading question (answered from RAG + news, no run)
-         * @description For concepts, comparisons, risk and market-backdrop questions. To build and test a strategy, use POST /runs.
-         */
-        post: operations["ask_runs_ask_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Understand a free-text trade request (no run is started)
+     * @description Review the extracted underlying, expiry, amounts and indicators, then send them to POST /runs.
+     */
+    post: operations["parse_query_runs_parse_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/runs/ask": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/runs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List pipeline runs */
-        get: operations["list_runs_runs_get"];
-        put?: never;
-        /**
-         * Start the multi-agent pipeline
-         * @description Returns immediately; follow progress with GET /runs/{id} or GET /runs/{id}/stream (SSE).
-         */
-        post: operations["create_run_runs_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Ask any trading question (answered from RAG + news, no run)
+     * @description For concepts, comparisons, risk and market-backdrop questions. To build and test a strategy, use POST /runs.
+     */
+    post: operations["ask_runs_ask_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/runs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/runs/{run_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Run status, step outputs and backtest link */
-        get: operations["get_run_runs__run_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** List pipeline runs */
+    get: operations["list_runs_runs_get"];
+    put?: never;
+    /**
+     * Start the multi-agent pipeline
+     * @description Returns immediately; follow progress with GET /runs/{id} or GET /runs/{id}/stream (SSE).
+     */
+    post: operations["create_run_runs_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/runs/{run_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/runs/{run_id}/stream": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Server-sent events: step progress, then run status, then done */
-        get: operations["stream_run_runs__run_id__stream_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Run status, step outputs and backtest link */
+    get: operations["get_run_runs__run_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/runs/{run_id}/stream": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/expiries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Upcoming option expiries (live exchange contract list)
-         * @description Real expiry dates (holiday shifts included) and the lot size. `stale` means the last cached copy is shown
-         *     because the download failed.
-         */
-        get: operations["list_expiries_expiries_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Server-sent events: step progress, then run status, then done */
+    get: operations["stream_run_runs__run_id__stream_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/expiries": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/account": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Your paper account (created on first use) */
-        get: operations["get_account_paper_account_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Upcoming option expiries (live exchange contract list)
+     * @description Real expiry dates (holiday shifts included) and the lot size. `stale` means the last cached copy is shown
+     *     because the download failed.
+     */
+    get: operations["list_expiries_expiries_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/account": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/account/reset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Wipe positions, orders and trades and start over */
-        post: operations["reset_account_paper_account_reset_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Your paper account (created on first use) */
+    get: operations["get_account_paper_account_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/account/reset": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/clock/start": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Choose the dataset the market replays and set the clock */
-        post: operations["start_clock_paper_clock_start_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Wipe positions, orders and trades and start over */
+    post: operations["reset_account_paper_account_reset_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/clock/start": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/clock/advance": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Move the market forward; stop/target/square-off/expiry run */
-        post: operations["advance_paper_clock_advance_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Choose the dataset the market replays and set the clock */
+    post: operations["start_clock_paper_clock_start_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/clock/advance": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/expiries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Expiries available at the market time */
-        get: operations["expiries_paper_expiries_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Move the market forward; stop/target/square-off/expiry run */
+    post: operations["advance_paper_clock_advance_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/expiries": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/chain": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Option prices of one expiry at the market time */
-        get: operations["chain_paper_chain_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Expiries available at the market time */
+    get: operations["expiries_paper_expiries_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/chain": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/positions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Open positions marked to the market time */
-        get: operations["positions_paper_positions_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Option prices of one expiry at the market time */
+    get: operations["chain_paper_chain_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/positions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/orders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Order history, newest first */
-        get: operations["orders_paper_orders_get"];
-        put?: never;
-        /** Buy an option at the market price */
-        post: operations["place_order_paper_orders_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Open positions marked to the market time */
+    get: operations["positions_paper_positions_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/orders": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/trades": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Closed trades with realised P&L, newest first */
-        get: operations["trades_paper_trades_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Order history, newest first */
+    get: operations["orders_paper_orders_get"];
+    put?: never;
+    /** Buy an option at the market price */
+    post: operations["place_order_paper_orders_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/trades": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/positions/{position_id}/close": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Sell to close at the market price */
-        post: operations["close_position_paper_positions__position_id__close_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Closed trades with realised P&L, newest first
+     * @description Closed trades; date_from / date_to (inclusive) filter on the day the trade was closed (market-clock time).
+     */
+    get: operations["trades_paper_trades_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/positions/{position_id}/close": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/paper/from-plan": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Paper-trade the plan of an AI run */
-        post: operations["from_plan_paper_from_plan_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Sell to close at the market price */
+    post: operations["close_position_paper_positions__position_id__close_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/from-plan": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get?: never;
+    put?: never;
+    /** Paper-trade the plan of an AI run */
+    post: operations["from_plan_paper_from_plan_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/paper/pnl": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Realised P&L of closed trades for a date or a date range
+     * @description Closed trades only (unrealised P&L of open positions is not included). A single day is date_from = date_to.
+     */
+    get: operations["pnl_paper_pnl_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** AccountOut */
-        AccountOut: {
-            /** Starting Balance */
-            starting_balance: number;
-            /** Cash */
-            cash: number;
-            /** Market Value */
-            market_value: number;
-            /** Equity */
-            equity: number;
-            /** Realized Pnl */
-            realized_pnl: number;
-            /** Unrealized Pnl */
-            unrealized_pnl: number;
-            /** Open Positions */
-            open_positions: number;
-            /** Dataset Id */
-            dataset_id: string | null;
-            /** Dataset Name */
-            dataset_name: string | null;
-            /** Underlying */
-            underlying: string | null;
-            /** Lot Size */
-            lot_size: number | null;
-            /** Clock Time */
-            clock_time: string | null;
-            /** Clock End */
-            clock_end: string | null;
-        };
-        /** AdvanceIn */
-        AdvanceIn: {
-            /**
-             * Candles
-             * @default 1
-             */
-            candles: number;
-        };
-        /** AdvanceOut */
-        AdvanceOut: {
-            account: components["schemas"]["AccountOut"];
-            /** Exits */
-            exits: components["schemas"]["TradeOut"][];
-            /** At End */
-            at_end: boolean;
-        };
-        /** AllOf */
-        "AllOf-Input": {
-            /** All */
-            all: components["schemas"]["Condition-Input"][];
-        };
-        /** AllOf */
-        "AllOf-Output": {
-            /** All */
-            all: components["schemas"]["Condition-Output"][];
-        };
-        /** AnyOf */
-        "AnyOf-Input": {
-            /** Any */
-            any: components["schemas"]["Condition-Input"][];
-        };
-        /** AnyOf */
-        "AnyOf-Output": {
-            /** Any */
-            any: components["schemas"]["Condition-Output"][];
-        };
-        /** AskAnswer */
-        AskAnswer: {
-            /**
-             * Answer
-             * @description A clear, direct answer to the trader's question
-             */
-            answer: string;
-            /**
-             * Key Points
-             * @description Short supporting points
-             */
-            key_points?: string[];
-            /**
-             * Caveats
-             * @description Limits, risks or what you could not know
-             */
-            caveats?: string[];
-            /**
-             * Sources
-             * @description Knowledge-base file names the answer is based on
-             */
-            sources?: string[];
-            /**
-             * News Sources
-             * @description Publishers / headlines used
-             */
-            news_sources?: string[];
-            /**
-             * Suggest Strategy Desk
-             * @description True when the trader would be better served by building and backtesting a strategy
-             * @default false
-             */
-            suggest_strategy_desk: boolean;
-        };
-        /** BacktestMetrics */
-        BacktestMetrics: {
-            /** Total Pnl */
-            total_pnl: number;
-            /** Num Trades */
-            num_trades: number;
-            /** Win Rate Pct */
-            win_rate_pct: number | null;
-            /** Avg Win */
-            avg_win: number | null;
-            /** Avg Loss */
-            avg_loss: number | null;
-            /** Profit Factor */
-            profit_factor: number | null;
-            /** Max Drawdown */
-            max_drawdown: number;
-            /** Max Drawdown Pct */
-            max_drawdown_pct: number;
-            /** Sharpe */
-            sharpe: number | null;
-            /** Expectancy */
-            expectancy: number | null;
-            /** Best Trade */
-            best_trade: number | null;
-            /** Worst Trade */
-            worst_trade: number | null;
-            /** Total Costs */
-            total_costs: number;
-            /** Daily Pnl */
-            daily_pnl: components["schemas"]["DailyPnl"][];
-        };
-        /** BacktestRequest */
-        BacktestRequest: {
-            /** Dataset Id */
-            dataset_id: string;
-            /** Strategy Id */
-            strategy_id?: string | null;
-            /** Template Id */
-            template_id?: string | null;
-            spec?: components["schemas"]["StrategySpec-Input"] | null;
-            /** Start */
-            start?: string | null;
-            /** End */
-            end?: string | null;
-            /**
-             * Capital
-             * @default 100000
-             */
-            capital: number;
-        };
-        /** BacktestResult */
-        BacktestResult: {
-            /** Strategy Name */
-            strategy_name: string;
-            /** Start */
-            start: string | null;
-            /** End */
-            end: string | null;
-            /** Capital */
-            capital: number;
-            /** Lot Size */
-            lot_size: number;
-            /** Trades */
-            trades: components["schemas"]["BacktestTrade"][];
-            /** Equity Curve */
-            equity_curve: components["schemas"]["EquityPoint"][];
-            metrics: components["schemas"]["BacktestMetrics"];
-            /** Events */
-            events: components["schemas"]["EngineEvent"][];
-            /**
-             * Events Truncated
-             * @default false
-             */
-            events_truncated: boolean;
-        };
-        /** BacktestRunOut */
-        BacktestRunOut: {
-            /** Id */
-            id: string;
-            /** Dataset Id */
-            dataset_id: string;
-            /** Strategy Id */
-            strategy_id: string | null;
-            /** Strategy Name */
-            strategy_name: string;
-            /** Start */
-            start: string | null;
-            /** End */
-            end: string | null;
-            /** Capital */
-            capital: number;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "completed" | "failed";
-            /** Total Pnl */
-            total_pnl: number | null;
-            /** Num Trades */
-            num_trades: number | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            spec: components["schemas"]["StrategySpec-Output"];
-            /** Error */
-            error: string | null;
-            result: components["schemas"]["BacktestResult"] | null;
-        };
-        /** BacktestRunSummary */
-        BacktestRunSummary: {
-            /** Id */
-            id: string;
-            /** Dataset Id */
-            dataset_id: string;
-            /** Strategy Id */
-            strategy_id: string | null;
-            /** Strategy Name */
-            strategy_name: string;
-            /** Start */
-            start: string | null;
-            /** End */
-            end: string | null;
-            /** Capital */
-            capital: number;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "completed" | "failed";
-            /** Total Pnl */
-            total_pnl: number | null;
-            /** Num Trades */
-            num_trades: number | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-        };
-        /** BacktestTrade */
-        BacktestTrade: {
-            /** Id */
-            id: number;
-            /**
-             * Side
-             * @enum {string}
-             */
-            side: "buy" | "sell";
-            /**
-             * Option Type
-             * @enum {string}
-             */
-            option_type: "CE" | "PE";
-            /**
-             * Expiry
-             * Format: date
-             */
-            expiry: string;
-            /** Strike */
-            strike: number;
-            /**
-             * Signal Time
-             * Format: date-time
-             */
-            signal_time: string;
-            /**
-             * Entry Time
-             * Format: date-time
-             */
-            entry_time: string;
-            /**
-             * Exit Time
-             * Format: date-time
-             */
-            exit_time: string;
-            /**
-             * Entry Price
-             * @description Fill price incl. slippage
-             */
-            entry_price: number;
-            /**
-             * Exit Price
-             * @description Fill price incl. slippage
-             */
-            exit_price: number;
-            /** Qty */
-            qty: number;
-            /**
-             * Gross Pnl
-             * @description (exit-entry) fill prices x qty, sign by side; includes slippage
-             */
-            gross_pnl: number;
-            /**
-             * Slippage Cost
-             * @description Informational: slippage already embedded in gross_pnl
-             */
-            slippage_cost: number;
-            /** Brokerage */
-            brokerage: number;
-            /** Taxes */
-            taxes: number;
-            /** Net Pnl */
-            net_pnl: number;
-            /**
-             * Exit Reason
-             * @enum {string}
-             */
-            exit_reason: "stop_loss" | "target" | "trailing_sl" | "signal" | "square_off" | "end_of_data";
-        };
-        /** Body_upload_dataset_datasets_upload_post */
-        Body_upload_dataset_datasets_upload_post: {
-            /**
-             * File
-             * @description .csv or .parquet
-             */
-            file: string;
-            /**
-             * Mapping
-             * @description JSON ColumnMapping: standard field -> source column name
-             */
-            mapping: string;
-            /**
-             * Kind
-             * @enum {string}
-             */
-            kind: "underlying" | "options";
-            /** Underlying */
-            underlying: string;
-            /**
-             * Lot Size
-             * @default 1
-             */
-            lot_size: number;
-            /** Name */
-            name?: string | null;
-            /**
-             * Dataset Id
-             * @description Attach to an existing dataset (e.g. add options to underlying)
-             */
-            dataset_id?: string | null;
-            /**
-             * Resample To
-             * @description Resample to N-minute candles
-             */
-            resample_to?: number | null;
-        };
-        /** Body_upload_knowledge_upload_post */
-        Body_upload_knowledge_upload_post: {
-            /**
-             * File
-             * @description .md or .pdf
-             */
-            file: string;
-        };
-        /** ChainOut */
-        ChainOut: {
-            /** Dataset Id */
-            dataset_id: string;
-            /** Underlying */
-            underlying: string;
-            /**
-             * Expiry
-             * Format: date
-             */
-            expiry: string;
-            /**
-             * Clock Time
-             * Format: date-time
-             */
-            clock_time: string;
-            /** Spot */
-            spot: number | null;
-            /** Lot Size */
-            lot_size: number;
-            /** Rows */
-            rows: components["schemas"]["ChainRow"][];
-        };
-        /** ChainRow */
-        ChainRow: {
-            /** Strike */
-            strike: number;
-            /** Ce */
-            ce: number | null;
-            /** Pe */
-            pe: number | null;
-        };
-        /** ChangePasswordRequest */
-        ChangePasswordRequest: {
-            /** Current Password */
-            current_password: string;
-            /** New Password */
-            new_password: string;
-        };
-        /** ClockStartIn */
-        ClockStartIn: {
-            /** Dataset Id */
-            dataset_id: string;
-            /**
-             * At
-             * @description Start at the first candle on or after this time; default: 3rd-last day
-             */
-            at?: string | null;
-        };
-        /** CloseIn */
-        CloseIn: {
-            /**
-             * Lots
-             * @description Lots to sell; default: the whole position
-             */
-            lots?: number | null;
-        };
-        "Condition-Input": components["schemas"]["Rule"] | components["schemas"]["AllOf-Input"] | components["schemas"]["AnyOf-Input"];
-        "Condition-Output": components["schemas"]["Rule"] | components["schemas"]["AllOf-Output"] | components["schemas"]["AnyOf-Output"];
-        /** CostSpec */
-        CostSpec: {
-            /**
-             * Brokerage Per Order
-             * @default 20
-             */
-            brokerage_per_order: number;
-            slippage?: components["schemas"]["SlippageSpec"];
-            /**
-             * Tax Pct
-             * @description Approximate taxes/charges, % of turnover (entry + exit)
-             * @default 0.05
-             */
-            tax_pct: number;
-        };
-        /** DailyPnl */
-        DailyPnl: {
-            /**
-             * Date
-             * Format: date
-             */
-            date: string;
-            /** Pnl */
-            pnl: number;
-            /** Trades */
-            trades: number;
-        };
-        /** DatasetOut */
-        DatasetOut: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Underlying */
-            underlying: string;
-            /** Lot Size */
-            lot_size: number;
-            /** Timeframe Minutes */
-            timeframe_minutes: number | null;
-            /** Start Date */
-            start_date: string | null;
-            /** End Date */
-            end_date: string | null;
-            /** Underlying Rows */
-            underlying_rows: number;
-            /** Options Rows */
-            options_rows: number;
-            /** Expiries */
-            expiries: string[];
-            /** Strikes */
-            strikes: number[];
-            /** Quality */
-            quality: {
-                [key: string]: components["schemas"]["QualityReport"];
-            };
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-        };
-        /** DocumentInfo */
-        DocumentInfo: {
-            /** Source */
-            source: string;
-            /**
-             * Doc Type
-             * @enum {string}
-             */
-            doc_type: "builtin" | "uploaded";
-            /** Chunks */
-            chunks: number;
-        };
-        /** EngineEvent */
-        EngineEvent: {
-            /**
-             * Timestamp
-             * Format: date-time
-             */
-            timestamp: string;
-            /**
-             * Kind
-             * @enum {string}
-             */
-            kind: "missing_option_candle" | "no_contract" | "skipped_entry";
-            /** Message */
-            message: string;
-        };
-        /** EquityPoint */
-        EquityPoint: {
-            /**
-             * Timestamp
-             * Format: date-time
-             */
-            timestamp: string;
-            /** Equity */
-            equity: number;
-        };
-        /** ExpiriesOut */
-        ExpiriesOut: {
-            /** Dataset Id */
-            dataset_id: string;
-            /**
-             * Clock Time
-             * Format: date-time
-             */
-            clock_time: string;
-            /** Expiries */
-            expiries: string[];
-        };
-        /** ExpiriesResponse */
-        ExpiriesResponse: {
-            /** Underlying */
-            underlying: string;
-            /** Lot Size */
-            lot_size: number | null;
-            /**
-             * Source
-             * @default Upstox instruments file (exchange contract list)
-             */
-            source: string;
-            /**
-             * Fetched At
-             * Format: date-time
-             */
-            fetched_at: string;
-            /** Stale */
-            stale: boolean;
-            /** Expiries */
-            expiries: components["schemas"]["ExpiryOut"][];
-        };
-        /** ExpiryOut */
-        ExpiryOut: {
-            /**
-             * Date
-             * Format: date
-             */
-            date: string;
-            /**
-             * Kind
-             * @enum {string}
-             */
-            kind: "weekly" | "monthly";
-            /** Days To Expiry */
-            days_to_expiry: number;
-        };
-        /** ExportJobOut */
-        ExportJobOut: {
-            /** Id */
-            id: string;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "running" | "done" | "failed";
-            /** Underlying */
-            underlying: string;
-            /** Interval */
-            interval: number;
-            /**
-             * Start
-             * Format: date
-             */
-            start: string;
-            /**
-             * End
-             * Format: date
-             */
-            end: string;
-            /** Out Dir */
-            out_dir: string;
-            /** Total Expiries */
-            total_expiries: number;
-            /** Done Expiries */
-            done_expiries: number;
-            /** Files */
-            files: string[];
-            /** Error */
-            error: string | null;
-            /**
-             * Started At
-             * Format: date-time
-             */
-            started_at: string;
-            /** Finished At */
-            finished_at: string | null;
-        };
-        /** FromPlanIn */
-        FromPlanIn: {
-            /** Run Id */
-            run_id: string;
-            /**
-             * Option Type
-             * @enum {string}
-             */
-            option_type: "CE" | "PE";
-        };
-        /** FromPlanOut */
-        FromPlanOut: {
-            order: components["schemas"]["OrderOut"];
-            account: components["schemas"]["AccountOut"];
-            /** Notes */
-            notes: string[];
-        };
-        /** GapSample */
-        GapSample: {
-            /**
-             * Start
-             * Format: date-time
-             */
-            start: string;
-            /**
-             * End
-             * Format: date-time
-             */
-            end: string;
-            /** Missing Candles */
-            missing_candles: number;
-        };
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
-        };
-        /** HealthResponse */
-        HealthResponse: {
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "ok" | "degraded";
-            /** Version */
-            version: string;
-            /** Services */
-            services: {
-                [key: string]: "up" | "down";
-            };
-        };
-        /** IndicatorRef */
-        IndicatorRef: {
-            /** Indicator */
-            indicator: string;
-            /**
-             * Output
-             * @description Indicator output column (e.g. 'signal' for macd)
-             */
-            output?: string | null;
-        };
-        /** IndicatorSpec */
-        IndicatorSpec: {
-            /**
-             * Id
-             * @description Referenced by rules
-             */
-            id: string;
-            /**
-             * Type
-             * @enum {string}
-             */
-            type: "ema" | "sma" | "rsi" | "macd" | "bollinger" | "atr" | "vwap" | "supertrend";
-            /**
-             * Params
-             * @description e.g. {'period': 14}; defaults apply
-             */
-            params?: {
-                [key: string]: number;
-            };
-        };
-        /** IngestReport */
-        IngestReport: {
-            /** Documents */
-            documents: number;
-            /** Chunks Total */
-            chunks_total: number;
-            /** Chunks Added */
-            chunks_added: number;
-            /** Chunks Removed */
-            chunks_removed: number;
-            /** Sources Removed */
-            sources_removed: string[];
-        };
-        /** InstrumentSpec */
-        InstrumentSpec: {
-            /** Option Types */
-            option_types?: ("CE" | "PE")[];
-            strike?: components["schemas"]["StrikeSpec"];
-            /**
-             * Expiry
-             * @default nearest_weekly
-             * @enum {string}
-             */
-            expiry: "nearest_weekly" | "monthly";
-        };
-        /** LoginRequest */
-        LoginRequest: {
-            /** Email */
-            email: string;
-            /** Password */
-            password: string;
-        };
-        /** ModelInfo */
-        ModelInfo: {
-            /** Id */
-            id: string;
-            /** Provider */
-            provider: string;
-            /** Label */
-            label: string;
-        };
-        /** ModelsResponse */
-        ModelsResponse: {
-            /** Default */
-            default: string;
-            /** Default Available */
-            default_available: boolean;
-            /** Models */
-            models: components["schemas"]["ModelInfo"][];
-        };
-        /** OrderIn */
-        OrderIn: {
-            /**
-             * Expiry
-             * Format: date
-             */
-            expiry: string;
-            /** Strike */
-            strike: number;
-            /**
-             * Option Type
-             * @enum {string}
-             */
-            option_type: "CE" | "PE";
-            /**
-             * Lots
-             * @default 1
-             */
-            lots: number;
-            /**
-             * Stop Pct
-             * @description % of the entry premium
-             */
-            stop_pct?: number | null;
-            /** Target Pct */
-            target_pct?: number | null;
-            /**
-             * Dataset Id
-             * @description Starts the market clock on this dataset if it is not running
-             */
-            dataset_id?: string | null;
-        };
-        /** OrderOut */
-        OrderOut: {
-            /** Id */
-            id: string;
-            /** Underlying */
-            underlying: string;
-            /**
-             * Expiry
-             * Format: date
-             */
-            expiry: string;
-            /** Strike */
-            strike: number;
-            /**
-             * Option Type
-             * @enum {string}
-             */
-            option_type: "CE" | "PE";
-            /**
-             * Side
-             * @enum {string}
-             */
-            side: "buy" | "sell";
-            /** Qty */
-            qty: number;
-            /** Price */
-            price: number;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "filled" | "rejected";
-            /** Source */
-            source: string;
-            /** Note */
-            note: string | null;
-            /** Run Id */
-            run_id: string | null;
-            /**
-             * Placed At
-             * Format: date-time
-             */
-            placed_at: string;
-        };
-        /** ParseRequest */
-        ParseRequest: {
-            /**
-             * Query
-             * @description e.g. 'BankNifty, 50k capital, max loss 2000, target 7777'
-             */
-            query: string;
-            /** Model */
-            model?: string | null;
-        };
-        /** ParsedQuery */
-        ParsedQuery: {
-            /**
-             * Intent
-             * @description 'strategy' to build/test a trade plan, 'question' for any other trading question
-             * @default strategy
-             * @enum {string}
-             */
-            intent: "strategy" | "question";
-            /**
-             * Underlying
-             * @description NIFTY (Nifty 50) or BANKNIFTY
-             */
-            underlying?: ("NIFTY" | "BANKNIFTY") | null;
-            /**
-             * Expiry
-             * @description Option expiry the trader named, as an absolute date
-             */
-            expiry?: string | null;
-            /**
-             * Capital
-             * @description Trading amount in rupees, as stated
-             */
-            capital?: number | null;
-            /**
-             * Max Loss
-             * @description Maximum loss per trade in rupees, as stated
-             */
-            max_loss?: number | null;
-            /**
-             * Target Profit
-             * @description Target profit per trade in rupees, as stated
-             */
-            target_profit?: number | null;
-            /**
-             * Preferred Indicators
-             * @description Indicators the trader asked for (ema, rsi, vwap, supertrend, ...)
-             */
-            preferred_indicators?: string[];
-            /**
-             * Idea
-             * @description The strategy request in plain English, keeping any indicators the trader named
-             * @default
-             */
-            idea: string;
-            /**
-             * Notes
-             * @description What is missing or was ambiguous; never guess amounts
-             */
-            notes?: string[];
-        };
-        /** PositionOut */
-        PositionOut: {
-            /** Id */
-            id: string;
-            /** Underlying */
-            underlying: string;
-            /**
-             * Expiry
-             * Format: date
-             */
-            expiry: string;
-            /** Strike */
-            strike: number;
-            /**
-             * Option Type
-             * @enum {string}
-             */
-            option_type: "CE" | "PE";
-            /** Qty */
-            qty: number;
-            /** Lots */
-            lots: number;
-            /** Avg Price */
-            avg_price: number;
-            /** Mark Price */
-            mark_price: number;
-            /** Unrealized Pnl */
-            unrealized_pnl: number;
-            /** Stop Pct */
-            stop_pct: number | null;
-            /** Target Pct */
-            target_pct: number | null;
-            /** Square Off */
-            square_off: string | null;
-            /** Run Id */
-            run_id: string | null;
-            /**
-             * Opened At
-             * Format: date-time
-             */
-            opened_at: string;
-        };
-        /** PriceRef */
-        PriceRef: {
-            /**
-             * Price
-             * @enum {string}
-             */
-            price: "open" | "high" | "low" | "close";
-        };
-        /** QualityReport */
-        QualityReport: {
-            /** Input Rows */
-            input_rows: number;
-            /** Rows */
-            rows: number;
-            /** Bad Timestamps */
-            bad_timestamps: number;
-            /** Bad Rows */
-            bad_rows: number;
-            /** Invalid Ohlc Rows */
-            invalid_ohlc_rows: number;
-            /** Duplicates Removed */
-            duplicates_removed: number;
-            /** Trading Days */
-            trading_days: number;
-            /** Timeframe Minutes */
-            timeframe_minutes: number | null;
-            /** Missing Candles */
-            missing_candles: number;
-            /** Gap Count */
-            gap_count: number;
-            /** Gap Samples */
-            gap_samples: components["schemas"]["GapSample"][];
-            /** Warnings */
-            warnings: string[];
-        };
-        /** RangeRef */
-        RangeRef: {
-            /** Range */
-            range: [
-                number,
-                number
-            ];
-        };
-        /** RegisterRequest */
-        RegisterRequest: {
-            /** Email */
-            email: string;
-            /** Name */
-            name: string;
-            /** Password */
-            password: string;
-            /**
-             * Level
-             * @default beginner
-             * @enum {string}
-             */
-            level: "beginner" | "advanced" | "expert";
-        };
-        /** ResetIn */
-        ResetIn: {
-            /** Starting Balance */
-            starting_balance?: number | null;
-        };
-        /** RetrievedChunk */
-        RetrievedChunk: {
-            /** Text */
-            text: string;
-            /**
-             * Score
-             * @description Cosine similarity, higher is more relevant
-             */
-            score: number;
-            /** Source */
-            source: string;
-            /** Heading */
-            heading: string;
-            /**
-             * Doc Type
-             * @enum {string}
-             */
-            doc_type: "builtin" | "uploaded";
-        };
-        /** RiskSpec */
-        RiskSpec: {
-            /**
-             * Stop Loss Pct
-             * @description % of entry premium
-             */
-            stop_loss_pct?: number | null;
-            /** Target Pct */
-            target_pct?: number | null;
-            /**
-             * Trailing Sl Pct
-             * @description % from best premium since entry
-             */
-            trailing_sl_pct?: number | null;
-            /** Max Trades Per Day */
-            max_trades_per_day?: number | null;
-            /**
-             * Entry Start
-             * Format: time
-             * @default 09:20:00
-             */
-            entry_start: string;
-            /**
-             * Entry End
-             * Format: time
-             * @default 15:00:00
-             */
-            entry_end: string;
-            /**
-             * Square Off
-             * Format: time
-             * @description Forced intraday exit at this time
-             * @default 15:15:00
-             */
-            square_off: string;
-        };
-        /** Rule */
-        Rule: {
-            /** Left */
-            left: components["schemas"]["IndicatorRef"] | components["schemas"]["PriceRef"] | components["schemas"]["ValueRef"] | components["schemas"]["RangeRef"];
-            /**
-             * Op
-             * @enum {string}
-             */
-            op: "crosses_above" | "crosses_below" | ">" | "<" | "between";
-            /** Right */
-            right: components["schemas"]["IndicatorRef"] | components["schemas"]["PriceRef"] | components["schemas"]["ValueRef"] | components["schemas"]["RangeRef"];
-        };
-        /** RunOut */
-        RunOut: {
-            /** Id */
-            id: string;
-            /** Dataset Id */
-            dataset_id: string;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "queued" | "running" | "completed" | "failed";
-            /** Idea */
-            idea: string | null;
-            /** Backtest Run Id */
-            backtest_run_id: string | null;
-            /** Error */
-            error: string | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            request: components["schemas"]["RunRequest-Output"];
-            /** Steps */
-            steps: components["schemas"]["StepRecord"][];
-        };
-        /** RunRequest */
-        "RunRequest-Input": {
-            /**
-             * Dataset Id
-             * @description Dataset to test on. Leave empty and set `underlying` to use the newest dataset of that underlying
-             * @default
-             */
-            dataset_id: string;
-            /** Underlying */
-            underlying?: ("NIFTY" | "BANKNIFTY") | null;
-            /**
-             * Expiry
-             * @description The option expiry you plan to trade (weekly vs monthly follows from it)
-             */
-            expiry?: string | null;
-            /**
-             * Max Loss
-             * @description Maximum loss per trade in rupees
-             */
-            max_loss?: number | null;
-            /**
-             * Target Profit
-             * @description Target profit per trade in rupees
-             */
-            target_profit?: number | null;
-            /**
-             * Idea
-             * @description Plain-English strategy idea (Strategy Agent translates it)
-             */
-            idea?: string | null;
-            /** Template Id */
-            template_id?: string | null;
-            /** Strategy Id */
-            strategy_id?: string | null;
-            spec?: components["schemas"]["StrategySpec-Input"] | null;
-            /** Start */
-            start?: string | null;
-            /** End */
-            end?: string | null;
-            /**
-             * Capital
-             * @default 100000
-             */
-            capital: number;
-            /**
-             * Model
-             * @description 'provider:model'; defaults to per-agent setting, then DEFAULT_MODEL
-             */
-            model?: string | null;
-        };
-        /** RunRequest */
-        "RunRequest-Output": {
-            /**
-             * Dataset Id
-             * @description Dataset to test on. Leave empty and set `underlying` to use the newest dataset of that underlying
-             * @default
-             */
-            dataset_id: string;
-            /** Underlying */
-            underlying?: ("NIFTY" | "BANKNIFTY") | null;
-            /**
-             * Expiry
-             * @description The option expiry you plan to trade (weekly vs monthly follows from it)
-             */
-            expiry?: string | null;
-            /**
-             * Max Loss
-             * @description Maximum loss per trade in rupees
-             */
-            max_loss?: number | null;
-            /**
-             * Target Profit
-             * @description Target profit per trade in rupees
-             */
-            target_profit?: number | null;
-            /**
-             * Idea
-             * @description Plain-English strategy idea (Strategy Agent translates it)
-             */
-            idea?: string | null;
-            /** Template Id */
-            template_id?: string | null;
-            /** Strategy Id */
-            strategy_id?: string | null;
-            spec?: components["schemas"]["StrategySpec-Output"] | null;
-            /** Start */
-            start?: string | null;
-            /** End */
-            end?: string | null;
-            /**
-             * Capital
-             * @default 100000
-             */
-            capital: number;
-            /**
-             * Model
-             * @description 'provider:model'; defaults to per-agent setting, then DEFAULT_MODEL
-             */
-            model?: string | null;
-        };
-        /** RunSummary */
-        RunSummary: {
-            /** Id */
-            id: string;
-            /** Dataset Id */
-            dataset_id: string;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "queued" | "running" | "completed" | "failed";
-            /** Idea */
-            idea: string | null;
-            /** Backtest Run Id */
-            backtest_run_id: string | null;
-            /** Error */
-            error: string | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-        };
-        /** SearchRequest */
-        SearchRequest: {
-            /** Query */
-            query: string;
-            /**
-             * K
-             * @default 5
-             */
-            k: number;
-        };
-        /** SlippageSpec */
-        SlippageSpec: {
-            /**
-             * Mode
-             * @default points
-             * @enum {string}
-             */
-            mode: "points" | "pct";
-            /**
-             * Value
-             * @default 0
-             */
-            value: number;
-        };
-        /** StepRecord */
-        StepRecord: {
-            /**
-             * Name
-             * @enum {string}
-             */
-            name: "research" | "strategy" | "verify" | "backtest" | "risk";
-            /**
-             * Status
-             * @default pending
-             * @enum {string}
-             */
-            status: "pending" | "running" | "completed" | "failed" | "skipped";
-            /** Model */
-            model?: string | null;
-            /** Started At */
-            started_at?: string | null;
-            /** Finished At */
-            finished_at?: string | null;
-            /** Output */
-            output?: {
-                [key: string]: unknown;
-            } | null;
-            /** Error */
-            error?: string | null;
-            /** Usage */
-            usage?: {
-                [key: string]: number;
-            } | null;
-            /** Warnings */
-            warnings?: string[];
-        };
-        /** StrategyCreate */
-        StrategyCreate: {
-            /**
-             * Name
-             * @description Defaults to spec.name
-             */
-            name?: string | null;
-            spec: components["schemas"]["StrategySpec-Input"];
-        };
-        /** StrategyOut */
-        StrategyOut: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            spec: components["schemas"]["StrategySpec-Output"];
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-        };
-        /** StrategySpec */
-        "StrategySpec-Input": {
-            /** Name */
-            name: string;
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-            /**
-             * Signal Source
-             * @default underlying
-             * @enum {string}
-             */
-            signal_source: "underlying" | "option";
-            /**
-             * Timeframe Minutes
-             * @description Resample data to this timeframe before running
-             */
-            timeframe_minutes?: number | null;
-            /** Indicators */
-            indicators?: components["schemas"]["IndicatorSpec"][];
-            /** @description Bullish signal: buy CE (or sell PE) */
-            entry_bullish?: components["schemas"]["Condition-Input"] | null;
-            /** @description Bearish signal: buy PE (or sell CE) */
-            entry_bearish?: components["schemas"]["Condition-Input"] | null;
-            /** @description Signal-based exit for any open position */
-            exit_condition?: components["schemas"]["Condition-Input"] | null;
-            /**
-             * Exit On Opposite Signal
-             * @default false
-             */
-            exit_on_opposite_signal: boolean;
-            /**
-             * Direction
-             * @default buy
-             * @enum {string}
-             */
-            direction: "buy" | "sell";
-            instrument?: components["schemas"]["InstrumentSpec"];
-            risk?: components["schemas"]["RiskSpec"];
-            /**
-             * Lots
-             * @default 1
-             */
-            lots: number;
-            costs?: components["schemas"]["CostSpec"];
-        };
-        /** StrategySpec */
-        "StrategySpec-Output": {
-            /** Name */
-            name: string;
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-            /**
-             * Signal Source
-             * @default underlying
-             * @enum {string}
-             */
-            signal_source: "underlying" | "option";
-            /**
-             * Timeframe Minutes
-             * @description Resample data to this timeframe before running
-             */
-            timeframe_minutes?: number | null;
-            /** Indicators */
-            indicators?: components["schemas"]["IndicatorSpec"][];
-            /** @description Bullish signal: buy CE (or sell PE) */
-            entry_bullish?: components["schemas"]["Condition-Output"] | null;
-            /** @description Bearish signal: buy PE (or sell CE) */
-            entry_bearish?: components["schemas"]["Condition-Output"] | null;
-            /** @description Signal-based exit for any open position */
-            exit_condition?: components["schemas"]["Condition-Output"] | null;
-            /**
-             * Exit On Opposite Signal
-             * @default false
-             */
-            exit_on_opposite_signal: boolean;
-            /**
-             * Direction
-             * @default buy
-             * @enum {string}
-             */
-            direction: "buy" | "sell";
-            instrument?: components["schemas"]["InstrumentSpec"];
-            risk?: components["schemas"]["RiskSpec"];
-            /**
-             * Lots
-             * @default 1
-             */
-            lots: number;
-            costs?: components["schemas"]["CostSpec"];
-        };
-        /** StrikeSpec */
-        StrikeSpec: {
-            /**
-             * Mode
-             * @default atm
-             * @enum {string}
-             */
-            mode: "atm" | "offset" | "nearest_premium";
-            /**
-             * Offset
-             * @description mode=offset: strikes above (+) / below (-) ATM, for both CE and PE
-             * @default 0
-             */
-            offset: number;
-            /**
-             * Premium
-             * @description mode=nearest_premium: target option premium
-             */
-            premium?: number | null;
-        };
-        /** SyntheticRequest */
-        SyntheticRequest: {
-            /** Name */
-            name?: string | null;
-            /**
-             * Underlying
-             * @default NIFTY
-             */
-            underlying: string;
-            /**
-             * Start Date
-             * Format: date
-             * @default 2024-01-01
-             */
-            start_date: string;
-            /**
-             * Trading Days
-             * @default 20
-             */
-            trading_days: number;
-            /**
-             * Start Price
-             * @default 22000
-             */
-            start_price: number;
-            /**
-             * Strike Step
-             * @default 50
-             */
-            strike_step: number;
-            /**
-             * N Strikes
-             * @description Strikes on each side of ATM
-             * @default 10
-             */
-            n_strikes: number;
-            /**
-             * Lot Size
-             * @default 75
-             */
-            lot_size: number;
-            /**
-             * Seed
-             * @default 42
-             */
-            seed: number;
-        };
-        /** TemplateOut */
-        TemplateOut: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Description */
-            description: string;
-            spec: components["schemas"]["StrategySpec-Output"];
-        };
-        /** TokenOut */
-        TokenOut: {
-            /** Token */
-            token: string;
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            user: components["schemas"]["UserOut"];
-        };
-        /** TradeOut */
-        TradeOut: {
-            /** Id */
-            id: string;
-            /** Underlying */
-            underlying: string;
-            /**
-             * Expiry
-             * Format: date
-             */
-            expiry: string;
-            /** Strike */
-            strike: number;
-            /**
-             * Option Type
-             * @enum {string}
-             */
-            option_type: "CE" | "PE";
-            /** Qty */
-            qty: number;
-            /** Entry Price */
-            entry_price: number;
-            /** Exit Price */
-            exit_price: number;
-            /**
-             * Entry Time
-             * Format: date-time
-             */
-            entry_time: string;
-            /**
-             * Exit Time
-             * Format: date-time
-             */
-            exit_time: string;
-            /** Gross Pnl */
-            gross_pnl: number;
-            /** Costs */
-            costs: number;
-            /** Net Pnl */
-            net_pnl: number;
-            /** Exit Reason */
-            exit_reason: string;
-            /** Run Id */
-            run_id: string | null;
-        };
-        /** UpdateProfileRequest */
-        UpdateProfileRequest: {
-            /** Name */
-            name?: string | null;
-            /** Level */
-            level?: ("beginner" | "advanced" | "expert") | null;
-        };
-        /** UploadResponse */
-        UploadResponse: {
-            /** Source */
-            source: string;
-            /** Chunks */
-            chunks: number;
-        };
-        /** UpstoxExportRequest */
-        UpstoxExportRequest: {
-            /**
-             * Underlying
-             * @default NIFTY
-             * @enum {string}
-             */
-            underlying: "NIFTY" | "BANKNIFTY";
-            /**
-             * Start Date
-             * Format: date
-             */
-            start_date: string;
-            /**
-             * End Date
-             * Format: date
-             */
-            end_date: string;
-            /**
-             * Interval Minutes
-             * @default 1
-             * @enum {integer}
-             */
-            interval_minutes: 1 | 3 | 5 | 15 | 30;
-            /**
-             * Include Options
-             * @description Needs Upstox Plus; only expiries from the last ~6 months exist
-             * @default true
-             */
-            include_options: boolean;
-            /**
-             * N Strikes
-             * @description Strikes on each side of ATM
-             * @default 10
-             */
-            n_strikes: number;
-            /** Option Types */
-            option_types?: ("CE" | "PE")[];
-            /**
-             * Expiry Type
-             * @default all
-             * @enum {string}
-             */
-            expiry_type: "all" | "weekly" | "monthly";
-            /**
-             * Last Expiries
-             * @description Only the most recent N expiries in the range
-             */
-            last_expiries?: number | null;
-        };
-        /** UpstoxImportRequest */
-        UpstoxImportRequest: {
-            /** Name */
-            name?: string | null;
-            /**
-             * Underlying
-             * @default NIFTY
-             * @enum {string}
-             */
-            underlying: "NIFTY" | "BANKNIFTY";
-            /**
-             * Start Date
-             * Format: date
-             */
-            start_date: string;
-            /**
-             * End Date
-             * Format: date
-             */
-            end_date: string;
-            /**
-             * Interval Minutes
-             * @default 5
-             * @enum {integer}
-             */
-            interval_minutes: 1 | 3 | 5 | 15 | 30;
-            /**
-             * Include Options
-             * @description Needs Upstox Plus; only expiries from the last ~6 months exist
-             * @default false
-             */
-            include_options: boolean;
-            /**
-             * N Strikes
-             * @description Strikes on each side of ATM
-             * @default 10
-             */
-            n_strikes: number;
-            /**
-             * Dataset Id
-             * @description Attach to an existing dataset
-             */
-            dataset_id?: string | null;
-        };
-        /** UserOut */
-        UserOut: {
-            /** Id */
-            id: string;
-            /** Email */
-            email: string;
-            /** Name */
-            name: string;
-            /**
-             * Level
-             * @enum {string}
-             */
-            level: "beginner" | "advanced" | "expert";
-        };
-        /** ValidateRequest */
-        ValidateRequest: {
-            /**
-             * Spec
-             * @description Raw strategy spec JSON to validate
-             */
-            spec: {
-                [key: string]: unknown;
-            };
-        };
-        /** ValidateResponse */
-        ValidateResponse: {
-            /** Valid */
-            valid: boolean;
-            /**
-             * Errors
-             * @description 'path: message' per problem
-             */
-            errors?: string[];
-            /** @description Normalized spec (defaults filled) when valid */
-            spec?: components["schemas"]["StrategySpec-Output"] | null;
-        };
-        /** ValidationError */
-        ValidationError: {
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-            /** Input */
-            input?: unknown;
-            /** Context */
-            ctx?: Record<string, never>;
-        };
-        /** ValueRef */
-        ValueRef: {
-            /** Value */
-            value: number;
-        };
+  schemas: {
+    /** AccountOut */
+    AccountOut: {
+      /** Starting Balance */
+      starting_balance: number;
+      /** Cash */
+      cash: number;
+      /** Market Value */
+      market_value: number;
+      /** Equity */
+      equity: number;
+      /** Realized Pnl */
+      realized_pnl: number;
+      /** Unrealized Pnl */
+      unrealized_pnl: number;
+      /** Open Positions */
+      open_positions: number;
+      /** Dataset Id */
+      dataset_id: string | null;
+      /** Dataset Name */
+      dataset_name: string | null;
+      /** Underlying */
+      underlying: string | null;
+      /** Lot Size */
+      lot_size: number | null;
+      /** Clock Time */
+      clock_time: string | null;
+      /** Clock End */
+      clock_end: string | null;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** AdvanceIn */
+    AdvanceIn: {
+      /**
+       * Candles
+       * @default 1
+       */
+      candles: number;
+    };
+    /** AdvanceOut */
+    AdvanceOut: {
+      account: components["schemas"]["AccountOut"];
+      /** Exits */
+      exits: components["schemas"]["TradeOut"][];
+      /** At End */
+      at_end: boolean;
+    };
+    /** AllOf */
+    "AllOf-Input": {
+      /** All */
+      all: components["schemas"]["Condition-Input"][];
+    };
+    /** AllOf */
+    "AllOf-Output": {
+      /** All */
+      all: components["schemas"]["Condition-Output"][];
+    };
+    /** AnyOf */
+    "AnyOf-Input": {
+      /** Any */
+      any: components["schemas"]["Condition-Input"][];
+    };
+    /** AnyOf */
+    "AnyOf-Output": {
+      /** Any */
+      any: components["schemas"]["Condition-Output"][];
+    };
+    /** AskAnswer */
+    AskAnswer: {
+      /**
+       * In Scope
+       * @description False when the question is not about NIFTY / BANKNIFTY options trading
+       * @default true
+       */
+      in_scope: boolean;
+      /**
+       * Answer
+       * @description A clear, direct answer; when in_scope is false, the one-sentence refusal instead
+       */
+      answer: string;
+      /**
+       * Key Points
+       * @description Short supporting points
+       */
+      key_points?: string[];
+      /**
+       * Caveats
+       * @description Limits, risks or what you could not know
+       */
+      caveats?: string[];
+      /**
+       * Sources
+       * @description Knowledge-base file names the answer is based on
+       */
+      sources?: string[];
+      /**
+       * News Sources
+       * @description Publishers / headlines used
+       */
+      news_sources?: string[];
+      /**
+       * Suggest Strategy Desk
+       * @description True when the trader would be better served by building and backtesting a strategy
+       * @default false
+       */
+      suggest_strategy_desk: boolean;
+    };
+    /** BacktestMetrics */
+    BacktestMetrics: {
+      /** Total Pnl */
+      total_pnl: number;
+      /** Num Trades */
+      num_trades: number;
+      /** Win Rate Pct */
+      win_rate_pct: number | null;
+      /** Avg Win */
+      avg_win: number | null;
+      /** Avg Loss */
+      avg_loss: number | null;
+      /** Profit Factor */
+      profit_factor: number | null;
+      /** Max Drawdown */
+      max_drawdown: number;
+      /** Max Drawdown Pct */
+      max_drawdown_pct: number;
+      /** Sharpe */
+      sharpe: number | null;
+      /** Expectancy */
+      expectancy: number | null;
+      /** Best Trade */
+      best_trade: number | null;
+      /** Worst Trade */
+      worst_trade: number | null;
+      /** Total Costs */
+      total_costs: number;
+      /** Daily Pnl */
+      daily_pnl: components["schemas"]["DailyPnl"][];
+    };
+    /** BacktestRequest */
+    BacktestRequest: {
+      /** Dataset Id */
+      dataset_id: string;
+      /** Strategy Id */
+      strategy_id?: string | null;
+      /** Template Id */
+      template_id?: string | null;
+      spec?: components["schemas"]["StrategySpec-Input"] | null;
+      /** Start */
+      start?: string | null;
+      /** End */
+      end?: string | null;
+      /**
+       * Capital
+       * @default 100000
+       */
+      capital: number;
+    };
+    /** BacktestResult */
+    BacktestResult: {
+      /** Strategy Name */
+      strategy_name: string;
+      /** Start */
+      start: string | null;
+      /** End */
+      end: string | null;
+      /** Capital */
+      capital: number;
+      /** Lot Size */
+      lot_size: number;
+      /** Trades */
+      trades: components["schemas"]["BacktestTrade"][];
+      /** Equity Curve */
+      equity_curve: components["schemas"]["EquityPoint"][];
+      metrics: components["schemas"]["BacktestMetrics"];
+      /** Events */
+      events: components["schemas"]["EngineEvent"][];
+      /**
+       * Events Truncated
+       * @default false
+       */
+      events_truncated: boolean;
+      verification?: components["schemas"]["Verification"] | null;
+    };
+    /** BacktestRunOut */
+    BacktestRunOut: {
+      /** Id */
+      id: string;
+      /** Dataset Id */
+      dataset_id: string;
+      /** Strategy Id */
+      strategy_id: string | null;
+      /** Strategy Name */
+      strategy_name: string;
+      /** Start */
+      start: string | null;
+      /** End */
+      end: string | null;
+      /** Capital */
+      capital: number;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "completed" | "failed";
+      /** Total Pnl */
+      total_pnl: number | null;
+      /** Num Trades */
+      num_trades: number | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      spec: components["schemas"]["StrategySpec-Output"];
+      /** Error */
+      error: string | null;
+      result: components["schemas"]["BacktestResult"] | null;
+    };
+    /** BacktestRunSummary */
+    BacktestRunSummary: {
+      /** Id */
+      id: string;
+      /** Dataset Id */
+      dataset_id: string;
+      /** Strategy Id */
+      strategy_id: string | null;
+      /** Strategy Name */
+      strategy_name: string;
+      /** Start */
+      start: string | null;
+      /** End */
+      end: string | null;
+      /** Capital */
+      capital: number;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "completed" | "failed";
+      /** Total Pnl */
+      total_pnl: number | null;
+      /** Num Trades */
+      num_trades: number | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+    };
+    /** BacktestTrade */
+    BacktestTrade: {
+      /** Id */
+      id: number;
+      /**
+       * Side
+       * @enum {string}
+       */
+      side: "buy" | "sell";
+      /**
+       * Option Type
+       * @enum {string}
+       */
+      option_type: "CE" | "PE";
+      /**
+       * Expiry
+       * Format: date
+       */
+      expiry: string;
+      /** Strike */
+      strike: number;
+      /**
+       * Signal Time
+       * Format: date-time
+       */
+      signal_time: string;
+      /**
+       * Entry Time
+       * Format: date-time
+       */
+      entry_time: string;
+      /**
+       * Exit Time
+       * Format: date-time
+       */
+      exit_time: string;
+      /**
+       * Entry Price
+       * @description Fill price incl. slippage
+       */
+      entry_price: number;
+      /**
+       * Exit Price
+       * @description Fill price incl. slippage
+       */
+      exit_price: number;
+      /** Qty */
+      qty: number;
+      /**
+       * Gross Pnl
+       * @description (exit-entry) fill prices x qty, sign by side; includes slippage
+       */
+      gross_pnl: number;
+      /**
+       * Slippage Cost
+       * @description Informational: slippage already embedded in gross_pnl
+       */
+      slippage_cost: number;
+      /** Brokerage */
+      brokerage: number;
+      /** Taxes */
+      taxes: number;
+      /** Net Pnl */
+      net_pnl: number;
+      /**
+       * Exit Reason
+       * @enum {string}
+       */
+      exit_reason:
+        | "stop_loss"
+        | "target"
+        | "trailing_sl"
+        | "signal"
+        | "square_off"
+        | "end_of_data";
+      lots?: number | null;
+      lot_size?: number | null;
+      entry_raw?: number | null;
+      exit_raw?: number | null;
+      stop_price?: number | null;
+      target_price?: number | null;
+      trail_stop_price?: number | null;
+      candles?: components["schemas"]["TradeCandle"][];
+      verified?: boolean | null;
+      checks?: components["schemas"]["CheckLine"][];
+    };
+    /** TradeCandle */
+    TradeCandle: {
+      /** Timestamp */
+      timestamp: string;
+      open: number;
+      high: number;
+      low: number;
+      close: number;
+    };
+    /** CheckLine */
+    CheckLine: {
+      name: string;
+      reported?: number | null;
+      recomputed?: number | null;
+      ok: boolean;
+      note?: string;
+    };
+    /** Verification */
+    Verification: {
+      checked: number;
+      passed: number;
+      failed: number;
+      sum_of_trades: number;
+      reported_total_pnl: number;
+      totals_match: boolean;
+      failed_trade_ids: number[];
+    };
+    /** Body_upload_dataset_datasets_upload_post */
+    Body_upload_dataset_datasets_upload_post: {
+      /**
+       * File
+       * @description .csv or .parquet
+       */
+      file: string;
+      /**
+       * Mapping
+       * @description JSON ColumnMapping: standard field -> source column name
+       */
+      mapping: string;
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "underlying" | "options";
+      /** Underlying */
+      underlying: string;
+      /**
+       * Lot Size
+       * @default 1
+       */
+      lot_size: number;
+      /** Name */
+      name?: string | null;
+      /**
+       * Dataset Id
+       * @description Attach to an existing dataset (e.g. add options to underlying)
+       */
+      dataset_id?: string | null;
+      /**
+       * Resample To
+       * @description Resample to N-minute candles
+       */
+      resample_to?: number | null;
+    };
+    /** Body_upload_knowledge_upload_post */
+    Body_upload_knowledge_upload_post: {
+      /**
+       * File
+       * @description .md or .pdf
+       */
+      file: string;
+    };
+    /** ChainOut */
+    ChainOut: {
+      /** Dataset Id */
+      dataset_id: string;
+      /** Underlying */
+      underlying: string;
+      /**
+       * Expiry
+       * Format: date
+       */
+      expiry: string;
+      /**
+       * Clock Time
+       * Format: date-time
+       */
+      clock_time: string;
+      /** Spot */
+      spot: number | null;
+      /** Lot Size */
+      lot_size: number;
+      /** Rows */
+      rows: components["schemas"]["ChainRow"][];
+    };
+    /** ChainRow */
+    ChainRow: {
+      /** Strike */
+      strike: number;
+      /** Ce */
+      ce: number | null;
+      /** Pe */
+      pe: number | null;
+    };
+    /** ChangePasswordRequest */
+    ChangePasswordRequest: {
+      /** Current Password */
+      current_password: string;
+      /** New Password */
+      new_password: string;
+    };
+    /** ClockStartIn */
+    ClockStartIn: {
+      /** Dataset Id */
+      dataset_id: string;
+      /**
+       * At
+       * @description Start at the first candle on or after this time; default: 3rd-last day
+       */
+      at?: string | null;
+    };
+    /** CloseIn */
+    CloseIn: {
+      /**
+       * Lots
+       * @description Lots to sell; default: the whole position
+       */
+      lots?: number | null;
+    };
+    "Condition-Input":
+      | components["schemas"]["Rule"]
+      | components["schemas"]["AllOf-Input"]
+      | components["schemas"]["AnyOf-Input"];
+    "Condition-Output":
+      | components["schemas"]["Rule"]
+      | components["schemas"]["AllOf-Output"]
+      | components["schemas"]["AnyOf-Output"];
+    /** CostSpec */
+    CostSpec: {
+      /**
+       * Brokerage Per Order
+       * @default 20
+       */
+      brokerage_per_order: number;
+      slippage?: components["schemas"]["SlippageSpec"];
+      /**
+       * Tax Pct
+       * @description Approximate taxes/charges, % of turnover (entry + exit)
+       * @default 0.05
+       */
+      tax_pct: number;
+    };
+    /** DailyPnl */
+    DailyPnl: {
+      /**
+       * Date
+       * Format: date
+       */
+      date: string;
+      /** Pnl */
+      pnl: number;
+      /** Trades */
+      trades: number;
+    };
+    /** DatasetOut */
+    DatasetOut: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      /** Underlying */
+      underlying: string;
+      /** Lot Size */
+      lot_size: number;
+      /** Timeframe Minutes */
+      timeframe_minutes: number | null;
+      /** Start Date */
+      start_date: string | null;
+      /** End Date */
+      end_date: string | null;
+      /** Underlying Rows */
+      underlying_rows: number;
+      /** Options Rows */
+      options_rows: number;
+      /** Expiries */
+      expiries: string[];
+      /** Strikes */
+      strikes: number[];
+      /** Quality */
+      quality: {
+        [key: string]: components["schemas"]["QualityReport"];
+      };
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+    };
+    /** DocumentInfo */
+    DocumentInfo: {
+      /** Source */
+      source: string;
+      /**
+       * Doc Type
+       * @enum {string}
+       */
+      doc_type: "builtin" | "uploaded";
+      /** Chunks */
+      chunks: number;
+    };
+    /** EngineEvent */
+    EngineEvent: {
+      /**
+       * Timestamp
+       * Format: date-time
+       */
+      timestamp: string;
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "missing_option_candle" | "no_contract" | "skipped_entry";
+      /** Message */
+      message: string;
+    };
+    /** EquityPoint */
+    EquityPoint: {
+      /**
+       * Timestamp
+       * Format: date-time
+       */
+      timestamp: string;
+      /** Equity */
+      equity: number;
+    };
+    /** ExpiriesOut */
+    ExpiriesOut: {
+      /** Dataset Id */
+      dataset_id: string;
+      /**
+       * Clock Time
+       * Format: date-time
+       */
+      clock_time: string;
+      /** Expiries */
+      expiries: string[];
+    };
+    /** ExpiriesResponse */
+    ExpiriesResponse: {
+      /** Underlying */
+      underlying: string;
+      /** Lot Size */
+      lot_size: number | null;
+      /**
+       * Source
+       * @default Upstox instruments file (exchange contract list)
+       */
+      source: string;
+      /**
+       * Fetched At
+       * Format: date-time
+       */
+      fetched_at: string;
+      /** Stale */
+      stale: boolean;
+      /** Expiries */
+      expiries: components["schemas"]["ExpiryOut"][];
+    };
+    /** ExpiryOut */
+    ExpiryOut: {
+      /**
+       * Date
+       * Format: date
+       */
+      date: string;
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "weekly" | "monthly";
+      /** Days To Expiry */
+      days_to_expiry: number;
+    };
+    /** ExportJobOut */
+    ExportJobOut: {
+      /** Id */
+      id: string;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "running" | "done" | "failed";
+      /** Underlying */
+      underlying: string;
+      /** Interval */
+      interval: number;
+      /**
+       * Start
+       * Format: date
+       */
+      start: string;
+      /**
+       * End
+       * Format: date
+       */
+      end: string;
+      /** Out Dir */
+      out_dir: string;
+      /** Total Expiries */
+      total_expiries: number;
+      /** Done Expiries */
+      done_expiries: number;
+      /** Files */
+      files: string[];
+      /** Error */
+      error: string | null;
+      /**
+       * Started At
+       * Format: date-time
+       */
+      started_at: string;
+      /** Finished At */
+      finished_at: string | null;
+    };
+    /** FromPlanIn */
+    FromPlanIn: {
+      /** Run Id */
+      run_id: string;
+      /**
+       * Option Type
+       * @enum {string}
+       */
+      option_type: "CE" | "PE";
+    };
+    /** FromPlanOut */
+    FromPlanOut: {
+      order: components["schemas"]["OrderOut"];
+      account: components["schemas"]["AccountOut"];
+      /** Notes */
+      notes: string[];
+    };
+    /** GapSample */
+    GapSample: {
+      /**
+       * Start
+       * Format: date-time
+       */
+      start: string;
+      /**
+       * End
+       * Format: date-time
+       */
+      end: string;
+      /** Missing Candles */
+      missing_candles: number;
+    };
+    /** HTTPValidationError */
+    HTTPValidationError: {
+      /** Detail */
+      detail?: components["schemas"]["ValidationError"][];
+    };
+    /** HealthResponse */
+    HealthResponse: {
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "ok" | "degraded";
+      /** Version */
+      version: string;
+      /** Services */
+      services: {
+        [key: string]: "up" | "down";
+      };
+    };
+    /** IndicatorRef */
+    IndicatorRef: {
+      /** Indicator */
+      indicator: string;
+      /**
+       * Output
+       * @description Indicator output column (e.g. 'signal' for macd)
+       */
+      output?: string | null;
+    };
+    /** IndicatorSpec */
+    IndicatorSpec: {
+      /**
+       * Id
+       * @description Referenced by rules
+       */
+      id: string;
+      /**
+       * Type
+       * @enum {string}
+       */
+      type:
+        | "ema"
+        | "sma"
+        | "rsi"
+        | "macd"
+        | "bollinger"
+        | "atr"
+        | "vwap"
+        | "supertrend";
+      /**
+       * Params
+       * @description e.g. {'period': 14}; defaults apply
+       */
+      params?: {
+        [key: string]: number;
+      };
+    };
+    /** IngestReport */
+    IngestReport: {
+      /** Documents */
+      documents: number;
+      /** Chunks Total */
+      chunks_total: number;
+      /** Chunks Added */
+      chunks_added: number;
+      /** Chunks Removed */
+      chunks_removed: number;
+      /** Sources Removed */
+      sources_removed: string[];
+    };
+    /** InstrumentSpec */
+    InstrumentSpec: {
+      /** Option Types */
+      option_types?: ("CE" | "PE")[];
+      strike?: components["schemas"]["StrikeSpec"];
+      /**
+       * Expiry
+       * @default nearest_weekly
+       * @enum {string}
+       */
+      expiry: "nearest_weekly" | "monthly";
+    };
+    /** LoginRequest */
+    LoginRequest: {
+      /** Email */
+      email: string;
+      /** Password */
+      password: string;
+    };
+    /** ModelInfo */
+    ModelInfo: {
+      /** Id */
+      id: string;
+      /** Provider */
+      provider: string;
+      /** Label */
+      label: string;
+    };
+    /** ModelsResponse */
+    ModelsResponse: {
+      /** Default */
+      default: string;
+      /** Default Available */
+      default_available: boolean;
+      /**
+       * Locked
+       * @default false
+       */
+      locked: boolean;
+      /** Models */
+      models: components["schemas"]["ModelInfo"][];
+    };
+    /** OrderIn */
+    OrderIn: {
+      /**
+       * Expiry
+       * Format: date
+       */
+      expiry: string;
+      /** Strike */
+      strike: number;
+      /**
+       * Option Type
+       * @enum {string}
+       */
+      option_type: "CE" | "PE";
+      /**
+       * Lots
+       * @default 1
+       */
+      lots: number;
+      /**
+       * Stop Pct
+       * @description % of the entry premium
+       */
+      stop_pct?: number | null;
+      /** Target Pct */
+      target_pct?: number | null;
+      /**
+       * Dataset Id
+       * @description Starts the market clock on this dataset if it is not running
+       */
+      dataset_id?: string | null;
+    };
+    /** OrderOut */
+    OrderOut: {
+      /** Id */
+      id: string;
+      /** Underlying */
+      underlying: string;
+      /**
+       * Expiry
+       * Format: date
+       */
+      expiry: string;
+      /** Strike */
+      strike: number;
+      /**
+       * Option Type
+       * @enum {string}
+       */
+      option_type: "CE" | "PE";
+      /**
+       * Side
+       * @enum {string}
+       */
+      side: "buy" | "sell";
+      /** Qty */
+      qty: number;
+      /** Price */
+      price: number;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "filled" | "rejected";
+      /** Source */
+      source: string;
+      /** Note */
+      note: string | null;
+      /** Run Id */
+      run_id: string | null;
+      /**
+       * Placed At
+       * Format: date-time
+       */
+      placed_at: string;
+    };
+    /** ParseRequest */
+    ParseRequest: {
+      /**
+       * Query
+       * @description e.g. 'BankNifty, 50k capital, max loss 2000, target 7777'
+       */
+      query: string;
+      /** Model */
+      model?: string | null;
+    };
+    /** ParsedQuery */
+    ParsedQuery: {
+      /**
+       * Intent
+       * @description 'strategy' to build/test a trade plan, 'question' for an in-scope trading question, 'off_topic' for anything outside NIFTY / BANKNIFTY options trading
+       * @default strategy
+       * @enum {string}
+       */
+      intent: "strategy" | "question" | "off_topic";
+      /**
+       * Refusal
+       * @description When intent is off_topic: one calm sentence for the trader
+       */
+      refusal?: string | null;
+      /**
+       * Underlying
+       * @description NIFTY (Nifty 50) or BANKNIFTY
+       */
+      underlying?: ("NIFTY" | "BANKNIFTY") | null;
+      /**
+       * Expiry
+       * @description Option expiry the trader named, as an absolute date
+       */
+      expiry?: string | null;
+      /**
+       * Capital
+       * @description Trading amount in rupees, as stated
+       */
+      capital?: number | null;
+      /**
+       * Max Loss
+       * @description Maximum loss per trade in rupees, as stated
+       */
+      max_loss?: number | null;
+      /**
+       * Target Profit
+       * @description Target profit per trade in rupees, as stated
+       */
+      target_profit?: number | null;
+      /**
+       * Preferred Indicators
+       * @description Indicators the trader asked for (ema, rsi, vwap, supertrend, ...)
+       */
+      preferred_indicators?: string[];
+      /**
+       * Idea
+       * @description The strategy request in plain English, keeping any indicators the trader named
+       * @default
+       */
+      idea: string;
+      /**
+       * Notes
+       * @description What is missing or was ambiguous; never guess amounts
+       */
+      notes?: string[];
+    };
+    /** PnlDay */
+    PnlDay: {
+      /**
+       * Date
+       * Format: date
+       */
+      date: string;
+      /** Trades */
+      trades: number;
+      /** Net Pnl */
+      net_pnl: number;
+      /**
+       * Cumulative
+       * @description Running net P&L from the start of the range to the end of this day
+       */
+      cumulative: number;
+    };
+    /** PnlGroup */
+    PnlGroup: {
+      /** Key */
+      key: string;
+      /** Trades */
+      trades: number;
+      /** Net Pnl */
+      net_pnl: number;
+    };
+    /** PnlOut */
+    PnlOut: {
+      /** Date From */
+      date_from: string | null;
+      /** Date To */
+      date_to: string | null;
+      /**
+       * Available From
+       * @description Date of the first closed trade in the account (ignores the filter)
+       */
+      available_from: string | null;
+      /** Available To */
+      available_to: string | null;
+      summary: components["schemas"]["PnlSummary"];
+      /** Daily */
+      daily: components["schemas"]["PnlDay"][];
+      /** By Exit Reason */
+      by_exit_reason: components["schemas"]["PnlGroup"][];
+      /** By Option Type */
+      by_option_type: components["schemas"]["PnlGroup"][];
+    };
+    /** PnlSummary */
+    PnlSummary: {
+      /** Net Pnl */
+      net_pnl: number;
+      /** Gross Pnl */
+      gross_pnl: number;
+      /** Costs */
+      costs: number;
+      /** Trades */
+      trades: number;
+      /** Wins */
+      wins: number;
+      /** Losses */
+      losses: number;
+      /** Win Rate Pct */
+      win_rate_pct: number | null;
+      /** Avg Win */
+      avg_win: number | null;
+      /** Avg Loss */
+      avg_loss: number | null;
+      /**
+       * Profit Factor
+       * @description Sum of winning trades / sum of losing trades; null if none lost
+       */
+      profit_factor: number | null;
+      /** Best Trade */
+      best_trade: number | null;
+      /** Worst Trade */
+      worst_trade: number | null;
+      /**
+       * Max Drawdown
+       * @description Largest fall of the running net P&L (trade by trade) inside the range
+       */
+      max_drawdown: number;
+    };
+    /** PositionOut */
+    PositionOut: {
+      /** Id */
+      id: string;
+      /** Underlying */
+      underlying: string;
+      /**
+       * Expiry
+       * Format: date
+       */
+      expiry: string;
+      /** Strike */
+      strike: number;
+      /**
+       * Option Type
+       * @enum {string}
+       */
+      option_type: "CE" | "PE";
+      /** Qty */
+      qty: number;
+      /** Lots */
+      lots: number;
+      /** Avg Price */
+      avg_price: number;
+      /** Mark Price */
+      mark_price: number;
+      /** Unrealized Pnl */
+      unrealized_pnl: number;
+      /** Stop Pct */
+      stop_pct: number | null;
+      /** Target Pct */
+      target_pct: number | null;
+      /** Square Off */
+      square_off: string | null;
+      /** Run Id */
+      run_id: string | null;
+      /**
+       * Opened At
+       * Format: date-time
+       */
+      opened_at: string;
+    };
+    /** PriceRef */
+    PriceRef: {
+      /**
+       * Price
+       * @enum {string}
+       */
+      price: "open" | "high" | "low" | "close";
+    };
+    /** QualityReport */
+    QualityReport: {
+      /** Input Rows */
+      input_rows: number;
+      /** Rows */
+      rows: number;
+      /** Bad Timestamps */
+      bad_timestamps: number;
+      /** Bad Rows */
+      bad_rows: number;
+      /** Invalid Ohlc Rows */
+      invalid_ohlc_rows: number;
+      /** Duplicates Removed */
+      duplicates_removed: number;
+      /** Trading Days */
+      trading_days: number;
+      /** Timeframe Minutes */
+      timeframe_minutes: number | null;
+      /** Missing Candles */
+      missing_candles: number;
+      /** Gap Count */
+      gap_count: number;
+      /** Gap Samples */
+      gap_samples: components["schemas"]["GapSample"][];
+      /** Warnings */
+      warnings: string[];
+    };
+    /** RangeRef */
+    RangeRef: {
+      /** Range */
+      range: [number, number];
+    };
+    /** RegisterRequest */
+    RegisterRequest: {
+      /** Email */
+      email: string;
+      /** Name */
+      name: string;
+      /** Password */
+      password: string;
+      /**
+       * Level
+       * @default beginner
+       * @enum {string}
+       */
+      level: "beginner" | "advanced" | "expert";
+    };
+    /** ResetIn */
+    ResetIn: {
+      /** Starting Balance */
+      starting_balance?: number | null;
+    };
+    /** RetrievedChunk */
+    RetrievedChunk: {
+      /** Text */
+      text: string;
+      /**
+       * Score
+       * @description Cosine similarity, higher is more relevant
+       */
+      score: number;
+      /** Source */
+      source: string;
+      /** Heading */
+      heading: string;
+      /**
+       * Doc Type
+       * @enum {string}
+       */
+      doc_type: "builtin" | "uploaded";
+    };
+    /** RiskSpec */
+    RiskSpec: {
+      /**
+       * Stop Loss Pct
+       * @description % of entry premium
+       */
+      stop_loss_pct?: number | null;
+      /** Target Pct */
+      target_pct?: number | null;
+      /**
+       * Trailing Sl Pct
+       * @description % from best premium since entry
+       */
+      trailing_sl_pct?: number | null;
+      /** Max Trades Per Day */
+      max_trades_per_day?: number | null;
+      /**
+       * Entry Start
+       * Format: time
+       * @default 09:20:00
+       */
+      entry_start: string;
+      /**
+       * Entry End
+       * Format: time
+       * @default 15:00:00
+       */
+      entry_end: string;
+      /**
+       * Square Off
+       * Format: time
+       * @description Forced intraday exit at this time
+       * @default 15:15:00
+       */
+      square_off: string;
+    };
+    /** Rule */
+    Rule: {
+      /** Left */
+      left:
+        | components["schemas"]["IndicatorRef"]
+        | components["schemas"]["PriceRef"]
+        | components["schemas"]["ValueRef"]
+        | components["schemas"]["RangeRef"];
+      /**
+       * Op
+       * @enum {string}
+       */
+      op: "crosses_above" | "crosses_below" | ">" | "<" | "between";
+      /** Right */
+      right:
+        | components["schemas"]["IndicatorRef"]
+        | components["schemas"]["PriceRef"]
+        | components["schemas"]["ValueRef"]
+        | components["schemas"]["RangeRef"];
+    };
+    /** RunOut */
+    RunOut: {
+      /** Id */
+      id: string;
+      /** Dataset Id */
+      dataset_id: string;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "queued" | "running" | "completed" | "failed";
+      /** Idea */
+      idea: string | null;
+      /** Backtest Run Id */
+      backtest_run_id: string | null;
+      /** Error */
+      error: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+      request: components["schemas"]["RunRequest-Output"];
+      /** Steps */
+      steps: components["schemas"]["StepRecord"][];
+    };
+    /** RunRequest */
+    "RunRequest-Input": {
+      /**
+       * Dataset Id
+       * @description Dataset to test on. Leave empty and set `underlying` to use the newest dataset of that underlying
+       * @default
+       */
+      dataset_id: string;
+      /** Underlying */
+      underlying?: ("NIFTY" | "BANKNIFTY") | null;
+      /**
+       * Expiry
+       * @description The option expiry you plan to trade (weekly vs monthly follows from it)
+       */
+      expiry?: string | null;
+      /**
+       * Max Loss
+       * @description Maximum loss per trade in rupees
+       */
+      max_loss?: number | null;
+      /**
+       * Target Profit
+       * @description Target profit per trade in rupees
+       */
+      target_profit?: number | null;
+      /**
+       * Idea
+       * @description Plain-English strategy idea (Strategy Agent translates it)
+       */
+      idea?: string | null;
+      /** Template Id */
+      template_id?: string | null;
+      /** Strategy Id */
+      strategy_id?: string | null;
+      spec?: components["schemas"]["StrategySpec-Input"] | null;
+      /** Start */
+      start?: string | null;
+      /** End */
+      end?: string | null;
+      /**
+       * Capital
+       * @default 100000
+       */
+      capital: number;
+      /**
+       * Model
+       * @description 'provider:model'; defaults to per-agent setting, then DEFAULT_MODEL
+       */
+      model?: string | null;
+    };
+    /** RunRequest */
+    "RunRequest-Output": {
+      /**
+       * Dataset Id
+       * @description Dataset to test on. Leave empty and set `underlying` to use the newest dataset of that underlying
+       * @default
+       */
+      dataset_id: string;
+      /** Underlying */
+      underlying?: ("NIFTY" | "BANKNIFTY") | null;
+      /**
+       * Expiry
+       * @description The option expiry you plan to trade (weekly vs monthly follows from it)
+       */
+      expiry?: string | null;
+      /**
+       * Max Loss
+       * @description Maximum loss per trade in rupees
+       */
+      max_loss?: number | null;
+      /**
+       * Target Profit
+       * @description Target profit per trade in rupees
+       */
+      target_profit?: number | null;
+      /**
+       * Idea
+       * @description Plain-English strategy idea (Strategy Agent translates it)
+       */
+      idea?: string | null;
+      /** Template Id */
+      template_id?: string | null;
+      /** Strategy Id */
+      strategy_id?: string | null;
+      spec?: components["schemas"]["StrategySpec-Output"] | null;
+      /** Start */
+      start?: string | null;
+      /** End */
+      end?: string | null;
+      /**
+       * Capital
+       * @default 100000
+       */
+      capital: number;
+      /**
+       * Model
+       * @description 'provider:model'; defaults to per-agent setting, then DEFAULT_MODEL
+       */
+      model?: string | null;
+    };
+    /** RunSummary */
+    RunSummary: {
+      /** Id */
+      id: string;
+      /** Dataset Id */
+      dataset_id: string;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "queued" | "running" | "completed" | "failed";
+      /** Idea */
+      idea: string | null;
+      /** Backtest Run Id */
+      backtest_run_id: string | null;
+      /** Error */
+      error: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /** SearchRequest */
+    SearchRequest: {
+      /** Query */
+      query: string;
+      /**
+       * K
+       * @default 5
+       */
+      k: number;
+    };
+    /** SlippageSpec */
+    SlippageSpec: {
+      /**
+       * Mode
+       * @default points
+       * @enum {string}
+       */
+      mode: "points" | "pct";
+      /**
+       * Value
+       * @default 0
+       */
+      value: number;
+    };
+    /** StepRecord */
+    StepRecord: {
+      /**
+       * Name
+       * @enum {string}
+       */
+      name: "research" | "strategy" | "verify" | "backtest" | "risk";
+      /**
+       * Status
+       * @default pending
+       * @enum {string}
+       */
+      status: "pending" | "running" | "completed" | "failed" | "skipped";
+      /** Model */
+      model?: string | null;
+      /** Started At */
+      started_at?: string | null;
+      /** Finished At */
+      finished_at?: string | null;
+      /** Output */
+      output?: {
+        [key: string]: unknown;
+      } | null;
+      /** Error */
+      error?: string | null;
+      /** Usage */
+      usage?: {
+        [key: string]: number;
+      } | null;
+      /** Warnings */
+      warnings?: string[];
+    };
+    /** StrategyCreate */
+    StrategyCreate: {
+      /**
+       * Name
+       * @description Defaults to spec.name
+       */
+      name?: string | null;
+      spec: components["schemas"]["StrategySpec-Input"];
+    };
+    /** StrategyOut */
+    StrategyOut: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      spec: components["schemas"]["StrategySpec-Output"];
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+    };
+    /** StrategySpec */
+    "StrategySpec-Input": {
+      /** Name */
+      name: string;
+      /**
+       * Description
+       * @default
+       */
+      description: string;
+      /**
+       * Signal Source
+       * @default underlying
+       * @enum {string}
+       */
+      signal_source: "underlying" | "option";
+      /**
+       * Timeframe Minutes
+       * @description Resample data to this timeframe before running
+       */
+      timeframe_minutes?: number | null;
+      /** Indicators */
+      indicators?: components["schemas"]["IndicatorSpec"][];
+      /** @description Bullish signal: buy CE (or sell PE) */
+      entry_bullish?: components["schemas"]["Condition-Input"] | null;
+      /** @description Bearish signal: buy PE (or sell CE) */
+      entry_bearish?: components["schemas"]["Condition-Input"] | null;
+      /** @description Signal-based exit for any open position */
+      exit_condition?: components["schemas"]["Condition-Input"] | null;
+      /**
+       * Exit On Opposite Signal
+       * @default false
+       */
+      exit_on_opposite_signal: boolean;
+      /**
+       * Direction
+       * @default buy
+       * @enum {string}
+       */
+      direction: "buy" | "sell";
+      instrument?: components["schemas"]["InstrumentSpec"];
+      risk?: components["schemas"]["RiskSpec"];
+      /**
+       * Lots
+       * @default 1
+       */
+      lots: number;
+      costs?: components["schemas"]["CostSpec"];
+    };
+    /** StrategySpec */
+    "StrategySpec-Output": {
+      /** Name */
+      name: string;
+      /**
+       * Description
+       * @default
+       */
+      description: string;
+      /**
+       * Signal Source
+       * @default underlying
+       * @enum {string}
+       */
+      signal_source: "underlying" | "option";
+      /**
+       * Timeframe Minutes
+       * @description Resample data to this timeframe before running
+       */
+      timeframe_minutes?: number | null;
+      /** Indicators */
+      indicators?: components["schemas"]["IndicatorSpec"][];
+      /** @description Bullish signal: buy CE (or sell PE) */
+      entry_bullish?: components["schemas"]["Condition-Output"] | null;
+      /** @description Bearish signal: buy PE (or sell CE) */
+      entry_bearish?: components["schemas"]["Condition-Output"] | null;
+      /** @description Signal-based exit for any open position */
+      exit_condition?: components["schemas"]["Condition-Output"] | null;
+      /**
+       * Exit On Opposite Signal
+       * @default false
+       */
+      exit_on_opposite_signal: boolean;
+      /**
+       * Direction
+       * @default buy
+       * @enum {string}
+       */
+      direction: "buy" | "sell";
+      instrument?: components["schemas"]["InstrumentSpec"];
+      risk?: components["schemas"]["RiskSpec"];
+      /**
+       * Lots
+       * @default 1
+       */
+      lots: number;
+      costs?: components["schemas"]["CostSpec"];
+    };
+    /** StrikeSpec */
+    StrikeSpec: {
+      /**
+       * Mode
+       * @default atm
+       * @enum {string}
+       */
+      mode: "atm" | "offset" | "nearest_premium";
+      /**
+       * Offset
+       * @description mode=offset: strikes above (+) / below (-) ATM, for both CE and PE
+       * @default 0
+       */
+      offset: number;
+      /**
+       * Premium
+       * @description mode=nearest_premium: target option premium
+       */
+      premium?: number | null;
+    };
+    /** SyntheticRequest */
+    SyntheticRequest: {
+      /** Name */
+      name?: string | null;
+      /**
+       * Underlying
+       * @default NIFTY
+       */
+      underlying: string;
+      /**
+       * Start Date
+       * Format: date
+       * @default 2024-01-01
+       */
+      start_date: string;
+      /**
+       * Trading Days
+       * @default 20
+       */
+      trading_days: number;
+      /**
+       * Start Price
+       * @default 22000
+       */
+      start_price: number;
+      /**
+       * Strike Step
+       * @default 50
+       */
+      strike_step: number;
+      /**
+       * N Strikes
+       * @description Strikes on each side of ATM
+       * @default 10
+       */
+      n_strikes: number;
+      /**
+       * Lot Size
+       * @default 75
+       */
+      lot_size: number;
+      /**
+       * Seed
+       * @default 42
+       */
+      seed: number;
+    };
+    /** TemplateOut */
+    TemplateOut: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      /** Description */
+      description: string;
+      spec: components["schemas"]["StrategySpec-Output"];
+    };
+    /** TokenOut */
+    TokenOut: {
+      /** Token */
+      token: string;
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+      user: components["schemas"]["UserOut"];
+    };
+    /** TradeOut */
+    TradeOut: {
+      /** Id */
+      id: string;
+      /** Underlying */
+      underlying: string;
+      /**
+       * Expiry
+       * Format: date
+       */
+      expiry: string;
+      /** Strike */
+      strike: number;
+      /**
+       * Option Type
+       * @enum {string}
+       */
+      option_type: "CE" | "PE";
+      /** Qty */
+      qty: number;
+      /** Entry Price */
+      entry_price: number;
+      /** Exit Price */
+      exit_price: number;
+      /**
+       * Entry Time
+       * Format: date-time
+       */
+      entry_time: string;
+      /**
+       * Exit Time
+       * Format: date-time
+       */
+      exit_time: string;
+      /** Gross Pnl */
+      gross_pnl: number;
+      /** Costs */
+      costs: number;
+      /** Net Pnl */
+      net_pnl: number;
+      /** Exit Reason */
+      exit_reason: string;
+      /** Run Id */
+      run_id: string | null;
+    };
+    /** UpdateProfileRequest */
+    UpdateProfileRequest: {
+      /** Name */
+      name?: string | null;
+      /** Level */
+      level?: ("beginner" | "advanced" | "expert") | null;
+    };
+    /** UploadResponse */
+    UploadResponse: {
+      /** Source */
+      source: string;
+      /** Chunks */
+      chunks: number;
+    };
+    /** UpstoxExportRequest */
+    UpstoxExportRequest: {
+      /**
+       * Underlying
+       * @default NIFTY
+       * @enum {string}
+       */
+      underlying: "NIFTY" | "BANKNIFTY";
+      /**
+       * Start Date
+       * Format: date
+       */
+      start_date: string;
+      /**
+       * End Date
+       * Format: date
+       */
+      end_date: string;
+      /**
+       * Interval Minutes
+       * @default 1
+       * @enum {integer}
+       */
+      interval_minutes: 1 | 3 | 5 | 15 | 30;
+      /**
+       * Include Options
+       * @description Needs Upstox Plus; only expiries from the last ~6 months exist
+       * @default true
+       */
+      include_options: boolean;
+      /**
+       * N Strikes
+       * @description Strikes on each side of ATM
+       * @default 10
+       */
+      n_strikes: number;
+      /** Option Types */
+      option_types?: ("CE" | "PE")[];
+      /**
+       * Expiry Type
+       * @default all
+       * @enum {string}
+       */
+      expiry_type: "all" | "weekly" | "monthly";
+      /**
+       * Last Expiries
+       * @description Only the most recent N expiries in the range
+       */
+      last_expiries?: number | null;
+    };
+    /** UpstoxImportRequest */
+    UpstoxImportRequest: {
+      /** Name */
+      name?: string | null;
+      /**
+       * Underlying
+       * @default NIFTY
+       * @enum {string}
+       */
+      underlying: "NIFTY" | "BANKNIFTY";
+      /**
+       * Start Date
+       * Format: date
+       */
+      start_date: string;
+      /**
+       * End Date
+       * Format: date
+       */
+      end_date: string;
+      /**
+       * Interval Minutes
+       * @default 5
+       * @enum {integer}
+       */
+      interval_minutes: 1 | 3 | 5 | 15 | 30;
+      /**
+       * Include Options
+       * @description Needs Upstox Plus; only expiries from the last ~6 months exist
+       * @default false
+       */
+      include_options: boolean;
+      /**
+       * N Strikes
+       * @description Strikes on each side of ATM
+       * @default 10
+       */
+      n_strikes: number;
+      /**
+       * Dataset Id
+       * @description Attach to an existing dataset
+       */
+      dataset_id?: string | null;
+    };
+    /** UserOut */
+    UserOut: {
+      /** Id */
+      id: string;
+      /** Email */
+      email: string;
+      /** Name */
+      name: string;
+      /**
+       * Level
+       * @enum {string}
+       */
+      level: "beginner" | "advanced" | "expert";
+    };
+    /** ValidateRequest */
+    ValidateRequest: {
+      /**
+       * Spec
+       * @description Raw strategy spec JSON to validate
+       */
+      spec: {
+        [key: string]: unknown;
+      };
+    };
+    /** ValidateResponse */
+    ValidateResponse: {
+      /** Valid */
+      valid: boolean;
+      /**
+       * Errors
+       * @description 'path: message' per problem
+       */
+      errors?: string[];
+      /** @description Normalized spec (defaults filled) when valid */
+      spec?: components["schemas"]["StrategySpec-Output"] | null;
+    };
+    /** ValidationError */
+    ValidationError: {
+      /** Location */
+      loc: (string | number)[];
+      /** Message */
+      msg: string;
+      /** Error Type */
+      type: string;
+      /** Input */
+      input?: unknown;
+      /** Context */
+      ctx?: Record<string, never>;
+    };
+    /** ValueRef */
+    ValueRef: {
+      /** Value */
+      value: number;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    health_health_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-        };
+  health_health_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    register_auth_register_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RegisterRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["HealthResponse"];
         };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+      };
     };
-    login_auth_login_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  register_auth_register_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    me_auth_me_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RegisterRequest"];
+      };
     };
-    update_me_auth_me_patch: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateProfileRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["TokenOut"];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    logout_auth_logout_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  login_auth_login_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    change_password_auth_change_password_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChangePasswordRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginRequest"];
+      };
     };
-    upload_dataset_datasets_upload_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["Body_upload_dataset_datasets_upload_post"];
-            };
+        content: {
+          "application/json": components["schemas"]["TokenOut"];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DatasetOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    create_synthetic_datasets_synthetic_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SyntheticRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DatasetOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  me_auth_me_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    import_upstox_datasets_upstox_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpstoxImportRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["UserOut"];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DatasetOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    list_export_jobs_datasets_upstox_export_jobs_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ExportJobOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  update_me_auth_me_patch: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    start_export_job_datasets_upstox_export_jobs_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpstoxExportRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ExportJobOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateProfileRequest"];
+      };
     };
-    get_export_job_datasets_upstox_export_jobs__job_id__get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path: {
-                job_id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ExportJobOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["UserOut"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    list_datasets_datasets_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DatasetOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  logout_auth_logout_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    get_dataset_datasets__dataset_id__get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path: {
-                dataset_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DatasetOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    list_templates_strategies_templates_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TemplateOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  change_password_auth_change_password_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    validate_spec_strategies_validate_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ValidateRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidateResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ChangePasswordRequest"];
+      };
     };
-    list_strategies_strategies_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StrategyOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    create_strategy_strategies_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StrategyCreate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StrategyOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  upload_dataset_datasets_upload_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    get_strategy_strategies__strategy_id__get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path: {
-                strategy_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StrategyOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "multipart/form-data": components["schemas"]["Body_upload_dataset_datasets_upload_post"];
+      };
     };
-    list_backtests_backtests_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BacktestRunSummary"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["DatasetOut"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    create_backtest_backtests_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BacktestRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BacktestRunOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  create_synthetic_datasets_synthetic_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    get_backtest_backtests__run_id__get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path: {
-                run_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BacktestRunOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SyntheticRequest"];
+      };
     };
-    list_models_models_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ModelsResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["DatasetOut"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    reingest_knowledge_ingest_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IngestReport"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  import_upstox_datasets_upstox_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    upload_knowledge_upload_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["Body_upload_knowledge_upload_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpstoxImportRequest"];
+      };
     };
-    search_knowledge_search_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SearchRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["DatasetOut"];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RetrievedChunk"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    documents_knowledge_documents_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DocumentInfo"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  list_export_jobs_datasets_upstox_export_jobs_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    parse_query_runs_parse_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ParseRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["ExportJobOut"][];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParsedQuery"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    ask_runs_ask_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ParseRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AskAnswer"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  start_export_job_datasets_upstox_export_jobs_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    list_runs_runs_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RunSummary"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpstoxExportRequest"];
+      };
     };
-    create_run_runs_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RunRequest-Input"];
-            };
+        content: {
+          "application/json": components["schemas"]["ExportJobOut"];
         };
-        responses: {
-            /** @description Successful Response */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RunSummary"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    get_run_runs__run_id__get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path: {
-                run_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RunOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_export_job_datasets_upstox_export_jobs__job_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        job_id: string;
+      };
+      cookie?: never;
     };
-    stream_run_runs__run_id__stream_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path: {
-                run_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description events: step, run, done */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/event-stream": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["ExportJobOut"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    list_expiries_expiries_get: {
-        parameters: {
-            query: {
-                underlying: "NIFTY" | "BANKNIFTY";
-                count?: number;
-            };
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ExpiriesResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  list_datasets_datasets_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    get_account_paper_account_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["DatasetOut"][];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    reset_account_paper_account_reset_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ResetIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_dataset_datasets__dataset_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        dataset_id: string;
+      };
+      cookie?: never;
     };
-    start_clock_paper_clock_start_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ClockStartIn"];
-            };
+        content: {
+          "application/json": components["schemas"]["DatasetOut"];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AccountOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    advance_paper_clock_advance_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AdvanceIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AdvanceOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  list_templates_strategies_templates_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    expiries_paper_expiries_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ExpiriesOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["TemplateOut"][];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    chain_paper_chain_get: {
-        parameters: {
-            query: {
-                expiry: string;
-            };
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChainOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  validate_spec_strategies_validate_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    positions_paper_positions_get: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PositionOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ValidateRequest"];
+      };
     };
-    orders_paper_orders_get: {
-        parameters: {
-            query?: {
-                limit?: number;
-            };
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["ValidateResponse"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    place_order_paper_orders_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OrderIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  list_strategies_strategies_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    trades_paper_trades_get: {
-        parameters: {
-            query?: {
-                limit?: number;
-            };
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TradeOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["StrategyOut"][];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    close_position_paper_positions__position_id__close_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path: {
-                position_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CloseIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TradeOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  create_strategy_strategies_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
     };
-    from_plan_paper_from_plan_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FromPlanIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FromPlanOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StrategyCreate"];
+      };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StrategyOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_strategy_strategies__strategy_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        strategy_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StrategyOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_backtests_backtests_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BacktestRunSummary"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  create_backtest_backtests_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BacktestRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BacktestRunOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_backtest_backtests__run_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        run_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BacktestRunOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_models_models_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ModelsResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reingest_knowledge_ingest_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IngestReport"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  upload_knowledge_upload_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": components["schemas"]["Body_upload_knowledge_upload_post"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UploadResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  search_knowledge_search_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SearchRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RetrievedChunk"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  documents_knowledge_documents_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DocumentInfo"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  parse_query_runs_parse_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ParseRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ParsedQuery"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  ask_runs_ask_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ParseRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AskAnswer"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_runs_runs_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RunSummary"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  create_run_runs_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RunRequest-Input"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RunSummary"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_run_runs__run_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        run_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RunOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  stream_run_runs__run_id__stream_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        run_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description events: step, run, done */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/event-stream": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_expiries_expiries_get: {
+    parameters: {
+      query: {
+        underlying: "NIFTY" | "BANKNIFTY";
+        count?: number;
+      };
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ExpiriesResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_account_paper_account_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AccountOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reset_account_paper_account_reset_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ResetIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AccountOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  start_clock_paper_clock_start_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ClockStartIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AccountOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  advance_paper_clock_advance_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AdvanceIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AdvanceOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  expiries_paper_expiries_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ExpiriesOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  chain_paper_chain_get: {
+    parameters: {
+      query: {
+        expiry: string;
+      };
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ChainOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  positions_paper_positions_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PositionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  orders_paper_orders_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  place_order_paper_orders_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OrderIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  trades_paper_trades_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        date_from?: string | null;
+        date_to?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TradeOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  close_position_paper_positions__position_id__close_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        position_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CloseIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TradeOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  from_plan_paper_from_plan_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["FromPlanIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FromPlanOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  pnl_paper_pnl_get: {
+    parameters: {
+      query?: {
+        date_from?: string | null;
+        date_to?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PnlOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
 }

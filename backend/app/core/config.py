@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=(".env", "upstox/.env"), extra="ignore")
 
     app_name: str = "AI Powered Trading"
     app_version: str = "0.1.0"
@@ -17,6 +17,9 @@ class Settings(BaseSettings):
 
     cors_origins: str = "http://localhost:3000"
     default_model: str = "openai:gpt-4o-mini"
+    lock_model: bool = (
+        False  # True: ignore the model a request asks for and always use DEFAULT_MODEL / per-agent overrides
+    )
     # Optional per-agent overrides (used by the agents in Phase 5); empty = use the request/default model.
     research_model: str = ""
     strategy_model: str = ""
@@ -39,6 +42,8 @@ class Settings(BaseSettings):
     enable_mock_llm: bool = False  # offline scripted "mock:demo" model for demos/tests; never calls a network
 
     # Upstox historical data import (Analytics Token needs no daily re-auth; option history needs Upstox Plus)
+    upstox_api_key: str = ""
+    upstox_api_secret: str = ""
     upstox_access_token: str = ""
 
     # Market news for the research agent (public RSS feeds; empty NEWS_FEEDS = built-in list of Indian market sites)
@@ -50,6 +55,11 @@ class Settings(BaseSettings):
     auth_session_hours: int = 24 * 7
     allow_registration: bool = True
 
+    # Guardrails: budget limits per user (the text and output guards live in app/guardrails)
+    llm_calls_per_minute: int = 12  # parse + ask + run starts
+    max_active_runs_per_user: int = 2
+    runs_per_day: int = 40
+
     # Agent pipeline
     agent_timeout_seconds: float = 180.0
     max_concurrent_runs: int = 2
@@ -58,7 +68,8 @@ class Settings(BaseSettings):
     embedding_provider: str = "fastembed"
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     model_cache_dir: str = "/app/.model_cache"
-    rag_autoingest: bool = True
+    rag_autoingest: bool = False  # off: the knowledge base holds only what you upload
+    rag_builtin_docs: bool = False  # True also indexes the notes in app/rag/docs
     rag_collection: str = "knowledge"
 
     # Optional tracing: app runs fine when these are empty.

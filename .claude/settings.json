@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run pytest *)",
+      "Bash(uv run ruff check *)",
+      "Bash(uv run mypy *)",
+      "Bash(uv sync)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(git diff *)",
+      "Bash(git status *)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local)"
+    ]
+  }
+}

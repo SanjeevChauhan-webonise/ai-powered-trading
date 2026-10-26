@@ -16,7 +16,8 @@ from app.data.resample import resample
 from app.data.validate import infer_timeframe_minutes
 from app.engine.conditions import compute_indicators, evaluate
 from app.engine.metrics import compute_metrics, equity_curve
-from app.schemas.backtest import BacktestResult, BacktestTrade, EngineEvent, ExitReason
+from app.engine.verify import verify_result
+from app.schemas.backtest import BacktestResult, BacktestTrade, EngineEvent, ExitReason, TradeCandle
 from app.schemas.strategy import Condition, StrategySpec
 
 MAX_EVENTS = 500
@@ -45,6 +46,18 @@ class _Position:
     trail_stop: float | None
     last_ts: pd.Timestamp
     last_close: float
+
+
+LotSchedule = list[tuple[date, int]]  # (first expiry date the size applies to, lot size), ascending
+
+
+def lot_for_expiry(schedule: LotSchedule | None, expiry: date, default: int) -> int:
+    """NSE lot sizes follow the contract's expiry, not the trade date (old contracts keep their size until expiry)."""
+    size = default
+    for since, lot in schedule or []:
+        if expiry >= since:
+            size = lot
+    return size
 
 
 def pick_expiry(expiries: list[pd.Timestamp], day: pd.Timestamp, mode: str) -> pd.Timestamp | None:
@@ -88,8 +101,10 @@ class _Runner:
         lot_size: int,
         start: date | None,
         end: date | None,
+        lot_schedule: LotSchedule | None = None,
     ) -> None:  # noqa: E501
         self.spec, self.under, self.opts, self.lot_size = spec, under, opts, lot_size
+        self.lot_schedule = lot_schedule
         self.start, self.end = start, end
         self.by_ts = opts.groupby("timestamp").indices
         self.contracts = opts.groupby(["expiry", "strike", "option_type"], sort=False).indices
@@ -170,7 +185,8 @@ class _Runner:
         return _Position(
             view=view, side=spec.direction, option_type=typ, expiry=expiry, strike=strike,
             signal_time=signal_ts, entry_time=ts, entry_raw=raw, entry_price=fill,
-            qty=spec.lots * self.lot_size, candles=candles, stop=stop, target=target,
+            qty=spec.lots * lot_for_expiry(self.lot_schedule, expiry.date(), self.lot_size),
+            candles=candles, stop=stop, target=target,
             trail_pct=risk.trailing_sl_pct, extreme=fill, trail_stop=trail, last_ts=ts, last_close=candle[3],
         )  # fmt: skip
 
@@ -225,6 +241,13 @@ class _Runner:
                 gross_pnl=round(gross, 2), slippage_cost=round(slip, 2),
                 brokerage=round(brokerage, 2), taxes=round(taxes, 2),
                 net_pnl=round(gross - brokerage - taxes, 2), exit_reason=reason,
+                lots=self.spec.lots, lot_size=pos.qty // self.spec.lots, entry_raw=pos.entry_raw, exit_raw=raw_exit,
+                stop_price=pos.stop, target_price=pos.target, trail_stop_price=pos.trail_stop,
+                candles=[
+                    TradeCandle(timestamp=t.to_pydatetime(), open=c[0], high=c[1], low=c[2], close=c[3])
+                    for t, c in sorted(pos.candles.items())
+                    if pos.entry_time <= t <= ts
+                ],
             )
         )  # fmt: skip
 
@@ -294,8 +317,12 @@ def run_backtest(
     start: date | None = None,
     end: date | None = None,
     capital: float = 100_000.0,
+    lot_schedule: LotSchedule | None = None,
 ) -> BacktestResult:
-    """Run a strategy on normalized underlying + option candles. Indicators warm up on all data before `start`."""
+    """Run a strategy on normalized underlying + option candles. Indicators warm up on all data before `start`.
+
+    lot_schedule overrides lot_size per expiry (see lot_for_expiry); lot_size stays the default and the reported size.
+    """
     if underlying["symbol"].nunique() > 1:
         raise ValueError("underlying candles must contain a single symbol")
     under = underlying.sort_values("timestamp").reset_index(drop=True)
@@ -310,7 +337,7 @@ def run_backtest(
     bear = _signal(spec.entry_bearish, frames, under, types)
     exit_sig = _signal(spec.exit_condition, frames, under, types)
 
-    runner = _Runner(spec, under, opts, lot_size, start, end)
+    runner = _Runner(spec, under, opts, lot_size, start, end, lot_schedule)
     runner.run(bull, bear, exit_sig)
 
     days = sorted(
@@ -320,10 +347,12 @@ def run_backtest(
             if (start is None or t.date() >= start) and (end is None or t.date() <= end)
         }
     )  # noqa: E501
+    metrics = compute_metrics(runner.trades, capital, days)
+    verification = verify_result(runner.trades, spec, metrics)
     return BacktestResult(
         strategy_name=spec.name, start=start, end=end, capital=capital, lot_size=lot_size,
         trades=runner.trades, equity_curve=equity_curve(runner.trades, capital),
-        metrics=compute_metrics(runner.trades, capital, days),
+        metrics=metrics, verification=verification,
         events=runner.events, events_truncated=runner.events_truncated,
     )  # fmt: skip
 

@@ -19,9 +19,11 @@ from app.data.csv_loader import load_export_dir
 from app.data.normalize import DataError
 
 # ----------------------------------------------------------------------------- SETTINGS
-UNDERLYINGS = ["NIFTY", "BANKNIFTY"]  # any of: "NIFTY", "BANKNIFTY"
-INTERVAL_MINUTES = 5  # must match the folder the export wrote (option-data/<UNDERLYING>/<N>m)
-DATA_DIR = Path("option-data/fake")
+UNDERLYINGS = ["NIFTY"]  # any of: "NIFTY", "BANKNIFTY"
+INTERVAL_MINUTES = 1  # must match the folder the export wrote (option-data/<UNDERLYING>/<N>m)
+DATA_DIR = Path("option-data/converted")
+# Multi-year 1-minute data does not fit in memory in the app; coarsen it while loading (underlying -> N minutes)
+RESAMPLE_TO: dict[str, int] = {"NIFTY": 5}
 # Lot sizes change over time; check the current NSE value before loading.
 LOT_SIZES = {"NIFTY": 65, "BANKNIFTY": 30}
 # Set an id to replace the data of an existing dataset instead of creating a new one, e.g. {"NIFTY": "ab12..."}
@@ -39,7 +41,7 @@ def main() -> int:
             try:
                 row = load_export_dir(
                     session, settings, folder, underlying=underlying, lot_size=LOT_SIZES[underlying],
-                    name=f"{underlying} {INTERVAL_MINUTES}m", dataset_id=DATASET_IDS.get(underlying),
+                    name=f"{underlying} {RESAMPLE_TO.get(underlying, INTERVAL_MINUTES)}m", dataset_id=DATASET_IDS.get(underlying), resample_to=RESAMPLE_TO.get(underlying),
                 )  # fmt: skip
             except DataError as e:
                 print(f"{underlying}: error: {e}")

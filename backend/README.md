@@ -18,6 +18,21 @@ uv run pytest && uv run ruff check . && uv run mypy app
 ## Env vars
 See `.env.example`. Langfuse keys are optional; the app runs without them. `UPSTOX_ACCESS_TOKEN` is only needed for the Upstox import (below).
 
+## Guardrails (scope, safety, budgets)
+The app only works for NIFTY / BANKNIFTY options trading. Full explanation, the OWASP mapping, measured results and the gaps are in
+[`docs/guardrails.md`](../docs/guardrails.md). In short, several independent layers, the important ones in code outside the model:
+- **Input guard** (`app/guardrails/text.py`): cleans text, blocks prompt-injection phrases **before any model call**, redacts email,
+  PAN, Aadhaar, phone, card numbers and API keys.
+- **Prompts** (`app/agents/prompts.py`): one shared `<scope>` block (what is in scope, refusal protocol, outside text is data) in all seven agents.
+- **Scope gates in code:** intake `intent=off_topic`, ask `in_scope=false`, and the research step stops a run on an off-topic idea.
+- **Data filters:** news items and knowledge passages that look like injection are dropped before an agent reads them.
+- **Output guards** (`app/guardrails/output.py`): no promises of profit, no direct buy/sell orders, and the strategy text may not quote
+  lots, rupees or stop/target % (a violation makes the agent rewrite).
+- **Budgets** (`app/guardrails/limits.py`, `.env`): `LLM_CALLS_PER_MINUTE=12`, `MAX_ACTIVE_RUNS_PER_USER=2`, `RUNS_PER_DAY=40` (HTTP 429), and a
+  hard cap on max loss per trade of 5% / 10% / 25% of capital for Beginner / Advanced / Expert.
+- **Check it:** `MODEL=openai:gpt-4o-mini PYTHONPATH=. uv run python otj/eval_prompts.py` runs a fixed set of in-scope, off-topic, injection and
+  vague requests against the running API (a few cents). Run it after any prompt or guard change.
+
 ## Accounts and experience levels
 Email + password accounts (`app/api/auth.py`, `app/core/security.py`). Everything except `/health` and `/auth/*` needs
 `Authorization: Bearer <token>`.
@@ -56,6 +71,10 @@ Each user has one paper account (`paper_accounts`, default balance Rs 5,00,000) 
 - Positions are long options only (selling to open is rejected). While the clock advances, each candle runs the exits:
   expiry, stop loss, target and square-off. Costs are charged when a trade closes (2 x Rs 20 brokerage + 0.05% taxes, the backtest
   engine's defaults), so cash always moves by exactly the trade's net P&L.
+- `GET /paper/pnl?date_from=&date_to=` is the realised P&L of closed trades for a day (both dates the same) or a range: net / gross /
+  costs, win rate, profit factor, average win and loss, best and worst trade, max drawdown, a daily series with the running total, and
+  breakdowns by exit reason and CE/PE. The bounds of the account's trades come back too. `GET /paper/trades` takes the same
+  `date_from` / `date_to`. Dates are market-clock days (the day the trade was closed); unrealised P&L is not included.
 - Everything is private to the user. Migration `0005` adds the tables.
 - Fake history for the five test accounts (orders, closed trades, open positions), made by replaying the data with this same code:
 ```bash
@@ -145,7 +164,7 @@ Any model name works for requests even if unlisted; only the provider must be co
 
 ## Knowledge base / RAG (Phase 4)
 Markdown docs in `app/rag/docs/` are chunked by heading, embedded locally (fastembed, `all-MiniLM-L6-v2`, no API key; the model
-downloads once into the `modelcache` volume) and stored in ChromaDB. An empty knowledge base is filled in the background on startup.
+downloads once into the `modelcache` volume) and stored in ChromaDB. The knowledge base starts empty and holds only what you upload (set `RAG_AUTOINGEST=true` / `RAG_BUILTIN_DOCS=true` to also index the built-in notes).
 ```bash
 curl -X POST localhost:8000/knowledge/ingest                                  # re-sync built-in docs + uploads
 curl -F file=@notes.pdf localhost:8000/knowledge/upload                       # .md or .pdf, kept in ./storage/knowledge

@@ -135,7 +135,11 @@ def resolve_model(settings: Settings, requested: str | None = None, agent: str |
     provider and its credentials are.
     """
     override = getattr(settings, f"{agent}_model", "") if agent else ""
-    model_id = requested or override or settings.default_model
+    model_id = (
+        (override or settings.default_model)
+        if settings.lock_model
+        else (requested or override or settings.default_model)
+    )
     provider, _ = _split(model_id)
     if not _configured(settings, _BY_KEY[provider]):
         raise ModelError(

@@ -27,6 +27,9 @@ class VectorStore(Protocol):
         ...
 
     def count(self) -> int: ...
+    def chunks_of(self, source: str, offset: int, limit: int) -> list[tuple[str, str, dict[str, Any]]]:
+        """(id, text, metadata) of one source's chunks in document order."""
+        ...
 
 
 class ChromaStore:
@@ -67,6 +70,14 @@ class ChromaStore:
     def count(self) -> int:
         return int(self._col.count())
 
+    def chunks_of(self, source: str, offset: int, limit: int) -> list[tuple[str, str, dict[str, Any]]]:
+        got = self._col.get(where={"source": source}, include=["documents", "metadatas"])
+        rows = sorted(
+            zip(got["ids"], got["documents"], got["metadatas"], strict=True),
+            key=lambda r: int(r[2].get("chunk_index", 0)),
+        )
+        return [(i, d, dict(m)) for i, d, m in rows[offset : offset + limit]]
+
 
 class InMemoryStore:
     """Test double with the same semantics (cosine similarity)."""
@@ -100,6 +111,11 @@ class InMemoryStore:
 
     def count(self) -> int:
         return len(self._rows)
+
+    def chunks_of(self, source: str, offset: int, limit: int) -> list[tuple[str, str, dict[str, Any]]]:
+        rows = [(i, t, dict(m)) for i, (t, _, m) in self._rows.items() if m["source"] == source]
+        rows.sort(key=lambda r: int(r[2].get("chunk_index", 0)))
+        return rows[offset : offset + limit]
 
 
 def collection_name(base: str, embedding_model: str) -> str:

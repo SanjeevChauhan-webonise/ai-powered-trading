@@ -12,6 +12,8 @@ from typing import Any
 
 import httpx
 
+from app.guardrails.text import looks_like_injection
+
 log = logging.getLogger(__name__)
 
 DEFAULT_FEEDS = {
@@ -44,6 +46,12 @@ def _parse(source: str, content: bytes) -> list[dict[str, Any]]:
     for item in ET.fromstring(content).iter("item"):
         title = _clean(item.findtext("title"))
         if not title:
+            continue
+        if looks_like_injection(f"{title} {item.findtext('description') or ''}"):
+            log.warning(
+                "dropped a news item that looks like prompt injection",
+                extra={"event": "news_injection", "source": source},
+            )
             continue
         try:
             published = parsedate_to_datetime(item.findtext("pubDate") or "")

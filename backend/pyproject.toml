@@ -44,9 +44,12 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "upstox/tests"]
+pythonpath = ["."]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["E501"]
+"upstox/tests/*" = ["E501"]
 "otj/*" = ["E501"]
+"app/guardrails/*" = ["E501"]  # regex tables are long lines
 "app/agents/prompts.py" = ["E501"]

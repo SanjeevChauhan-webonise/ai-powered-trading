@@ -18,10 +18,14 @@ Sidebar layout (`components/layout/app-shell.tsx`), design from "Strategy Desk (
 - `/`: dashboard. Counts, recent AI runs (open one in the Strategy Desk), recent backtests, datasets.
 - `/strategy-desk`: describe a trade in free text, pick underlying / expiry (dropdown of upcoming expiries, `lib/expiries.ts`) / capital / max loss / target / risk appetite, and
   get a trade plan with reasons plus the live agent pipeline. Calls `POST /runs/parse`, then `POST /runs`, and polls `GET /runs/{id}`.
-  `?run=<id>` reopens an earlier run. Lots, stop and target come from your rupee limits (computed in the backend, not by the LLM).
+  `?run=<id>` reopens an earlier run. A general options question ("what is theta decay?") is answered directly (knowledge base and news, no plan,
+  no backtest); anything outside NIFTY / BANKNIFTY options trading is refused with a short message. Lots, stop and target come from your rupee limits (computed in the backend, not by the LLM).
 - `/backtest`: all backtests. `/backtest/new`: pick dataset + template, run a direct (no-AI) backtest.
 - `/results/[id]`: metrics, equity / drawdown / daily P&L charts, sortable + filterable trade log.
-- `/pnl`: net P&L across all backtests (per run, per strategy). Simulated, not real or paper money.
+- `/pnl`: Profit & Loss for a **day or a date range** (presets All / Last day / Last 7 days / Last 30 days, or From and To dates; the same
+  date twice is one day). Two tabs: **Paper account** (net P&L, win rate, profit factor, drawdown, daily bars with a running total, by day,
+  by exit reason, CE / PE, and the closed trades in the period; click a day to see only that day) and **Backtests** (filtered by the day each
+  backtest was run). Simulated money only.
 - `/knowledge`: browse, search, upload (`.md` / `.pdf`) and re-ingest the RAG knowledge base.
 - `/settings`: your profile and experience level (beginner / advanced / expert), available models, default model, service status.
 - `/login`: log in or create an account.

@@ -36,9 +36,9 @@ from app.core.logging import run_id_var
 from app.core.models import PipelineRun, User
 from app.core.tracing import run_span
 from app.data.backtest_io import build_run_record, load_frames
-from app.data.expiries import ExpiryService, get_service
 from app.data.models import Dataset
 from app.engine.backtest import run_backtest
+from app.engine.lots import LOT_SCHEDULES
 from app.engine.sizing import Sizing, apply_money_limits, estimate_entry_premium, expiry_kind
 from app.engine.spec_check import check_spec
 from app.engine.summary import build_facts, stress_spec
@@ -57,6 +57,7 @@ from app.schemas.agents import (
 )
 from app.schemas.backtest import BacktestResult
 from app.schemas.strategy import StrategySpec
+from upstox.expiries import ExpiryService, get_service
 
 log = logging.getLogger(__name__)
 T = TypeVar("T")
@@ -77,6 +78,26 @@ def _semaphore(limit: int) -> asyncio.Semaphore:
     return _semaphores[loop]
 
 
+def _trace_info(run: PipelineRun | None) -> dict[str, Any]:
+    """Langfuse trace title, user, tags and metadata for a run, so it is easy to find: 'NIFTY | <idea>' by user."""
+    req = (run.request if run else None) or {}
+    underlying = str(req.get("underlying") or "")
+    idea = " ".join(str(req.get("idea") or req.get("template_id") or "strategy").split())
+    model = str(req.get("model") or "default")
+    kind = "idea" if req.get("idea") else "template" if req.get("template_id") else "spec"
+    tags = [t for t in (underlying, f"model:{model}", f"source:{kind}") if t and t != "model:default"]
+    return {
+        "title": f"strategy-desk | {underlying or 'auto'} | {idea[:60]}",
+        "user_id": run.user_id if run else None,
+        "tags": tags,
+        "metadata": {
+            "model": model,
+            "capital": str(req.get("capital", "")),
+            "dataset_id": str(req.get("dataset_id", "")),
+        },
+    }
+
+
 class StepFailed(Exception):
     pass
 
@@ -85,9 +106,18 @@ def _now() -> str:
     return datetime.now(UTC).replace(tzinfo=None).isoformat()
 
 
+class OutOfScope(Exception):
+    """The request is not about NIFTY / BANKNIFTY options trading. The message is for the trader."""
+
+
+DEFAULT_REFUSAL = "This tool only handles NIFTY and BANKNIFTY options trading: strategies, backtests and paper trading."
+
+
 def _err(e: BaseException) -> str:
     if isinstance(e, TimeoutError):
         return "TimeoutError: step timed out"
+    if isinstance(e, OutOfScope):
+        return str(e)
     return f"{type(e).__name__}: {e}"[:1000]
 
 
@@ -212,8 +242,9 @@ class Pipeline:
     async def execute(self, run_id: str) -> None:
         token = run_id_var.set(run_id)
         try:
+            info = await self._db(lambda s: _trace_info(s.get(PipelineRun, run_id)))
             async with _semaphore(self.settings.max_concurrent_runs):
-                with run_span(run_id):
+                with run_span(run_id, **info):
                     await self._run(run_id)
         except StepFailed as e:
             log.warning("run failed: %s", e)
@@ -307,7 +338,10 @@ class Pipeline:
         )
 
         def run_engine(spec: StrategySpec, start: date | None, end: date | None) -> BacktestResult:
-            return run_backtest(spec, under, opts, lot_size=ctx.lot_size, start=start, end=end, capital=req.capital)
+            return run_backtest(
+                spec, under, opts, lot_size=ctx.lot_size, start=start, end=end, capital=req.capital,
+                lot_schedule=LOT_SCHEDULES.get(ctx.underlying),
+            )  # fmt: skip
 
         sizing: Sizing | None = None
 
@@ -341,8 +375,13 @@ class Pipeline:
 
         async def research() -> tuple[Any, dict[str, Any], dict[str, int] | None, list[str]]:
             out, usage = await self._agent(
-                research_agent, f"Trading idea or strategy to research:\n{topic}", models["research"], deps
+                research_agent,
+                f"Index: {ctx.underlying}\nTrading idea or strategy to research:\n{topic}",
+                models["research"],
+                deps,
             )
+            if not out.in_scope:  # the first step is also the scope gate for direct POST /runs calls
+                raise OutOfScope(out.refusal or DEFAULT_REFUSAL)
             return out, out.model_dump(mode="json"), usage, []
 
         research_out: ResearchOutput = await self._step(run_id, "research", models["research"], research)

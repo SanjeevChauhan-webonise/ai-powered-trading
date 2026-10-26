@@ -10,6 +10,8 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from app.api.deps import Cfg, Emb, Store
 from app.rag import ingest, retriever
 from app.schemas.rag import (
+    ChunkOut,
+    ChunkPage,
     DocumentInfo,
     IngestReport,
     RetrievedChunk,
@@ -85,3 +87,28 @@ def documents(store: Store) -> list[DocumentInfo]:
         return [
             DocumentInfo(source=s, doc_type=t, chunks=len(ids)) for s, (t, ids) in sorted(store.ids_by_source().items())
         ]
+
+
+@router.get("/chunks", response_model=ChunkPage, summary="Browse the stored chunks of one source, in document order")
+def chunks(store: Store, source: str, offset: int = 0, limit: int = 20) -> ChunkPage:
+    limit = max(1, min(limit, 100))
+    with _kb_errors():
+        known = store.ids_by_source().get(source)
+        if known is None:
+            raise HTTPException(404, f"Unknown source '{source}'")
+        rows = store.chunks_of(source, max(0, offset), limit)
+        return ChunkPage(
+            source=source,
+            total=len(known[1]),
+            offset=max(0, offset),
+            chunks=[
+                ChunkOut(
+                    id=i,
+                    source=source,
+                    heading=str(m.get("heading", "")),
+                    chunk_index=int(m.get("chunk_index", 0)),
+                    text=t,
+                )
+                for i, t, m in rows
+            ],
+        )
