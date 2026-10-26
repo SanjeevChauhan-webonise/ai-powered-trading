@@ -1,7 +1,6 @@
 "use client";
 
 import { LoaderCircle } from "lucide-react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -23,7 +22,6 @@ import {
 } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { STORAGE_PREFIX } from "@/lib/brand";
-import { SHOW_PAPER_TRADING } from "@/lib/features";
 import {
   daysTo,
   expiryKind,
@@ -243,19 +241,6 @@ export function Desk() {
             and risk-review a strategy for you.
           </p>
         </div>
-        {SHOW_PAPER_TRADING && (
-          <div className="flex rounded-xl bg-muted p-1 text-sm font-medium">
-            <span className="rounded-lg bg-card px-4 py-1.5 shadow-sm">
-              Backtest mode
-            </span>
-            <Link
-              href="/paper-trading"
-              className="px-4 py-1.5 text-muted-foreground hover:text-foreground"
-            >
-              Paper trade mode
-            </Link>
-          </div>
-        )}
       </div>
 
       <div className="grid items-start gap-5 xl:grid-cols-[1fr_1.1fr_1fr]">

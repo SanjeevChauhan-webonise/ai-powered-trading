@@ -4,7 +4,6 @@ import {
   BookOpen,
   ChartColumn,
   ChartLine,
-  ClipboardList,
   LayoutDashboard,
   Settings,
   Sparkles,
@@ -17,27 +16,19 @@ import {
   api,
   type Health,
   type ModelsResponse,
-  type PaperAccount,
 } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { APP_NAME, TAGLINE } from "@/lib/brand";
 import { LEVEL_TONE } from "@/lib/levels";
-import { SHOW_PAPER_TRADING } from "@/lib/features";
-import { money } from "@/lib/format";
 
-const ALL_NAV = [
+const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/strategy-desk", label: "Strategy Desk", icon: Sparkles },
   { href: "/backtest", label: "Backtest", icon: ChartLine },
-  { href: "/paper-trading", label: "Paper Trading", icon: ClipboardList },
   { href: "/pnl", label: "Profit & Loss", icon: ChartColumn },
   { href: "/knowledge", label: "Knowledge Base", icon: BookOpen },
   { href: "/settings", label: "Settings & Models", icon: Settings },
 ];
-
-const NAV = ALL_NAV.filter(
-  (n) => SHOW_PAPER_TRADING || n.href !== "/paper-trading",
-);
 
 function active(path: string, href: string): boolean {
   if (href === "/") return path === "/";
@@ -74,24 +65,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [offline, setOffline] = useState(false);
   const [models, setModels] = useState<ModelsResponse | null>(null);
   const [dataName, setDataName] = useState<string | null>(null);
-  const [paper, setPaper] = useState<PaperAccount | null>(null);
-
-  // The paper balance in the sidebar: loaded once, then whenever the Paper Trading page changes the account.
-  useEffect(() => {
-    if (!SHOW_PAPER_TRADING) return;
-    let on = true;
-    const load = () =>
-      api
-        .paperAccount()
-        .then((p) => on && setPaper(p))
-        .catch(() => undefined);
-    void load();
-    window.addEventListener("paper-updated", load);
-    return () => {
-      on = false;
-      window.removeEventListener("paper-updated", load);
-    };
-  }, []);
 
   useEffect(() => {
     api
@@ -146,24 +119,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 Log out
               </button>
             </div>
-          )}
-          {SHOW_PAPER_TRADING && (
-            <Link
-              href="/paper-trading"
-              className="block rounded-lg bg-muted/60 px-2.5 py-2 hover:bg-muted"
-            >
-              <div className="mb-0.5 text-[10px] uppercase tracking-wide">
-                Paper account
-              </div>
-              <div className="font-mono text-sm font-semibold text-foreground">
-                {paper ? money(paper.equity) : "–"}
-              </div>
-              <div className="text-[11px]">
-                {paper
-                  ? `Virtual capital · cash ${money(paper.cash)}`
-                  : "Virtual capital"}
-              </div>
-            </Link>
           )}
           <div>
             <div className="mb-0.5 uppercase tracking-wide">Model</div>

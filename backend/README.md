@@ -59,29 +59,6 @@ PYTHONPATH=. uv run python otj/fake_users.py      # each persona logs in and run
 `seed_users.py` also hands runs that existed before accounts (tagged "[Amit]" etc. go to that persona, the rest to
 `ADOPT_UNOWNED_TO`) to their owners. Change the default passwords (`POST /auth/change-password`) for any account you keep.
 
-## Paper trading (simulation on replayed data)
-Each user has one paper account (`paper_accounts`, default balance Rs 5,00,000) with `paper_positions`, `paper_orders` and
-`paper_trades`. There is **no live feed**: the "market" is a loaded dataset replayed by a **market clock** (`app/paper/`).
-- `POST /paper/clock/start {dataset_id}` picks the dataset and starts the clock (first candle of the 3rd-last day), and
-  `POST /paper/clock/advance {candles}` moves it forward. Orders fill at the price of the candle the clock is on.
-- `GET /paper/expiries`, `GET /paper/chain?expiry=` (only expiries that have prices at the market time),
-  `POST /paper/orders` (buy), `POST /paper/positions/{id}/close` (sell to close), `GET /paper/account|positions|orders|trades`,
-  `POST /paper/account/reset`, and `POST /paper/from-plan {run_id, option_type}` to paper-trade an AI trade plan (same lots,
-  stop, target and 15:15 square-off; the strike follows the plan's ATM / offset / nearest-premium rule).
-- Positions are long options only (selling to open is rejected). While the clock advances, each candle runs the exits:
-  expiry, stop loss, target and square-off. Costs are charged when a trade closes (2 x Rs 20 brokerage + 0.05% taxes, the backtest
-  engine's defaults), so cash always moves by exactly the trade's net P&L.
-- `GET /paper/pnl?date_from=&date_to=` is the realised P&L of closed trades for a day (both dates the same) or a range: net / gross /
-  costs, win rate, profit factor, average win and loss, best and worst trade, max drawdown, a daily series with the running total, and
-  breakdowns by exit reason and CE/PE. The bounds of the account's trades come back too. `GET /paper/trades` takes the same
-  `date_from` / `date_to`. Dates are market-clock days (the day the trade was closed); unrealised P&L is not included.
-- Everything is private to the user. Migration `0005` adds the tables.
-- Fake history for the five test accounts (orders, closed trades, open positions), made by replaying the data with this same code:
-```bash
-docker compose exec api alembic upgrade head
-docker compose run --rm -e PYTHONPATH=/app -v "$PWD/otj:/app/otj" api python otj/seed_paper.py   # RESETS those accounts first
-```
-
 ## Datasets (Phase 1)
 A dataset holds underlying candles and/or option candles, stored as Parquet in `./storage/<id>/`
 (metadata in Postgres; migrations run automatically on container start).

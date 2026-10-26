@@ -1,10 +1,10 @@
 # AI Powered Trading
 
 A multi-agent system that turns a plain-English NIFTY / BANKNIFTY options idea into a verified strategy, a deterministic backtest,
-a trade plan and a paper trade.
+and a trade plan.
 
 > **Educational and research prototype.** No live trading, no broker integration, not financial advice.
-> Backtests and paper trades use historical or replayed data and simulated money only.
+> Backtests use historical data and simulated money only.
 
 ## What it does
 
@@ -16,14 +16,13 @@ Describe a trade in free text, for example *"BankNifty, capital 50k, max loss 20
 4. **Verifies** the spec (fidelity to the idea, logic that can fire, risk settings) and sends it back for up to two revisions.
 5. **Backtests** it on historical option candles with a pure Python engine.
 6. **Reviews risk** and produces a trade plan with reasons. Lots, stop and target come from your rupee limits, computed in code.
-7. **Paper trades** the plan against a replayed market with a virtual account.
 
 You can also skip the AI and run a backtest directly from a template or spec.
 
 ## Core principle
 
 LLMs never compute prices, signals, P&L, metrics, lots, rupees or stop/target percentages. Every number comes from deterministic
-code in `backend/app/engine` and `backend/app/paper`. Agents only retrieve knowledge, translate intent into a spec, call the
+code in `backend/app/engine`. Agents only retrieve knowledge, translate intent into a spec, call the
 engine as a tool, and explain the results.
 
 ## Features
@@ -31,7 +30,7 @@ engine as a tool, and explain the results.
 - **Strategy Desk:** free-text trade request, live agent pipeline, trade plan with reasons.
 - **Backtest engine:** signal on candle close, fill at the next candle open (no lookahead), stop/target/square-off, costs and slippage,
   metrics (P&L, win rate, profit factor, drawdown, Sharpe, expectancy) and a full trade log.
-- **Paper trading:** virtual account, market clock over a loaded dataset, option chain, orders, positions, and a P&L page.
+- **Profit & Loss page:** simulated P&L of your backtests after brokerage, slippage and taxes, for a day or a date range.
 - **Accounts and experience levels:** beginner / advanced / expert tune explanations and add max-loss caps.
 - **Model choice:** OpenAI, Anthropic, Gemini, Groq, Azure OpenAI, OpenRouter, Ollama, or an offline mock model.
 - **Knowledge base:** upload `.md` / `.pdf` documents, embedded locally (no API key needed).
@@ -43,7 +42,7 @@ engine as a tool, and explain the results.
 ```
 .
 ├── backend/    FastAPI + Postgres + ChromaDB (Docker Compose), Python 3.12, uv
-│   └── app/    api, agents, engine, guardrails, paper, rag, news, llm, data, schemas
+│   └── app/    api, agents, engine, guardrails, rag, news, llm, data, schemas
 ├── frontend/   Next.js (App Router) + TypeScript + Tailwind + shadcn/ui + Recharts
 ├── docs/       guardrails and longer guides
 └── rag-data/   knowledge documents
@@ -85,7 +84,7 @@ cd frontend && npm run gen:api     # regenerate API types (backend must be runni
 ## Documentation
 
 - [`PROJECT_SPEC.md`](PROJECT_SPEC.md): original specification
-- [`backend/README.md`](backend/README.md): API, engine, agents, RAG, paper trading, data import, env vars
+- [`backend/README.md`](backend/README.md): API, engine, agents, RAG, data import, env vars
 - [`frontend/README.md`](frontend/README.md): pages and setup
 - [`docs/guardrails.md`](docs/guardrails.md): safety layers, OWASP mapping, measured results and known gaps
 - [`CLAUDE.md`](CLAUDE.md): guidance for Claude Code (project rules, commands, subagents)

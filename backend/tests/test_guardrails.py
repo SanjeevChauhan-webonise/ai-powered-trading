@@ -49,7 +49,7 @@ def test_injection_is_detected(text: str):
         "what is the difference between weekly and monthly expiry?",
         "mujhe nifty mein bullish trade lena hai",
         "show me the backtest results and ignore losses below 100 rupees",
-        "explain how the system works for paper trading",
+        "explain how the system works for backtesting",
     ],
 )
 def test_normal_trading_text_is_not_flagged(text: str):

@@ -23,15 +23,13 @@ Sidebar layout (`components/layout/app-shell.tsx`), design from "Strategy Desk (
 - `/backtest`: all backtests. `/backtest/new`: pick dataset + template, run a direct (no-AI) backtest.
 - `/results/[id]`: metrics, equity / drawdown / daily P&L charts, sortable + filterable trade log.
 - `/pnl`: Profit & Loss for a **day or a date range** (presets All / Last day / Last 7 days / Last 30 days, or From and To dates; the same
-  date twice is one day). Two tabs: **Paper account** (net P&L, win rate, profit factor, drawdown, daily bars with a running total, by day,
-  by exit reason, CE / PE, and the closed trades in the period; click a day to see only that day) and **Backtests** (filtered by the day each
-  backtest was run). Simulated money only.
+  date twice is one day). It shows the simulated P&L of your backtests, filtered by the day each backtest was run.
+  Simulated money only.
 - `/knowledge`: browse, search, upload (`.md` / `.pdf`) and re-ingest the RAG knowledge base.
 - `/settings`: your profile and experience level (beginner / advanced / expert), available models, default model, service status.
 - `/login`: log in or create an account.
-- `/paper-trading`: virtual account (equity, cash, realised / unrealised P&L), the market clock (pick a dataset and move the replayed
-  market forward), an order ticket with the option chain, open positions, closed trades and orders. The Strategy Desk can paper-trade a
-  finished plan ("Paper trade CE / PE"). FINNIFTY / MIDCPNIFTY are shown disabled in the Strategy Desk (backend supports NIFTY and BANKNIFTY).
+
+FINNIFTY / MIDCPNIFTY are shown disabled in the Strategy Desk (the backend supports NIFTY and BANKNIFTY).
 
 ## API types
 `lib/api-types.ts` is generated from the backend OpenAPI schema. With the backend running:

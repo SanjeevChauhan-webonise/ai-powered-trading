@@ -35,14 +35,6 @@ export type ExpiriesResponse = S["ExpiriesResponse"];
 export type User = S["UserOut"];
 export type TokenOut = S["TokenOut"];
 export type Level = User["level"];
-export type PaperAccount = S["AccountOut"];
-export type PaperPosition = S["PositionOut"];
-export type PaperOrder = S["OrderOut"];
-export type PaperTrade = S["TradeOut"];
-export type PaperChain = S["ChainOut"];
-export type PaperAdvance = S["AdvanceOut"];
-export type PaperFromPlan = S["FromPlanOut"];
-export type PaperPnl = S["PnlOut"];
 export type AskAnswer = S["AskAnswer"];
 
 export class ApiError extends Error {}
@@ -152,61 +144,6 @@ export const api = {
   getRun: (id: string) => request<Run>(`/runs/${id}`),
   runs: () => request<RunSummary[]>("/runs"),
   models: () => request<ModelsResponse>("/models"),
-  paperAccount: () => request<PaperAccount>("/paper/account"),
-  paperReset: (starting_balance?: number) =>
-    request<PaperAccount>("/paper/account/reset", {
-      method: "POST",
-      body: JSON.stringify({ starting_balance: starting_balance ?? null }),
-    }),
-  paperStartClock: (dataset_id: string) =>
-    request<PaperAccount>("/paper/clock/start", {
-      method: "POST",
-      body: JSON.stringify({ dataset_id }),
-    }),
-  paperAdvance: (candles: number) =>
-    request<PaperAdvance>("/paper/clock/advance", {
-      method: "POST",
-      body: JSON.stringify({ candles }),
-    }),
-  paperExpiries: () =>
-    request<{ dataset_id: string; clock_time: string; expiries: string[] }>(
-      "/paper/expiries",
-    ),
-  paperChain: (expiry: string) =>
-    request<PaperChain>(`/paper/chain?expiry=${expiry}`),
-  paperPositions: () => request<PaperPosition[]>("/paper/positions"),
-  paperOrders: (limit = 30) =>
-    request<PaperOrder[]>(`/paper/orders?limit=${limit}`),
-  paperTrades: (limit = 100, from?: string, to?: string) =>
-    request<PaperTrade[]>(
-      `/paper/trades?limit=${limit}${from ? `&date_from=${from}` : ""}${to ? `&date_to=${to}` : ""}`,
-    ),
-  paperPnl: (from?: string, to?: string) =>
-    request<PaperPnl>(
-      `/paper/pnl?${new URLSearchParams({ ...(from ? { date_from: from } : {}), ...(to ? { date_to: to } : {}) })}`,
-    ),
-  paperBuy: (body: {
-    expiry: string;
-    strike: number;
-    option_type: "CE" | "PE";
-    lots: number;
-    stop_pct?: number | null;
-    target_pct?: number | null;
-  }) =>
-    request<PaperOrder>("/paper/orders", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
-  paperClose: (id: string, lots?: number) =>
-    request<PaperTrade>(`/paper/positions/${id}/close`, {
-      method: "POST",
-      body: JSON.stringify({ lots: lots ?? null }),
-    }),
-  paperFromPlan: (run_id: string, option_type: "CE" | "PE") =>
-    request<PaperFromPlan>("/paper/from-plan", {
-      method: "POST",
-      body: JSON.stringify({ run_id, option_type }),
-    }),
   expiries: (underlying: string, count = 10) =>
     request<ExpiriesResponse>(
       `/expiries?underlying=${underlying}&count=${count}`,

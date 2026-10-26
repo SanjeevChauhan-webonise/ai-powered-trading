@@ -1,7 +1,7 @@
 # AI Powered Trading
 
 Multi-agent system that turns a plain-English NIFTY / BANKNIFTY options idea into a verified strategy, a deterministic backtest,
-a trade plan and a paper trade. Educational use only: no live trading, no broker orders, not financial advice.
+and a trade plan. Educational use only: no live trading, no broker orders, not financial advice.
 Original spec: `PROJECT_SPEC.md`. Guardrails: `docs/guardrails.md`. Longer guides (.docx/.pdf) are in `docs/`.
 
 ## Repo layout
@@ -11,7 +11,7 @@ Original spec: `PROJECT_SPEC.md`. Guardrails: `docs/guardrails.md`. Longer guide
 
 ## Core principle (never break)
 LLMs never compute prices, signals, P&L, metrics, lots, rupees or stop/target %. All numbers come from deterministic Python in
-`backend/app/engine` (and `app/paper`). Agents only retrieve knowledge, translate intent into a `StrategySpec`, call the engine
+`backend/app/engine`. Agents only retrieve knowledge, translate intent into a `StrategySpec`, call the engine
 as a tool, and explain results. Strategies are declarative JSON (`app/schemas/strategy.py`); never execute user- or LLM-written code.
 
 ## Pipeline (backend/app/agents/orchestrator.py)
@@ -23,7 +23,6 @@ research (RAG + market news) -> strategy -> verify (up to 2 revision rounds) -> 
 - Scope: NIFTY and BANKNIFTY options only. Off-topic requests are refused (intake `intent=off_topic`, ask `in_scope=false`).
 - Backtest: signal on candle close, fill at next candle open (no lookahead). Stop wins over target when both are reachable in one
   candle. Intraday only, 15:15 square-off. Bullish buys CE, bearish buys PE (sell direction flips this).
-- Paper trading: no live feed. A dataset is replayed by a market clock; long options only; same costs as the backtest engine.
 - Users have experience levels (beginner / advanced / expert) that tune explanations and add max-loss caps (5% / 10% / 25% of capital).
 - Data is per user (`user_id`); other users get 404. Datasets, knowledge base and models are shared.
 - Timestamps are naive exchange-local time (Asia/Kolkata). Lot sizes change over time; use `app/engine/lots.py`.
@@ -44,7 +43,7 @@ research (RAG + market news) -> strategy -> verify (up to 2 revision rounds) -> 
 
 ## Subagents (`.claude/agents/`)
 - `backend-dev`: API, schemas, migrations, RAG, LLM registry.
-- `engine-reviewer`: read-only review of backtest engine / paper trading for lookahead, determinism and cost correctness.
+- `engine-reviewer`: read-only review of backtest engine for lookahead, determinism and cost correctness.
 - `guardrail-reviewer`: read-only review of prompts, guardrails and anything LLM-facing.
 - `frontend-dev`: Next.js pages, components, API client and types.
 - `data-ops`: Upstox export, CSV conversion and dataset loading scripts in `backend/otj`.

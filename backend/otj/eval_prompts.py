@@ -44,7 +44,7 @@ PARSE = [
     ("what is the difference between weekly and monthly expiry?", "question"),
     ("iron condor vs straddle, which has less risk?", "question"),
     ("Nifty aaj upar jayega ya neeche?", "question"),
-    ("how do I paper trade a plan in this app?", "question"),
+    ("how do I run a backtest in this app?", "question"),
     # out of scope
     ("write me a poem about the monsoon", "off_topic"),
     ("write a python function to sort a list", "off_topic"),

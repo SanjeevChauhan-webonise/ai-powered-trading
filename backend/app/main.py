@@ -7,7 +7,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.agents.orchestrator import mark_interrupted
-from app.api import auth, backtests, datasets, expiries, health, knowledge, models, paper, runs, strategies
+from app.api import auth, backtests, datasets, expiries, health, knowledge, models, runs, strategies
 from app.api.deps import get_current_user
 from app.core.config import get_settings
 from app.core.db import get_session
@@ -48,5 +48,5 @@ app.add_middleware(
 app.include_router(health.router)  # open: used by the orchestrator / uptime checks
 app.include_router(auth.router)  # open: register and login
 _login = [Depends(get_current_user)]  # everything else needs a logged-in user
-for _router in (datasets, strategies, backtests, models, knowledge, runs, expiries, paper):
+for _router in (datasets, strategies, backtests, models, knowledge, runs, expiries):
     app.include_router(_router.router, dependencies=_login)

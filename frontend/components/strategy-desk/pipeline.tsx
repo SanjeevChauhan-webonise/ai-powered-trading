@@ -1,7 +1,5 @@
 import { Check, CircleAlert, LoaderCircle } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,14 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { api, type Run, type RunStep } from "@/lib/api";
-import { SHOW_PAPER_TRADING } from "@/lib/features";
-import {
-  STEP_LABELS,
-  stepOf,
-  stepSeconds,
-  tradePlanOf,
-} from "@/lib/trade-plan";
+import type { Run, RunStep } from "@/lib/api";
+import { STEP_LABELS, stepOf, stepSeconds } from "@/lib/trade-plan";
 
 const cut = (s: string, n = 110) =>
   s.length > n ? `${s.slice(0, n - 1)}…` : s;
@@ -80,59 +72,6 @@ function Dot({ step, index }: { step: RunStep; index: number }) {
     <span className={`${base} bg-muted text-muted-foreground`}>
       {index + 1}
     </span>
-  );
-}
-
-function PaperTradeButtons({ run }: { run: Run }) {
-  const router = useRouter();
-  const plan = tradePlanOf(run);
-  const [busy, setBusy] = useState<"CE" | "PE" | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  if (!plan) return null;
-  const sides = (["CE", "PE"] as const).filter((t) => {
-    const action =
-      t === "CE" ? plan.bullish_signal_action : plan.bearish_signal_action;
-    return action?.toLowerCase().startsWith("buy");
-  });
-  if (sides.length === 0)
-    return (
-      <p className="text-xs text-muted-foreground">
-        This plan sells options to open; paper trading supports buying only.
-      </p>
-    );
-
-  async function go(t: "CE" | "PE") {
-    setBusy(t);
-    setError(null);
-    try {
-      await api.paperFromPlan(run.id, t);
-      router.push("/paper-trading");
-    } catch (e) {
-      setError((e as Error).message);
-      setBusy(null);
-    }
-  }
-  return (
-    <div className="space-y-1.5">
-      <div className="flex gap-2">
-        {sides.map((t) => (
-          <Button
-            key={t}
-            variant="outline"
-            className="h-10 flex-1"
-            disabled={busy !== null}
-            onClick={() => void go(t)}
-          >
-            {busy === t ? "Opening…" : `Paper trade ${t}`}
-          </Button>
-        ))}
-      </div>
-      {error && <p className="text-xs text-red-700">{error}</p>}
-      <p className="text-[11px] text-muted-foreground">
-        Buys at the replayed market price with this plan&apos;s lots, stop and
-        target. A simulation: it uses fake or historical data.
-      </p>
-    </div>
   );
 }
 
@@ -232,14 +171,6 @@ export function Pipeline({ run, note }: { run: Run | null; note?: string }) {
               Open full backtest results
             </Button>
           )}
-          {SHOW_PAPER_TRADING &&
-            (run?.status === "completed" ? (
-              <PaperTradeButtons run={run} />
-            ) : (
-              <Button variant="outline" className="h-10 w-full" disabled>
-                Paper trade this plan
-              </Button>
-            ))}
         </div>
       </CardContent>
     </Card>

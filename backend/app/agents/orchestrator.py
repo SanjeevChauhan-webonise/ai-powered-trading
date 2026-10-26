@@ -110,7 +110,7 @@ class OutOfScope(Exception):
     """The request is not about NIFTY / BANKNIFTY options trading. The message is for the trader."""
 
 
-DEFAULT_REFUSAL = "This tool only handles NIFTY and BANKNIFTY options trading: strategies, backtests and paper trading."
+DEFAULT_REFUSAL = "This tool only handles NIFTY and BANKNIFTY options trading: strategies and backtests."
 
 
 def _err(e: BaseException) -> str:

@@ -14,7 +14,7 @@ log = logging.getLogger("guardrails")
 
 MAX_CHARS = 2000
 REFUSAL = (
-    "This tool only handles NIFTY and BANKNIFTY options trading: strategies, backtests and paper trading. "
+    "This tool only handles NIFTY and BANKNIFTY options trading: strategies and backtests. "
     "Ask me about one of those."
 )
 
